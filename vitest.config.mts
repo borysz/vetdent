@@ -14,5 +14,10 @@ export default defineConfig({
     // Worker threads start noticeably faster than forked processes on Windows.
     pool: "threads",
     include: ["src/**/*.test.{ts,tsx}"],
+    // Placeholder settings: unit tests never talk to a real Supabase project.
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: "https://project.supabase.test",
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "test-publishable-key",
+    },
   },
 });

@@ -4,6 +4,10 @@
     "tagline": "Állatorvosi fogászati kezelési lap",
     "description": "Tabletre tervezett fogászati kezelési lap kutyákhoz és macskákhoz: interaktív fogképlet, gyorsbevitel, műtéti napló és a gazdinak szóló összefoglaló."
   },
+  "common": {
+    "loading": "Betöltés…",
+    "optional": "nem kötelező"
+  },
   "connectivity": {
     "online": "Online",
     "offline": "Nincs kapcsolat",
@@ -11,8 +15,10 @@
     "offlineHint": "Az eszköz jelenleg nem éri el a hálózatot."
   },
   "home": {
-    "statusBadge": "Fejlesztés alatt · 1. fázis: alapozás",
+    "statusBadge": "Fejlesztés alatt",
     "lead": "Az anamnézistől az interaktív fogképleten és a műtéti naplón át a gazdinak szóló összefoglalóig – műtét közben, kesztyűs kézzel, tableten is.",
+    "signUp": "Regisztráció",
+    "login": "Bejelentkezés",
     "featuresTitle": "Ami készül",
     "features": {
       "odontogram": {
@@ -57,5 +63,136 @@
     "title": "Az oldal nem található",
     "body": "A keresett oldal nem létezik, vagy áthelyezték.",
     "home": "Vissza a nyitóoldalra"
+  },
+  "auth": {
+    "fields": {
+      "fullName": "Teljes név",
+      "email": "E-mail-cím",
+      "password": "Jelszó",
+      "newPassword": "Új jelszó",
+      "passwordHint": "Legalább 10 karakter."
+    },
+    "login": {
+      "title": "Bejelentkezés",
+      "lead": "Jelentkezzen be a fiókjába.",
+      "submit": "Bejelentkezés",
+      "forgot": "Elfelejtette a jelszavát?",
+      "noAccount": "Még nincs fiókja?",
+      "signUpLink": "Regisztráció"
+    },
+    "signUp": {
+      "title": "Regisztráció",
+      "lead": "Hozza létre a fiókját. A rendelő vagy az egyéni fiók adatait a következő lépésben adja meg.",
+      "submit": "Fiók létrehozása",
+      "hasAccount": "Már van fiókja?",
+      "loginLink": "Bejelentkezés",
+      "checkEmailTitle": "Nézze meg a postafiókját",
+      "checkEmailBody": "Megerősítő levelet küldtünk a megadott címre. A levélben lévő hivatkozásra kattintva folytathatja a regisztrációt."
+    },
+    "forgot": {
+      "title": "Elfelejtett jelszó",
+      "lead": "Adja meg az e-mail-címét, és küldünk egy hivatkozást, amellyel új jelszót állíthat be.",
+      "submit": "Hivatkozás küldése",
+      "sentTitle": "Elküldtük a levelet",
+      "sentBody": "Ha a megadott címmel létezik fiók, hamarosan megérkezik a levél a jelszó-visszaállító hivatkozással.",
+      "backToLogin": "Vissza a bejelentkezéshez"
+    },
+    "newPassword": {
+      "title": "Új jelszó beállítása",
+      "lead": "Adja meg az új jelszavát.",
+      "submit": "Jelszó mentése"
+    },
+    "logout": "Kijelentkezés",
+    "errors": {
+      "invalidCredentials": "Hibás e-mail-cím vagy jelszó.",
+      "emailNotConfirmed": "Az e-mail-címe még nincs megerősítve. Kattintson a megerősítő levélben lévő hivatkozásra.",
+      "weakPassword": "A jelszó túl gyenge. Válasszon hosszabbat vagy összetettebbet.",
+      "samePassword": "Az új jelszó nem egyezhet meg a régivel.",
+      "rateLimited": "Túl sok próbálkozás történt. Várjon egy kicsit, majd próbálja újra.",
+      "linkInvalid": "A hivatkozás érvénytelen vagy lejárt. Kérjen újat.",
+      "generic": "Hiba történt. Próbálja újra később."
+    },
+    "validation": {
+      "fullNameRequired": "Adja meg a nevét.",
+      "emailInvalid": "Érvényes e-mail-címet adjon meg.",
+      "passwordRequired": "Adja meg a jelszavát.",
+      "passwordTooShort": "A jelszó legalább 10 karakter legyen."
+    }
+  },
+  "onboarding": {
+    "title": "Milyen fiókot szeretne?",
+    "lead": "A fiók típusa később módosítható: az egyéni fiók rendelővé alakítható.",
+    "typeLegend": "Fióktípus",
+    "types": {
+      "clinic": {
+        "title": "Rendelő",
+        "body": "Vállalkozásként fizet elő, és munkatársakat hívhat meg szerepkörökkel."
+      },
+      "individual": {
+        "title": "Egyéni állatorvos",
+        "body": "Egyfős fiók a saját nevére; munkatárs nem hívható meg."
+      }
+    },
+    "fields": {
+      "clinicName": "A rendelő neve",
+      "individualName": "Név (ahogy a számlán szerepeljen)",
+      "taxNumber": "Adószám",
+      "postalCode": "Irányítószám",
+      "city": "Település",
+      "addressLine": "Utca, házszám",
+      "phone": "Telefonszám",
+      "ownerIsClinician": "Állatorvosként is dolgozom a rendelőben",
+      "ownerIsClinicianHint": "Így Ön is lezárhat kezelési lapokat."
+    },
+    "submit": "Fiók létrehozása",
+    "validation": {
+      "typeRequired": "Válasszon fióktípust.",
+      "nameRequired": "Adja meg a nevet.",
+      "taxNumberRequired": "Rendelő esetén az adószám megadása kötelező.",
+      "tooLong": "A megadott érték túl hosszú."
+    }
+  },
+  "appShell": {
+    "organizationLabel": "Aktuális fiók",
+    "switchLabel": "Fiók váltása",
+    "switchSubmit": "Váltás",
+    "roleInOrganization": "{role} · {type}"
+  },
+  "dashboard": {
+    "title": "Irányítópult",
+    "welcome": "Üdvözöljük, {name}!",
+    "welcomeNoName": "Üdvözöljük!",
+    "emptyTitle": "Itt még nincs mit mutatni",
+    "emptyBody": "A mai vizitek, a félbehagyott kezelési lapok és a legutóbbi páciensek itt jelennek majd meg."
+  },
+  "roles": {
+    "owner": "Tulajdonos",
+    "admin": "Admin",
+    "vet": "Állatorvos",
+    "assistant": "Asszisztens",
+    "receptionist": "Recepciós"
+  },
+  "organizationTypes": {
+    "clinic": "Rendelő",
+    "individual": "Egyéni állatorvos"
+  },
+  "dbErrors": {
+    "not_authenticated": "A folytatáshoz jelentkezzen be.",
+    "forbidden": "Ehhez a művelethez nincs jogosultsága.",
+    "individual_account_exists": "Már van egyéni állatorvosi fiókja.",
+    "organization_limit_reached": "Elérte a létrehozható fiókok számát.",
+    "individual_cannot_invite": "Egyéni állatorvosi fiókba nem hívható meg munkatárs.",
+    "cannot_invite_owner": "Tulajdonos nem hívható meg; a tulajdonosi szerepkör utólag adható.",
+    "invalid_email": "Érvényes e-mail-címet adjon meg.",
+    "already_member": "Ez a személy már tagja a fióknak.",
+    "invitation_not_found": "A meghívó nem található.",
+    "invitation_already_accepted": "Ezt a meghívót már elfogadták.",
+    "invitation_revoked": "Ezt a meghívót visszavonták.",
+    "invitation_expired": "A meghívó lejárt. Kérjen újat.",
+    "invitation_email_mismatch": "A meghívó másik e-mail-címre szól, mint amellyel bejelentkezett.",
+    "email_not_confirmed": "Előbb erősítse meg az e-mail-címét.",
+    "member_not_found": "A munkatárs nem található.",
+    "last_owner": "A fióknak legalább egy aktív tulajdonosa kell legyen.",
+    "unknown": "Hiba történt. Próbálja újra később."
   }
 }

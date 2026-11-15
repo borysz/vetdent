@@ -11,15 +11,12 @@ export function ToothCatalogPreview({ species }: { species: Species }) {
   const rows = getOdontogramRows(species);
 
   return (
-    <section
-      aria-labelledby={`catalog-${species}`}
-      className="rounded-2xl border border-line bg-panel p-4 sm:p-6"
-    >
+    <section aria-labelledby={`catalog-${species}`} className="rounded-2xl border bg-card p-4 sm:p-6">
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
         <h3 id={`catalog-${species}`} className="text-lg font-semibold">
           {t(`species.${species}`)}
         </h3>
-        <p className="text-sm text-ink-muted">{t("teeth.count", { count: getTeeth(species).length })}</p>
+        <p className="text-sm text-muted-foreground">{t("teeth.count", { count: getTeeth(species).length })}</p>
       </div>
 
       <div className="overflow-x-auto pb-2">
@@ -39,11 +36,11 @@ function JawRow({ label, teeth }: { label: string; teeth: readonly ToothDefiniti
 
   return (
     <div>
-      <p className="mb-2 text-sm font-medium text-ink-muted">{label}</p>
+      <p className="mb-2 text-sm font-medium text-muted-foreground">{label}</p>
       <div className="flex items-stretch justify-center gap-3">
         <SideLabel>{t("patientRight")}</SideLabel>
         <ToothGroup teeth={right} />
-        <span aria-hidden="true" className="w-px self-stretch bg-line" />
+        <span aria-hidden="true" className="w-px self-stretch bg-border" />
         <ToothGroup teeth={left} />
         <SideLabel>{t("patientLeft")}</SideLabel>
       </div>
@@ -53,7 +50,7 @@ function JawRow({ label, teeth }: { label: string; teeth: readonly ToothDefiniti
 
 function SideLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="flex shrink-0 items-center text-xs font-semibold tracking-wide text-ink-muted uppercase">
+    <span className="flex shrink-0 items-center text-xs font-semibold tracking-wide text-muted-foreground uppercase">
       {children}
     </span>
   );
@@ -68,7 +65,7 @@ function ToothGroup({ teeth }: { teeth: readonly ToothDefinition[] }) {
         <li
           key={tooth.number}
           aria-label={t("toothLabel", { number: tooth.number, type: t(`types.${tooth.type}`) })}
-          className="flex size-touch shrink-0 items-center justify-center rounded-lg border-2 border-tooth-healthy bg-panel font-mono text-sm font-medium"
+          className="flex size-touch shrink-0 items-center justify-center rounded-lg border-2 border-tooth-healthy bg-card font-mono text-sm font-medium"
         >
           {tooth.number}
         </li>

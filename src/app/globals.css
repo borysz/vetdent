@@ -1,32 +1,64 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 /*
- * Design tokens. Components use these names (bg-surface, text-ink,
- * bg-tooth-healthy, min-h-touch …) and never raw colour values, so the look
- * can be changed in one place.
+ * The app has a single (light) theme. Tying the `dark:` variant to a class
+ * that is never set keeps component styles from reacting to the operating
+ * system's dark mode.
+ */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design tokens.
+ *
+ * Generic UI colours use the shadcn/ui vocabulary (background, foreground,
+ * card, primary, muted, accent, destructive, border, input, ring), so
+ * generated components and our own code speak the same language. Their values
+ * are defined once in `:root` below.
+ *
+ * App-specific tokens (tooth status colours, warning, touch target size) are
+ * defined in the second `@theme` block.
  */
 @theme inline {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 @theme {
-  /* Surfaces and text */
-  --color-surface: #f4f7f8;
-  --color-panel: #ffffff;
-  --color-ink: #14212a;
-  --color-ink-muted: #556873;
-  --color-line: #d5dee3;
-
-  /* Brand and feedback */
-  --color-brand: #0f766e;
-  --color-brand-strong: #0b5a54;
-  --color-brand-soft: #e1f2f0;
-  --color-on-brand: #ffffff;
-  --color-danger: #b42318;
-  --color-danger-soft: #fdecea;
+  /* Feedback that shadcn/ui has no token for */
   --color-warning: #b45309;
   --color-warning-soft: #fef3e2;
+  --color-success: #1f7a45;
+  --color-success-soft: #e6f4ec;
 
   /* Tooth status colours (odontogram). Order of precedence is defined in code. */
   --color-tooth-healthy: #2e9e5b;
@@ -40,18 +72,57 @@
   --spacing-touch: 2.75rem;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
+:root {
+  --radius: 0.75rem;
+
+  /* Surfaces and text */
+  --background: #f4f7f8;
+  --foreground: #14212a;
+  --card: #ffffff;
+  --card-foreground: #14212a;
+  --popover: #ffffff;
+  --popover-foreground: #14212a;
+
+  /* Brand (teal) */
+  --primary: #0f766e;
+  --primary-foreground: #ffffff;
+  --accent: #e1f2f0;
+  --accent-foreground: #0b5a54;
+
+  /* Neutral */
+  --secondary: #e8eef1;
+  --secondary-foreground: #14212a;
+  --muted: #ecf1f3;
+  --muted-foreground: #556873;
+
+  /* Lines and focus */
+  --border: #d5dee3;
+  --input: #aebcc4;
+  --ring: #0f766e;
+
+  --destructive: #b42318;
 }
 
-body {
-  background: var(--color-surface);
-  color: var(--color-ink);
-  /* No hover-dependent UI and no accidental double-tap zoom while working. */
-  touch-action: manipulation;
-}
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
 
-:focus-visible {
-  outline: 3px solid var(--color-brand);
-  outline-offset: 2px;
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* No hover-dependent UI and no accidental double-tap zoom while working. */
+    touch-action: manipulation;
+  }
+
+  /* Visible keyboard focus for plain links and other unstyled controls. */
+  a:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
 }

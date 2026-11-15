@@ -7,7 +7,7 @@ Tabletre tervezett, előfizetéses webalkalmazás kutyák és macskák fogászat
 | Fázis | Tartalom | Állapot |
 |---|---|---|
 | 1 | Alapozás: projektváz, megjelenés, nyelvi réteg, PWA-jegyzék, tesztkeret, fogkatalógus | ✅ kész |
-| 2 | Felhasználók és szervezetek (Supabase Auth) | ⏳ következik – Supabase-projekt kell hozzá |
+| 2 | Felhasználók és szervezetek (Supabase Auth) | 🔶 részben kész (lásd lent) |
 | 3 | Jogosultságok és napló | – |
 | 4 | Előfizetés (Stripe) és számlázás (Számlázz.hu) | – |
 | 5 | Offline alapréteg | – |
@@ -18,7 +18,18 @@ Tabletre tervezett, előfizetéses webalkalmazás kutyák és macskák fogászat
 | 10 | Gazdi-PDF és e-mail | – |
 | 11 | Lezárás: tesztek, adatexport, biztonsági átnézés | – |
 
-Az 1. fázisból az adatbázis-migrációk és a típusgenerálás átkerült a 2. fázisba, mert felhős Supabase-projekt nélkül nem ellenőrizhetők (lásd [`docs/DONTESEK.md`](docs/DONTESEK.md)).
+A döntések és az eltérések a tervtől a [`docs/DONTESEK.md`](docs/DONTESEK.md) fájlban vannak.
+
+### A 2. fázis állása
+
+| Kész | Még hátravan |
+|---|---|
+| Regisztráció, bejelentkezés, kijelentkezés | Meghívók felülete és a meghívó elfogadása |
+| Elfelejtett jelszó és új jelszó beállítása | Munkatársak kezelése (szerepkör, felfüggesztés, eltávolítás) |
+| Fiók létrehozása: rendelő vagy egyéni állatorvos | Profil (név, titulus, jelszócsere, munkamenetek) |
+| Váltás több fiók között | Kétlépcsős azonosítás |
+| Adatbázisséma sorszintű védelemmel, szabályok adatbázis-függvényekben (meghívás, szerepkörök, utolsó tulajdonos védelme) | Magyar nyelvű levélsablonok, saját levélküldő |
+| 26 integrációs teszt a fiókok elszigetelésére és a szabályokra | Fióktörlés és adatexport |
 
 ## Futtatás helyben
 
@@ -45,6 +56,9 @@ Ezután az alkalmazás a <http://localhost:3000> címen érhető el.
 | `npm run typecheck` | Típusellenőrzés (TypeScript, strict) |
 | `npm run test` | Egységtesztek (Vitest) |
 | `npm run check` | Lint + típusellenőrzés + tesztek egyben |
+| `npm run test:integration` | Integrációs tesztek a fejlesztői Supabase-projekten (saját tesztadatokkal, amelyeket a végén töröl) – éles projekten soha ne futtasd |
+| `npm run db:push` | Az új migrációk feltöltése a Supabase-projektbe |
+| `npm run db:types` | A TypeScript-típusok újragenerálása az adatbázissémából |
 
 ## Felépítés
 
@@ -54,7 +68,10 @@ Ezután az alkalmazás a <http://localhost:3000> címen érhető el.
 | `src/components/` | Felületi komponensek |
 | `src/domain/` | Szakmai logika felülettől függetlenül (pl. fogkatalógus) |
 | `src/i18n/`, `messages/` | Nyelvi réteg; minden felületi szöveg a `messages/hu.json`-ból jön |
-| `src/lib/` | Közös segédmodulok (pl. környezeti változók ellenőrzése) |
+| `src/lib/` | Közös segédmodulok: környezeti változók, Supabase-kliensek, azonosítás (`auth/`), szervezetek (`organizations/`) |
+| `src/proxy.ts` | Minden kérés előtt frissíti a munkamenetet, és elvégzi az átirányításokat |
+| `supabase/migrations/` | Az adatbázisséma változásai |
+| `tests/integration/` | A valódi adatbázison futó tesztek |
 | `docs/` | Döntések, ötletek, szakmai ellenőrzésre váró adatok |
 | `referencia/` | A projektindító prompt és a kérdéslista |
 
@@ -65,8 +82,19 @@ Ezután az alkalmazás a <http://localhost:3000> címen érhető el.
 - Titok, ár, keret és belépési adat nem kerül a forráskódba; a beállítások mintája a `.env.example`.
 - A Next.js ebben a verzióban több ponton eltér a korábbiaktól – kódírás előtt a `node_modules/next/dist/docs/` alatti dokumentáció az irányadó (lásd `AGENTS.md`).
 
-## Következő lépések (2. fázishoz)
+## Supabase beállítása új gépen
 
-1. Supabase-fiók és egy fejlesztői projekt létrehozása **EU-régióban** (pl. Frankfurt). A létrehozáskor megadott adatbázisjelszót érdemes jelszókezelőbe menteni – a migrációk feltöltéséhez kell majd.
-2. A `.env.example` lemásolása `.env.local` néven, és a három Supabase-érték (projektcím, nyilvános kulcs, titkos kulcs) beírása.
-3. Bejelentkezés a Supabase CLI-be, hogy a migrációk feltölthetők legyenek (a 2. fázis elején, közösen).
+1. A `.env.example` lemásolása `.env.local` néven, és a három Supabase-érték (projektcím, nyilvános kulcs, titkos kulcs) beírása.
+2. Bejelentkezés és a projekt összekapcsolása a Supabase parancssori eszközzel:
+
+```bash
+npx supabase login
+```
+
+```bash
+npx supabase link --project-ref <projektazonosító>
+```
+
+3. A Supabase felületén (Authentication → URL Configuration) a „Site URL” legyen `http://localhost:3000`, az engedélyezett átirányítások között pedig szerepeljen a `http://localhost:3000/**`. Enélkül a megerősítő és jelszó-visszaállító levelek hivatkozásai nem az alkalmazásba vezetnek.
+
+A Supabase beépített levélküldője csak próbára való (óránként néhány levél); éles használathoz saját levélküldő kell.

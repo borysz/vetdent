@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
 function subscribe(onChange: () => void): () => void {
   window.addEventListener("online", onChange);
@@ -29,17 +30,12 @@ export function ConnectivityStatus() {
     <span
       role="status"
       title={isOnline ? t("onlineHint") : t("offlineHint")}
-      className={[
-        "inline-flex min-h-touch items-center gap-2 rounded-full border px-4 text-sm font-medium",
-        isOnline
-          ? "border-line bg-panel text-ink-muted"
-          : "border-warning bg-warning-soft text-warning",
-      ].join(" ")}
+      className={cn(
+        "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-sm font-medium",
+        isOnline ? "bg-card text-muted-foreground" : "border-warning bg-warning-soft text-warning",
+      )}
     >
-      <span
-        aria-hidden="true"
-        className={["size-2.5 rounded-full", isOnline ? "bg-tooth-healthy" : "bg-warning"].join(" ")}
-      />
+      <span aria-hidden="true" className={cn("size-2.5 rounded-full", isOnline ? "bg-tooth-healthy" : "bg-warning")} />
       {isOnline ? t("online") : t("offline")}
     </span>
   );
