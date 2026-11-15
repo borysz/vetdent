@@ -67,6 +67,6 @@ Ezután az alkalmazás a <http://localhost:3000> címen érhető el.
 
 ## Következő lépések (2. fázishoz)
 
-1. Supabase-fiók és egy fejlesztői projekt létrehozása **EU-régióban** (pl. Frankfurt).
-2. A projekt címének és kulcsainak beírása a `.env.local` fájlba (a szükséges változónevek a 2. fázis elején kerülnek a `.env.example`-be).
-3. Bejelentkezés a Supabase CLI-be, hogy a migrációk feltölthetők legyenek.
+1. Supabase-fiók és egy fejlesztői projekt létrehozása **EU-régióban** (pl. Frankfurt). A létrehozáskor megadott adatbázisjelszót érdemes jelszókezelőbe menteni – a migrációk feltöltéséhez kell majd.
+2. A `.env.example` lemásolása `.env.local` néven, és a három Supabase-érték (projektcím, nyilvános kulcs, titkos kulcs) beírása.
+3. Bejelentkezés a Supabase CLI-be, hogy a migrációk feltölthetők legyenek (a 2. fázis elején, közösen).
