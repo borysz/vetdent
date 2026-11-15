@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/*
+ * Design tokens. Components use these names (bg-surface, text-ink,
+ * bg-tooth-healthy, min-h-touch …) and never raw colour values, so the look
+ * can be changed in one place.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* Surfaces and text */
+  --color-surface: #f4f7f8;
+  --color-panel: #ffffff;
+  --color-ink: #14212a;
+  --color-ink-muted: #556873;
+  --color-line: #d5dee3;
+
+  /* Brand and feedback */
+  --color-brand: #0f766e;
+  --color-brand-strong: #0b5a54;
+  --color-brand-soft: #e1f2f0;
+  --color-on-brand: #ffffff;
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecea;
+  --color-warning: #b45309;
+  --color-warning-soft: #fef3e2;
+
+  /* Tooth status colours (odontogram). Order of precedence is defined in code. */
+  --color-tooth-healthy: #2e9e5b;
+  --color-tooth-tartar: #e0ad00;
+  --color-tooth-inflamed: #ea7a1a;
+  --color-tooth-extract: #d43a2f;
+  --color-tooth-endo: #2f6fd4;
+  --color-tooth-missing: #96a3ab;
+
+  /* Minimum touch target (44 px) for gloved, tablet-first use. */
+  --spacing-touch: 2.75rem;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  /* No hover-dependent UI and no accidental double-tap zoom while working. */
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-brand);
+  outline-offset: 2px;
 }

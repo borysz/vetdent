@@ -1,0 +1,61 @@
+{
+  "app": {
+    "name": "VetDent",
+    "tagline": "Állatorvosi fogászati kezelési lap",
+    "description": "Tabletre tervezett fogászati kezelési lap kutyákhoz és macskákhoz: interaktív fogképlet, gyorsbevitel, műtéti napló és a gazdinak szóló összefoglaló."
+  },
+  "connectivity": {
+    "online": "Online",
+    "offline": "Nincs kapcsolat",
+    "onlineHint": "Az eszköz kapcsolódik a hálózathoz.",
+    "offlineHint": "Az eszköz jelenleg nem éri el a hálózatot."
+  },
+  "home": {
+    "statusBadge": "Fejlesztés alatt · 1. fázis: alapozás",
+    "lead": "Az anamnézistől az interaktív fogképleten és a műtéti naplón át a gazdinak szóló összefoglalóig – műtét közben, kesztyűs kézzel, tableten is.",
+    "featuresTitle": "Ami készül",
+    "features": {
+      "odontogram": {
+        "title": "Interaktív fogképlet",
+        "body": "Kutya (42 fog) és macska (30 fog) teljes fogazata Triadan-számozással, színkódolt állapotokkal."
+      },
+      "quickActions": {
+        "title": "Gyorsbeviteli panel",
+        "body": "Több fog kijelölése, majd egyetlen érintéssel lelet vagy beavatkozás rögzítése."
+      },
+      "offline": {
+        "title": "Kapcsolat nélkül is",
+        "body": "A szakmai munka internet nélkül is folytatható; az adatok később szinkronizálódnak."
+      },
+      "summary": {
+        "title": "Gazdinak szóló összefoglaló",
+        "body": "Közérthető, színes PDF arról, melyik foggal mi történt és mi a teendő otthon."
+      }
+    },
+    "catalogTitle": "Fogkatalógus-előnézet",
+    "catalogLead": "A fogképlet alapja már elkészült: a fogak a Triadan-rendszer szerint, képernyősorrendben. A páciens jobb oldala a képernyő bal szélén látható, mint egy röntgenfelvételen."
+  },
+  "species": {
+    "dog": "Kutya",
+    "cat": "Macska"
+  },
+  "teeth": {
+    "count": "{count} fog",
+    "upperJaw": "Felső állcsont (maxilla)",
+    "lowerJaw": "Alsó állkapocs (mandibula)",
+    "patientRight": "Jobb",
+    "patientLeft": "Bal",
+    "toothLabel": "{number}-es fog, {type}",
+    "types": {
+      "incisor": "metszőfog",
+      "canine": "szemfog",
+      "premolar": "előzápfog",
+      "molar": "zápfog"
+    }
+  },
+  "notFound": {
+    "title": "Az oldal nem található",
+    "body": "A keresett oldal nem létezik, vagy áthelyezték.",
+    "home": "Vissza a nyitóoldalra"
+  }
+}
