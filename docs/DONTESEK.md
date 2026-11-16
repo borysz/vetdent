@@ -87,6 +87,16 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | A szerkesztés közben elküldött rekord esetén csak az elküldött mezők nyugtázódnak; az időközben végzett szerkesztés függőben marad. | Különben a nyugtázás elnyelné a friss szerkesztést. Teszttel igazolva. | `reconcileAfterPush` |
 | A rendszer az adatbázis-kapcsolat helyett a **HTTPS-es `db query` úton** vitte fel az 5. fázis migrációját. | A gépen a közvetlen Postgres-kapcsolatot egy TLS-vizsgáló hálózati elem megszakítja; a tanúsítvány-ellenőrzés kikapcsolását (a CLI javaslata) szándékosan nem alkalmaztam. A migrációs előzményt kézzel rögzítettem, hogy a későbbi `db push` ne futtassa újra. | Ha a `db push` újra működik, a következő migrációk a megszokott úton mennek. |
 
+### Service worker (kapcsolat nélküli indítás)
+
+| Döntés | Indok | Mit érint, ha változik |
+|---|---|---|
+| A service worker egyszerű, kézzel írt szkript (`public/sw.js`), nem Serwist. | A dokumentum is csak három szabályt kér: statikus fájlok, oldalak, semmi más. Egy külső csomag nélkül átlátható és tesztelhető; a gyökérről kiszolgálva az egész oldalt vezérli. Kivétel a „minden forráskód TypeScript” szabály alól, mert a worker a Next-buildön kívül fut; a logikát `service-worker.test.ts` őrzi. | Ha az igények nőnek (előtöltés, frissítési értesítés), váltás Serwistre. |
+| A `/_next/static` és az ikonok tartósan a gyorsítótárban vannak (cache first); a `/app` alatti oldalak hálózat-first, a sikeres válasz eltárolódik. Hálózat nélkül a pontos oldal, egyébként az `/app` kezdőoldal jön, végső esetben a böngésző saját hibaoldala. | A fájlnevek tartalmaznak hash-t, ezért nem avulnak el; az oldalak adatát a felület amúgy is az eszköz adatbázisából olvassa. | `public/sw.js` |
+| Átirányítás és hibás válasz nem kerül a tárolóba; más eredet (Supabase), POST, belépési és `/auth` útvonalak érintetlenek. | Különben a belépési oldal vagy egy hibaoldal ülne a védett oldal helyén. | `public/sw.js` |
+| Kijelentkezéskor és az eszköz törlésekor (10 hibás PIN) a worker oldal-tárolója ürül. | Közös tableten a következő felhasználó nem kaphatja az előző oldalait. | `clearCachedPages` |
+| A worker csak éles buildben regisztrál. | Fejlesztés közben elavult fájlokat szolgálna ki, és zavarná a gyorsfrissítést. | `registerServiceWorker` |
+
 ## Gazdik és páciensek
 
 | Döntés | Indok | Mit érint, ha változik |

@@ -19,6 +19,7 @@ import {
   waitMs,
 } from "@/lib/offline/pin";
 import { wipeDatabase } from "@/lib/offline/local-db";
+import { clearCachedPages } from "@/lib/offline/service-worker";
 
 interface DeviceLockProps {
   db: LocalDatabase | null;
@@ -198,6 +199,7 @@ function PinPrompt({
               // Too many wrong guesses: nothing readable stays on this device.
               startWipe(async () => {
                 await wipeDatabase(databaseName(userId, organizationId));
+                await clearCachedPages();
                 await signOutAction();
               });
               return;

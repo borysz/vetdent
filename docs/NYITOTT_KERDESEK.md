@@ -73,6 +73,7 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Gyanú: a gépen vállalati TLS-vizsgáló (Sophos) van, amely a Supabase felé a korábbinál másként viselkedik; a közvetlen adatbázis-kapcsolat (`supabase db push`) ugyanezért nem működött, a migrációt a HTTPS-es `db query` úton vittem fel, és a migrációs előzményt kézzel rögzítettem.
 - Kérés: nyisd meg a böngészőpanelt, vagy próbáld ki te: bejelentkezés → Gazdik → új gazdi felvétele → a böngésző fejlesztői eszközeiben „Offline” mód → szerkesztés → újra online, és nézd meg, feltöltődik-e a változás.
 - Válasz:
+- Részben megoldva (2026-11-16, új gép): a böngészőpanelben szimulált offline móddal (a Supabase-kérések elutasítása és `navigator.onLine` felülírása) az offline felvett gazdi függő maradt, online módra váltva feltöltődött, a törlése is. Valódi böngészős offline móddal (F12 → Network → Offline) még nem próbáltam; ez a service workerrel együtt a következő próba.
 
 **18. MEGOLDANDÓ: a teljes oldalbetöltés időnként nem „éled fel” a fejlesztői környezetben.** (2026-11-16)
 - Tünet: frissítés után (pl. `/app/paciensek`, `/app`, `/app/gazdik`) az oldal a „Betöltés az eszközről…” szövegnél marad, mert a React nem kapcsolja át interaktívra (a `div#S:0` stream-szegmens rejtve marad, a header/menü elemein nincs React-kötés). Menüből kattintva minden működik.
@@ -80,7 +81,8 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Gyanúk: (1) a panel által indított szerverfolyamat környezete; (2) a céges hálózati védelem (Sophos) szakaszos beavatkozása; (3) munkamenet-frissítés (`getClaims`) hibája a szerveroldali renderben. Közös nevező, hogy a szerveroldali Supabase-hívás hibája a teljes `OfflineBoundary` Suspense-határt elrontja.
 - Próba: `npm run dev` a saját terminálban, majd `http://localhost:3000/app/paciensek` frissítése. Ha ott működik, a hiba a panel környezetében van.
 - Részben megoldva (2026-11-16): ha a szerver nem éri el az auth szervert, az már nem számít „nincs bejelentkezve”-nek (nem dob ki a belépési oldalra, a proxy sem irányít át), hanem hibaoldal jelenik meg „Újrapróbálom” gombbal (`src/app/app/error.tsx`). Ez a tünetet szelídíti, az okot nem szünteti meg.
-- Még hátravan: a kliensoldali offline réteg a szervertől függetlenül is induljon el (service worker, 5. fázis maradéka), és az ok kiderítése a fenti próbával.
+- Új gépen (2026-11-16) a fejlesztői szerverrel a belépés és a `/app/paciensek` hiba nélkül betöltött, `fetch failed` nem jelentkezett; a hosszabb frissítgetéses próba még hátravan.
+- Kész: a service worker (`public/sw.js`), amely éles buildben a kiszolgált oldalakat eltárolja, így hálózat nélkül is elindul az alkalmazás. **Még hátravan:** valódi böngészős próba (`npm run build`, `npm run start`, bejelentkezés, oldalak megnyitása, utána hálózat nélkül frissítés). A panel beépített böngészője nem engedte a regisztrációt, ott nem lehetett kipróbálni.
 - Válasz:
 
 ## Tudnivaló, teendő nélkül is rendben van

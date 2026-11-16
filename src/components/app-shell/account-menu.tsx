@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { SubmitButton } from "@/components/forms/submit-button";
-import { signOutAction } from "@/lib/auth/actions";
+import { SignOutForm } from "@/components/app-shell/sign-out-form";
 import { getMemberships, requireActiveMembership } from "@/lib/auth/dal";
 import { switchOrganizationAction } from "@/lib/organizations/actions";
 
@@ -47,9 +47,7 @@ export async function AccountMenu() {
         </form>
       ) : null}
 
-      <form action={signOutAction}>
-        <SubmitButton variant="outline">{t("auth.logout")}</SubmitButton>
-      </form>
+      <SignOutForm label={t("auth.logout")} />
     </div>
   );
 }
