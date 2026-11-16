@@ -65,6 +65,36 @@ export type Database = {
           },
         ]
       }
+      billing_settings: {
+        Row: {
+          grace_days: number
+          id: boolean
+          prices_include_vat: boolean
+          trial_days: number
+          trial_storage_gb: number
+          updated_at: string
+          vat_percent: number
+        }
+        Insert: {
+          grace_days?: number
+          id?: boolean
+          prices_include_vat?: boolean
+          trial_days?: number
+          trial_storage_gb?: number
+          updated_at?: string
+          vat_percent?: number
+        }
+        Update: {
+          grace_days?: number
+          id?: boolean
+          prices_include_vat?: boolean
+          trial_days?: number
+          trial_storage_gb?: number
+          updated_at?: string
+          vat_percent?: number
+        }
+        Relationships: []
+      }
       invitations: {
         Row: {
           accepted_at: string | null
@@ -275,6 +305,66 @@ export type Database = {
         }
         Relationships: []
       }
+      plans: {
+        Row: {
+          audience: Database["public"]["Enums"]["plan_audience"]
+          created_at: string
+          description: string
+          features: string[]
+          id: string
+          is_default: boolean
+          is_public: boolean
+          key: string
+          max_members: number | null
+          monthly_price_huf: number | null
+          name: string
+          sort_order: number
+          storage_gb: number
+          stripe_monthly_price_id: string | null
+          stripe_yearly_price_id: string | null
+          updated_at: string
+          yearly_price_huf: number | null
+        }
+        Insert: {
+          audience: Database["public"]["Enums"]["plan_audience"]
+          created_at?: string
+          description?: string
+          features?: string[]
+          id?: string
+          is_default?: boolean
+          is_public?: boolean
+          key: string
+          max_members?: number | null
+          monthly_price_huf?: number | null
+          name: string
+          sort_order?: number
+          storage_gb: number
+          stripe_monthly_price_id?: string | null
+          stripe_yearly_price_id?: string | null
+          updated_at?: string
+          yearly_price_huf?: number | null
+        }
+        Update: {
+          audience?: Database["public"]["Enums"]["plan_audience"]
+          created_at?: string
+          description?: string
+          features?: string[]
+          id?: string
+          is_default?: boolean
+          is_public?: boolean
+          key?: string
+          max_members?: number | null
+          monthly_price_huf?: number | null
+          name?: string
+          sort_order?: number
+          storage_gb?: number
+          stripe_monthly_price_id?: string | null
+          stripe_yearly_price_id?: string | null
+          updated_at?: string
+          yearly_price_huf?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -319,6 +409,66 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "permissions"
             referencedColumns: ["key"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          billing_interval: string | null
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          organization_id: string
+          past_due_since: string | null
+          plan_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          billing_interval?: string | null
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          organization_id: string
+          past_due_since?: string | null
+          plan_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          billing_interval?: string | null
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          organization_id?: string
+          past_due_since?: string | null
+          plan_id?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -377,7 +527,42 @@ export type Database = {
           user_id: string
         }[]
       }
+      list_public_plans: {
+        Args: never
+        Returns: {
+          audience: Database["public"]["Enums"]["plan_audience"]
+          description: string
+          features: string[]
+          key: string
+          max_members: number
+          monthly_price_huf: number
+          name: string
+          prices_include_vat: boolean
+          storage_gb: number
+          trial_days: number
+          vat_percent: number
+          yearly_price_huf: number
+        }[]
+      }
       log_auth_event: { Args: { p_event: string }; Returns: undefined }
+      my_entitlements: {
+        Args: { p_organization_id: string }
+        Returns: {
+          access: string
+          cancel_at_period_end: boolean
+          current_period_end: string
+          features: string[]
+          grace_ends_at: string
+          max_members: number
+          member_count: number
+          pending_invitation_count: number
+          plan_key: string
+          plan_name: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          storage_gb: number
+          trial_ends_at: string
+        }[]
+      }
       my_permissions: { Args: { p_organization_id: string }; Returns: string[] }
       remove_member: { Args: { p_membership_id: string }; Returns: undefined }
       revoke_invitation: {
@@ -404,6 +589,8 @@ export type Database = {
       member_role: "owner" | "admin" | "vet" | "assistant" | "receptionist"
       member_status: "active" | "suspended"
       organization_type: "clinic" | "individual"
+      plan_audience: "clinic" | "individual"
+      subscription_status: "trialing" | "active" | "past_due" | "canceled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -534,6 +721,8 @@ export const Constants = {
       member_role: ["owner", "admin", "vet", "assistant", "receptionist"],
       member_status: ["active", "suspended"],
       organization_type: ["clinic", "individual"],
+      plan_audience: ["clinic", "individual"],
+      subscription_status: ["trialing", "active", "past_due", "canceled"],
     },
   },
 } as const

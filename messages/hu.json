@@ -419,6 +419,8 @@
     "member_not_found": "A munkatárs nem található.",
     "last_owner": "A fióknak legalább egy aktív tulajdonosa kell legyen.",
     "mfa_required": "A művelethez kétlépcsős azonosítás szükséges. Jelentkezzen be újra.",
+    "seat_limit_reached": "A csomagban nincs több szabad felhasználói hely. Vonjon vissza egy függő meghívót, távolítson el egy munkatársat, vagy váltson nagyobb csomagra.",
+    "read_only": "Az előfizetés lejárt, ezért a fiók csak olvasható. A meglévő adatok megtekinthetők; a folytatáshoz újítsa meg az előfizetést.",
     "unknown": "Hiba történt. Próbálja újra később."
   }
 }

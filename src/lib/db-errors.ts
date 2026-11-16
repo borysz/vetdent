@@ -20,6 +20,8 @@ export const DB_ERROR_KEYS = [
   "member_not_found",
   "last_owner",
   "mfa_required",
+  "seat_limit_reached",
+  "read_only",
 ] as const;
 
 export type DbErrorKey = (typeof DB_ERROR_KEYS)[number] | "unknown";

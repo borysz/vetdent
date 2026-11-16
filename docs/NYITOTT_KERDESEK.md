@@ -39,6 +39,19 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Addig is: mindenki magának kapcsolja be; rendelőszintű kötelezés nincs.
 - Válasz:
 
+**11. Stripe-fiók és tesztkulcsok** (a kérdéslista B8 pontja)
+- Miért kérdés: a fizetés bekötéséhez Stripe-fiók kell, teszt módú kulcsokkal. Ezeket neked kell létrehoznod és a `.env.local` fájlba írnod (én nem láthatom őket).
+- Addig is: elkészülnek a csomagok, a próbaidő, a keretek, a csak olvasható mód és az előfizetés oldal; a „fizetés” gomb még nem visz sehová.
+- Válasz:
+
+**12. Mennyibe kerüljenek a csomagok, és mik legyenek a pontos keretek?** (a kérdéslista B1, B5, B6 pontja)
+- Addig is: az Egyéni csomag 1 felhasználóval és 10 GB tárhellyel, a Rendelő csomag 10 felhasználóval és 100 GB tárhellyel szerepel; ár nincs megadva, az árazási oldal ezt jelzi. Minden érték az adatbázisban van, kódmódosítás nélkül állítható.
+- Válasz:
+
+**13. Számlázz.hu-fiók, Számla Agent kulcs, ÁFA-beállítás** (a kérdéslista B13 és B14 pontja)
+- Addig is: a számlázás nincs bekötve.
+- Válasz:
+
 ## Tudnivaló, teendő nélkül is rendben van
 
 **8. Az `npm audit` 7 közepes súlyosságú sérülékenységet jelez a függőségekben.**
