@@ -14,6 +14,8 @@ export const routes = {
   app: "/app",
   clients: "/app/gazdik",
   newClient: "/app/gazdik/uj",
+  patients: "/app/paciensek",
+  newPatient: "/app/paciensek/uj",
   members: "/app/munkatarsak",
   organization: "/app/fiok",
   billing: "/app/elofizetes",
@@ -24,6 +26,15 @@ export const routes = {
 
 export function clientPath(id: string): string {
   return `${routes.clients}/${id}`;
+}
+
+export function patientPath(id: string): string {
+  return `${routes.patients}/${id}`;
+}
+
+/** The new-patient form, optionally with the owner already chosen. */
+export function newPatientPath(clientId?: string): string {
+  return clientId ? `${routes.newPatient}?gazdi=${encodeURIComponent(clientId)}` : routes.newPatient;
 }
 
 /** Path of the page where an invitation is shown and accepted. */

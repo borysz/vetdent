@@ -30,6 +30,68 @@
       "unknown": "A szinkronizálás nem sikerült. Később újra próbáljuk."
     }
   },
+  "patients": {
+    "title": "Páciensek",
+    "lead": "A páciensek (az állatok) adatai az eszközön is tárolódnak, ezért internetkapcsolat nélkül is megnyithatók és szerkeszthetők.",
+    "new": "Új páciens",
+    "newTitle": "Új páciens",
+    "editTitle": "Páciens adatai",
+    "search": "Keresés névre, fajtára, chipszámra, gazdira",
+    "emptyTitle": "Még nincs páciens",
+    "emptyBody": "Az első páciens felvételéhez előbb vegyen fel egy gazdit, majd használja az „Új páciens” gombot.",
+    "noClients": "Páciens felvételéhez előbb legalább egy gazdi kell.",
+    "toClients": "Gazdik megnyitása",
+    "noResults": "Nincs találat.",
+    "loading": "Betöltés az eszközről…",
+    "unsent": "Még nincs feltöltve",
+    "problem": "A szerver elutasította",
+    "count": "{count, plural, one {1 páciens} other {# páciens}}",
+    "ownerLabel": "Gazdi: {owner}",
+    "ownerUnknown": "ismeretlen gazdi",
+    "notFound": "Ez a páciens nem található az eszközön. Lehet, hogy törölték.",
+    "back": "Vissza a páciensekhez",
+    "save": "Mentés",
+    "delete": "Páciens törlése",
+    "deleteConfirm": "Biztosan törli ezt a pácienst?",
+    "readOnly": "Az előfizetés lejárt, ezért a páciensek csak megtekinthetők.",
+    "problemInvalid": "A szerver elutasította ezt a módosítást, mert egy adat érvénytelen. Javítsa az adatot, és mentse újra.",
+    "problemForbidden": "A szerver elutasította ezt a módosítást, mert nincs hozzá jogosultsága.",
+    "speciesFixed": "A faj később nem módosítható, mert az határozza meg a fogképletet.",
+    "patientsOfClient": "A gazdi páciensei",
+    "noPatientsOfClient": "Ennek a gazdinak még nincs páciense.",
+    "addPatientToClient": "Új páciens ennek a gazdinak",
+    "fields": {
+      "clientId": "Gazdi",
+      "name": "Név",
+      "species": "Faj",
+      "breed": "Fajta",
+      "birthDate": "Születési dátum",
+      "sex": "Ivar",
+      "neutered": "Ivartalanított",
+      "weightKg": "Testtömeg (kg)",
+      "microchip": "Chipszám",
+      "notes": "Megjegyzés"
+    },
+    "species": {
+      "dog": "Kutya",
+      "cat": "Macska"
+    },
+    "sex": {
+      "male": "Kan / kandúr",
+      "female": "Szuka / nőstény",
+      "unknown": "Nem ismert"
+    },
+    "choose": "Válasszon…",
+    "validation": {
+      "ownerRequired": "Válasszon gazdit.",
+      "nameRequired": "Adja meg az állat nevét.",
+      "speciesRequired": "Válasszon fajt.",
+      "birthDateInvalid": "Érvényes, múltbeli dátumot adjon meg (ÉÉÉÉ-HH-NN).",
+      "weightInvalid": "A testtömeg 0 és 200 kg közötti szám legyen.",
+      "microchipInvalid": "A chipszám 9–20 számjegyből vagy betűből álljon, szóköz nélkül.",
+      "tooLong": "A megadott érték túl hosszú."
+    }
+  },
   "clients": {
     "title": "Gazdik",
     "lead": "A gazdik adatai az eszközön is tárolódnak, ezért internetkapcsolat nélkül is megnyithatók és szerkeszthetők.",
@@ -224,6 +286,7 @@
     "label": "Fő navigáció",
     "dashboard": "Irányítópult",
     "clients": "Gazdik",
+    "patients": "Páciensek",
     "members": "Munkatársak",
     "organization": "Fiók adatai",
     "billing": "Előfizetés",

@@ -87,6 +87,19 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | A szerkesztés közben elküldött rekord esetén csak az elküldött mezők nyugtázódnak; az időközben végzett szerkesztés függőben marad. | Különben a nyugtázás elnyelné a friss szerkesztést. Teszttel igazolva. | `reconcileAfterPush` |
 | A rendszer az adatbázis-kapcsolat helyett a **HTTPS-es `db query` úton** vitte fel az 5. fázis migrációját. | A gépen a közvetlen Postgres-kapcsolatot egy TLS-vizsgáló hálózati elem megszakítja; a tanúsítvány-ellenőrzés kikapcsolását (a CLI javaslata) szándékosan nem alkalmaztam. A migrációs előzményt kézzel rögzítettem, hogy a későbbi `db push` ne futtassa újra. | Ha a `db push` újra működik, a következő migrációk a megszokott úton mennek. |
 
+## Gazdik és páciensek
+
+| Döntés | Indok | Mit érint, ha változik |
+|---|---|---|
+| A páciensek és a gazdik ugyanazt a szinkronszerződést és ugyanazt az eszközoldali szabálykészletet használják (`record-model.ts`); egy új adattípus egy leírás (mezők, protokollnevek, alapértékek) és egy szerveroldali függvény. | Ne legyen két, eltérően viselkedő szinkronmegvalósítás. A gazdik tesztjei a közös modellre átírás után változtatás nélkül is átmentek. | A kezelési lap és a fogképlet ugyanezt a mintát követi. |
+| A páciens faját (kutya/macska) létrehozás után nem lehet módosítani; a szerver visszautasítja, a felületen a mező le van tiltva. | A faj dönti el, melyik fogai vannak az állatnak; módosítása a meglévő fogképleteket érvénytelenítené. | `sync_push_patients`, `PatientEditor`. |
+| Páciens csak a saját rendelő élő (nem törölt) gazdijához rendelhető, és átadható másik gazdinak ugyanabban a rendelőben. | Idegen fiók adatához ne lehessen kapcsolódni. | `sync_push_patients`. |
+| Az eszköz a páciens feltöltését **kivárja**, amíg a gazdija nem ismert a szervernek (például mert a gazdit elutasították, és még nem javították ki). Nem hibajelzés és nem adatvesztés: a páciens függőben marad, és a gazdi elfogadása után megy. | Különben a gazdi hibája miatt a páciens is elutasításra kerülne, és a gazdi javítása után sem indulna újra magától. Teszttel igazolva. | `readyToSend` a `sync-engine.ts`-ben. |
+| A feltöltés sorrendje: előbb a gazdik, azután a páciensek. | A páciens a gazdijára hivatkozik. | `syncAll` |
+| Gazdi törlésekor a páciensei megmaradnak (a gazdira továbbra is hivatkoznak). | Szándékos: a gazdi törlése ne töröljön szakmai adatot. Mi legyen a gazditalan páciensekkel, az a megőrzési szabályok kérdése (`NYITOTT_KERDESEK.md` 6. pont). | – |
+| A testtömeg a páciens aktuális értéke; a mérések előzményei (idővonal) a kezelési lapokhoz kapcsolódnak, még nem készültek el. | A prompt a lapon rögzített testtömegről beszél. | 7. fázis |
+| A testtömeg tizedesvesszővel és ponttal is megadható; két tizedesre kerekítve tárolódik. | Magyar felhasználók vesszőt írnak. | `parsePatientForm` |
+
 ## Szakmai tartalom
 
 | Döntés | Indok | Mit érint, ha változik |

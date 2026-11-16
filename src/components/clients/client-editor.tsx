@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { ClientPatients } from "@/components/clients/client-patients";
 import { FormField } from "@/components/forms/form-field";
 import { useRequiredOffline } from "@/components/offline/offline-provider";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -41,6 +42,7 @@ export function ClientEditor({ id }: { id?: string }) {
 
   // Remounting on a new record keeps the form's own state simple.
   return (
+    <div className="flex flex-col gap-8">
     <EditorForm
       key={existing?.id ?? "new"}
       existing={existing ?? null}
@@ -60,6 +62,8 @@ export function ClientEditor({ id }: { id?: string }) {
         router.push(routes.clients);
       }}
     />
+    {existing ? <ClientPatients clientId={existing.id} /> : null}
+    </div>
   );
 }
 
