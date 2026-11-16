@@ -52,6 +52,16 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Addig is: a számlázás nincs bekötve.
 - Válasz:
 
+**14. Ki legyen a platform első szuperadminja?** (a kérdéslista C8 pontja)
+- Miért kérdés: a platform-admin felülethez (csomagok szerkesztése, rendelők listája, próbaidő-hosszabbítás) ki kell jelölni legalább egy üzemeltetői fiókot.
+- Addig is: platform-admin felület nincs; a csomagok és beállítások az adatbázisban módosíthatók.
+- Válasz:
+
+**15. Milyen megoldásra épüljön az offline működés?** (5. fázis)
+- Miért kérdés: ez a projekt legnagyobb architekturális döntése. A lehetőségek: kész szinkronszolgáltatás (külön üzemeltetendő szerverrel jár), kész kliensoldali könyvtár, vagy saját megoldás (helyi adatbázis a böngészőben + kimenő sor + mezőszintű összefésülés).
+- Addig is: nem kezdtem el. Javaslatom a saját megoldás, mert nem kell hozzá külön szerver, és a kezelési lap összefésülési szabályai (fogankénti leletek) pontosan ránk szabhatók; cserébe több a saját kód és a teszt.
+- Válasz:
+
 ## Tudnivaló, teendő nélkül is rendben van
 
 **8. Az `npm audit` 7 közepes súlyosságú sérülékenységet jelez a függőségekben.**
