@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { DashboardOverview } from "@/components/app-shell/dashboard-overview";
 import { getProfile, requireActiveMembership } from "@/lib/auth/dal";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,10 +22,8 @@ export default function DashboardPage() {
         </Suspense>
       </div>
 
-      <section className="rounded-2xl border border-dashed bg-card p-8 text-center">
-        <h2 className="text-lg font-semibold">{t("dashboard.emptyTitle")}</h2>
-        <p className="mx-auto mt-1 max-w-xl text-muted-foreground">{t("dashboard.emptyBody")}</p>
-      </section>
+      <DashboardOverview />
+      <p className="text-sm text-muted-foreground">{t("dashboard.visitsSoon")}</p>
     </>
   );
 }

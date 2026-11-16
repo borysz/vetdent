@@ -43,6 +43,30 @@ export async function listPatients(
     .sort((a, b) => a.name.localeCompare(b.name, "hu"));
 }
 
+/**
+ * The patients touched most recently – by this device or by anyone else, as
+ * far as the device knows – newest first. Used for the dashboard.
+ */
+export async function recentPatients(db: LocalDatabase, organizationId: string, limit: number): Promise<PatientListItem[]> {
+  const [patientRows, clientRows] = await Promise.all([
+    db.patients.where("organizationId").equals(organizationId).toArray(),
+    db.clients.where("organizationId").equals(organizationId).toArray(),
+  ]);
+  const owners = new Map(clientRows.map((row) => [row.id, clientOps.viewOf(row).fullName]));
+
+  const touched = (row: (typeof patientRows)[number]): number =>
+    Math.max(row.touchedAt, row.server ? Date.parse(row.server.updatedAt) || 0 : 0);
+
+  return patientRows
+    .filter((row) => !isDeleted(row))
+    .sort((a, b) => touched(b) - touched(a))
+    .slice(0, limit)
+    .map((row) => {
+      const view = patientOps.viewOf(row);
+      return { ...view, ownerName: owners.get(view.clientId) ?? "" };
+    });
+}
+
 export async function getPatient(db: LocalDatabase, id: string): Promise<PatientView | null> {
   const row = await db.patients.get(id);
   return row && !isDeleted(row) ? patientOps.viewOf(row) : null;

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { clientOps, type ClientFields } from "./clients-model";
 import { LocalDatabase } from "./local-db";
 import { type PatientFields } from "./patients-model";
-import { createPatient, getPatient, listPatients, removePatient, updatePatient } from "./patients-store";
+import { createPatient, getPatient, listPatients, recentPatients, removePatient, updatePatient } from "./patients-store";
 import { syncAll, type SyncApi } from "./sync-engine";
 import type { PushResult, ServerRecord, WireChange } from "./record-model";
 
@@ -74,6 +74,32 @@ describe("the local list of patients", () => {
     await createPatient(db, ORG, patientFields());
     await createPatient(db, "org-2", patientFields({ name: "Idegen" }));
     expect((await listPatients(db, ORG)).map((item) => item.name)).toEqual(["Bodri"]);
+  });
+});
+
+describe("recent patients", () => {
+  test("newest first, limited, without deleted ones", async () => {
+    const oldest = await createPatient(db, ORG, patientFields({ name: "Régi" }));
+    const middle = await createPatient(db, ORG, patientFields({ name: "Közepes" }));
+    const newest = await createPatient(db, ORG, patientFields({ name: "Új" }));
+    const gone = await createPatient(db, ORG, patientFields({ name: "Törölt" }));
+    await db.patients.update(oldest, { touchedAt: 100 });
+    await db.patients.update(middle, { touchedAt: 200 });
+    await db.patients.update(newest, { touchedAt: 300 });
+    await db.patients.update(gone, { touchedAt: 400 });
+    await removePatient(db, gone);
+
+    expect((await recentPatients(db, ORG, 2)).map((item) => item.name)).toEqual(["Új", "Közepes"]);
+  });
+
+  test("an edit moves a patient to the top", async () => {
+    const first = await createPatient(db, ORG, patientFields({ name: "Első" }));
+    const second = await createPatient(db, ORG, patientFields({ name: "Második" }));
+    await db.patients.update(first, { touchedAt: 100 });
+    await db.patients.update(second, { touchedAt: 200 });
+
+    await updatePatient(db, first, { notes: "módosítva" });
+    expect((await recentPatients(db, ORG, 5))[0].name).toBe("Első");
   });
 });
 
