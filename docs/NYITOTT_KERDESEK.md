@@ -10,7 +10,7 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Miért kérdés: a projekt a `C:\Users\borosn\dev\vetdent` mappában van, a OneDrive-on kívül, és a Git-tároló csak ezen a gépen létezik. Ha a géppel történik valami, a munka elvész.
 - Addig is: minden lépés helyi Git-commitba kerül.
 - Javaslat: privát távoli tároló (pl. GitHub) létrehozása; a feltöltést egy paranccsal be tudom állítani.
-- Válasz:
+- Válasz: ✅ **Megoldva (2026-11-16).** Privát GitHub-tároló: <https://github.com/borysz/vetdent>, ág: `main`. A `.env.local` és a szerzői jogi védelem alatti képek szándékosan nincsenek benne. Mentés: `git push`.
 
 **2. Melyik levélküldő szolgáltatót használjuk, és milyen címről menjenek a levelek?** (a kérdéslista H5 pontja)
 - Miért kérdés: enélkül a meghívó hivatkozását a meghívónak kézzel kell továbbítania, a megerősítő és jelszó-visszaállító levelek pedig a Supabase gyári, angol sablonjával és korlátozott próba-levélküldőjével mennek ki (óránként néhány levél).
