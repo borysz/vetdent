@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { DeviceLock } from "@/components/offline/device-lock";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { databaseName, LocalDatabase, META_KEYS, readMeta } from "@/lib/offline/local-db";
 import { createSupabaseSyncApi } from "@/lib/offline/supabase-sync-api";
@@ -142,5 +143,18 @@ export function OfflineProvider({ userId, organizationId, canWrite, canDelete, c
     [db, organizationId, canWrite, canDelete, online, syncing, counts, lastSyncAt, error, syncNow, syncSoon],
   );
 
-  return <OfflineContext value={value}>{children}</OfflineContext>;
+  return (
+    <OfflineContext value={value}>
+      <DeviceLock
+        db={db}
+        userId={userId}
+        organizationId={organizationId}
+        online={online}
+        lastSyncAt={value.status.lastSyncAt}
+        syncNow={syncNow}
+      >
+        {children}
+      </DeviceLock>
+    </OfflineContext>
+  );
 }

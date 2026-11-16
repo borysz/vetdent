@@ -30,6 +30,37 @@
       "unknown": "A szinkronizálás nem sikerült. Később újra próbáljuk."
     }
   },
+  "deviceLock": {
+    "title": "Az alkalmazás zárolva van",
+    "lead": "Tétlenség miatt zároltuk az eszközt. Adja meg a PIN-kódját a folytatáshoz.",
+    "pin": "PIN-kód",
+    "unlock": "Feloldás",
+    "wrong": "Hibás PIN-kód.",
+    "wrongLeft": "Hibás PIN-kód. Még {count, plural, one {1 próbálkozás} other {# próbálkozás}} van, mielőtt várnia kell.",
+    "waiting": "Túl sok hibás próbálkozás. Várjon {seconds} másodpercet.",
+    "wipeWarning": "Túl sok hibás próbálkozás után az eszközön tárolt adatok törlődnek, és ki kell jelentkeznie.",
+    "wiping": "Kijelentkeztetés és az eszközön tárolt adatok törlése…",
+    "signOut": "Kijelentkezés",
+    "staleTitle": "Csatlakozás szükséges",
+    "staleBody": "Ez az eszköz több mint {days} napja nem érte el a szervert, ezért az adatok zárolva vannak. Csatlakozzon az internethez; a feloldás automatikus.",
+    "staleChecking": "Ellenőrzés…",
+    "staleRetry": "Újrapróbálom"
+  },
+  "devicePin": {
+    "title": "Eszköz PIN-kódja",
+    "offBody": "Állítson be egy 4–8 számjegyű PIN-kódot. Ha az alkalmazás {minutes} percig tétlen, ezzel a kóddal lehet újra használni; így az eszköz őrizetlenül hagyva sem mutat betegadatot. A PIN csak ezen az eszközön érvényes.",
+    "onBody": "Az eszközön be van állítva PIN-kód.",
+    "newPin": "Új PIN-kód",
+    "confirmPin": "PIN-kód újra",
+    "set": "PIN-kód beállítása",
+    "change": "PIN-kód módosítása",
+    "remove": "PIN-kód eltávolítása",
+    "removeConfirm": "Biztosan eltávolítja a PIN-kódot? Tétlenség után az eszköz nem zárolódik.",
+    "saved": "A PIN-kód elmentve.",
+    "removed": "A PIN-kód eltávolítva.",
+    "invalid": "A PIN-kód 4–8 számjegyből álljon.",
+    "mismatch": "A két PIN-kód nem egyezik."
+  },
   "patients": {
     "title": "Páciensek",
     "lead": "A páciensek (az állatok) adatai az eszközön is tárolódnak, ezért internetkapcsolat nélkül is megnyithatók és szerkeszthetők.",

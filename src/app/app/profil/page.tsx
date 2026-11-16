@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { ActionForm } from "@/components/forms/action-form";
 import { SubmitButton } from "@/components/forms/submit-button";
+import { DevicePinSettings } from "@/components/profile/device-pin-settings";
 import { ChangePasswordForm, MfaSettings, ProfileDetailsForm } from "@/components/profile/profile-forms";
 import { getProfile, requireUser } from "@/lib/auth/dal";
 import { signOutOtherSessionsAction } from "@/lib/profile/actions";
@@ -60,6 +61,10 @@ async function ProfileContent() {
 
       <Section title={t("mfa.title")}>
         <MfaSettings enabled={mfaEnabled} />
+      </Section>
+
+      <Section title={t("devicePin.title")}>
+        <DevicePinSettings />
       </Section>
 
       <Section title={t("profile.sessionsTitle")}>
