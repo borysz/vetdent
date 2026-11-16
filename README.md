@@ -22,7 +22,7 @@ A döntések és az eltérések a tervtől a [`docs/DONTESEK.md`](docs/DONTESEK.
 
 ### Ismert, megoldandó hibák
 
-- **Teljes oldalbetöltés időnként nem aktiválódik a fejlesztői környezetben** – részletek és próbalépések: [`docs/NYITOTT_KERDESEK.md`](docs/NYITOTT_KERDESEK.md) 18. pont.
+Nincs. (A korábban jelzett „teljes oldalbetöltés nem aktiválódik” a böngészőpanel sajátossága volt, nem az alkalmazás hibája: [`docs/NYITOTT_KERDESEK.md`](docs/NYITOTT_KERDESEK.md) 18. pont.)
 
 ## A 3. fázis tartalma
 

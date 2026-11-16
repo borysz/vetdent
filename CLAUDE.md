@@ -70,10 +70,9 @@ Kész: 1. alapozás · 2. felhasználók/fiókok/meghívók/profil/MFA+tartalék
 **Elhalasztva a demó utánra** (a demó ingyenes): Stripe-fizetés, Számlázz.hu-számlázás, platform-admin felület.
 
 Hátravan, javasolt sorrendben:
-1. **A betöltési hiba kivizsgálása** (`NYITOTT_KERDESEK.md` 18. pont) – teljes oldalbetöltéskor nem aktiválódik az `/app` alatti oldal (a böngészőpanelben éles módban is reprodukálható; a szerver HTML-je teljes, a kliens nem hydratál; kliensoldali navigációval minden megy). Előbb ezt kell tisztázni.
-2. A **service worker és a kezelési lap valódi böngészős próbája** (offline indítás, offline szerkesztés a vizit lapján), az **ütközések megjelenítése** a felületen.
-3. **8. fázis – odontogram** (8.3–8.6): saját SVG-fogak, kijelölés → gyorsgomb, színkódolás, tasakmélység, visszavonás.
-4. 9. fotók/sablonok/diktálás · 10. gazdi-PDF + e-mail · 11. lezárás (adatexport, biztonsági átnézés).
+1. A **service worker és a kezelési lap valódi böngészős próbája** (offline indítás, offline szerkesztés a vizit lapján), az **ütközések megjelenítése** a felületen. (A korábbi „betöltési hiba” megoldva: a böngészőpanel nem rajzol képkockát fókusz nélkül, ezért a React nem fedi fel a streamelt tartalmat; teljes betöltés után a panelben egy képernyőkép vagy kattintás elég. Lásd `NYITOTT_KERDESEK.md` 18. pont.)
+2. **8. fázis – odontogram** (8.3–8.6): saját SVG-fogak, kijelölés → gyorsgomb, színkódolás, tasakmélység, visszavonás.
+3. 9. fotók/sablonok/diktálás · 10. gazdi-PDF + e-mail · 11. lezárás (adatexport, biztonsági átnézés).
 A 2. fázis maradéka: levélküldés és magyar levélsablonok, fióktörlés/adatexport, kötelező MFA rendelőnként (kérdéseik a `NYITOTT_KERDESEK.md`-ben).
 
 ## A felhasználóval való együttműködés
@@ -90,5 +89,5 @@ A 2. fázis maradéka: levélküldés és magyar levélsablonok, fióktörlés/a
 - **Adatbázis-migráció:** `npm run db:push`, ha a közvetlen Postgres-kapcsolat működik. A céges hálózati védelem (Sophos) ezt időnként megszakítja; **a tanúsítvány-ellenőrzést ilyenkor sem szabad kikapcsolni.** Működő kerülő út (HTTPS): `npx supabase db query --remote --yes --file supabase/migrations/<fájl>.sql`, majd `insert into supabase_migrations.schema_migrations (version, name) values ('<verzió>', '<név>')`. A típusok: `npm run db:types` (a `gen types --remote` mindkét esetben megy). Új migráció után mindig frissítsd a `database.types.ts`-t.
 - A Supabase CLI be van jelentkezve és összekötve (`supabase link`); új gépen: `npx supabase login`, `npx supabase link --project-ref vinupzxgclcaanubqngn`.
 - **Böngészős próbák:** a panelben gyakran a felhasználó saját, élő munkamenete fut – **soha ne léptesd ki**. Ideiglenes tesztfelhasználót az admin API-val hozz létre (`e2e-…@vetdent.test`, előre megerősítve, véletlen jelszóval), és utána töröld; a felhasználó saját fiókját ne érintsd. A tesztek `itest-…@vetdent.test` felhasználókat hoznak létre és maguk törlik. A panel `launch.json`-ja a munkamenet mappájában van, nem a projektben.
-- A böngészős kipróbálásnál a gazdik/páciensek felületét **még nem sikerült végigpróbálni** offline szerkesztéssel (lásd 18. pont); ez az első teendők egyike.
+- Böngészős próba a panelben: **teljes oldalbetöltés után az `/app` oldalak „Betöltés…”-en állnak, amíg az oldal nem kap képkockát** (nincs fókusz, a requestAnimationFrame nem fut). Kérj egy képernyőképet (`computer` screenshot) vagy kattints, és az oldal felfedi magát; vagy navigálj kliensoldalon: `window.next.router.push("/app/…")`. Az offline szerkesztés szimulált offline móddal (fetch + navigator.onLine felülírása) ki van próbálva.
 - Tanulság: a böngészős próba kétszer is olyan hibát talált, amit a tesztek nem (űrlap-állapot, szerveroldali jogosultság). Adatbázis-jogok vagy a PostgREST előszűrő (`private.enforce_mfa`) módosítása után külön, friss folyamatból is ellenőrizd a szerver titkos kulcsos kéréseit.
