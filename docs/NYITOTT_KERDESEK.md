@@ -127,7 +127,7 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Ellenőrizve a böngészőpanelben 768×1024-en: a főoldalak (irányítópult, gazdik, páciensek és az új/szerkesztő űrlapok, sablonok, munkatársak, fiók, előfizetés, szerepkörök, napló, profil) és a kezelési lap: **nincs vízszintes túlcsordulás**, nincs nézeten kívüli elem, a 44 px alatti célfelületeket javítottam. 834×1194-en a kezelési lapot és a fogadatlapot néztem meg.
 - Javítva: a fogsor négy sorba rendezve, főmenü tördelése, felső sáv, mikrofon helye, a fogadatlap fejléce (a változtatások a `docs/DONTESEK.md` odontogram-szakaszában).
 - **Nem ellenőriztem:** a képernyőn megjelenő billentyűzet hatását (a tartalom feljebb tolódása), a 810×1080 és a 1024×1366 (nagy tablet) méretet, a fekvő nézetet a változtatások után, a telefont, a nyomtatási nézetet. Az oldalak közül az árak, a belépés, a regisztráció, a meghívó és a kezdő oldalakat sem mértem végig ezen a méreten.
-- Teendő: egy állandó, automatikus ellenőrzés (böngészős teszt a tablet méreteken) felvétele, hogy ez ne csak kézi próba maradjon.
+- Kész: **automatikus ellenőrzés** (`npm run check:tablet`, `tests/tablet/check-tablet.mjs`): a gépen lévő Edge/Chrome böngészőben 768×1024, 810×1080 és 834×1194 méreten bejelentkezik egy ideiglenes felhasználóval, és 15 oldalt (köztük a fogképletes kezelési lapot és a megnyitott fogadatlapot) ellenőriz: nincs oldalirányú görgetés, nincs nézeten kívüli elem, minden gomb, hivatkozás, lista és mező legalább 44 px magas. A végén törli, amit létrehozott. Az első futáskor megtalálta a „Vissza” hivatkozás 21 px-es hibáját. Hiányzik még: az árak, belépés, regisztráció, meghívó oldalak, a nagy tablet (1024×1366), a fekvő nézet és a billentyűzet.
 
 ## A 2. fázisból nyitva maradt
 
