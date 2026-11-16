@@ -95,6 +95,85 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          address: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          email: string | null
+          email_consent: boolean
+          field_revs: Json
+          full_name: string
+          id: string
+          notes: string | null
+          organization_id: string
+          phone: string | null
+          rev: number
+          seq: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          email_consent?: boolean
+          field_revs?: Json
+          full_name: string
+          id: string
+          notes?: string | null
+          organization_id: string
+          phone?: string | null
+          rev?: number
+          seq?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          email_consent?: boolean
+          field_revs?: Json
+          full_name?: string
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          phone?: string | null
+          rev?: number
+          seq?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           accepted_at: string | null
@@ -472,6 +551,70 @@ export type Database = {
           },
         ]
       }
+      sync_conflicts: {
+        Row: {
+          applied_value: Json | null
+          created_at: string
+          field: string
+          id: number
+          organization_id: string
+          overwritten_by: string | null
+          overwritten_value: Json | null
+          record_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          table_name: string
+        }
+        Insert: {
+          applied_value?: Json | null
+          created_at?: string
+          field: string
+          id?: never
+          organization_id: string
+          overwritten_by?: string | null
+          overwritten_value?: Json | null
+          record_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          table_name: string
+        }
+        Update: {
+          applied_value?: Json | null
+          created_at?: string
+          field?: string
+          id?: never
+          organization_id?: string
+          overwritten_by?: string | null
+          overwritten_value?: Json | null
+          record_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          table_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_conflicts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_conflicts_overwritten_by_fkey"
+            columns: ["overwritten_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_conflicts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -565,6 +708,10 @@ export type Database = {
       }
       my_permissions: { Args: { p_organization_id: string }; Returns: string[] }
       remove_member: { Args: { p_membership_id: string }; Returns: undefined }
+      resolve_sync_conflict: {
+        Args: { p_conflict_id: number }
+        Returns: undefined
+      }
       revoke_invitation: {
         Args: { p_invitation_id: string }
         Returns: undefined
@@ -575,6 +722,10 @@ export type Database = {
           p_status: Database["public"]["Enums"]["member_status"]
         }
         Returns: undefined
+      }
+      sync_push_clients: {
+        Args: { p_changes: Json; p_organization_id: string }
+        Returns: Json
       }
       update_member: {
         Args: {
