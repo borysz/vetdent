@@ -1,18 +1,15 @@
-import {
-  applyPulled,
-  applyPushResult,
-  deleteLocalClient,
-  editLocalClient,
-  hasPending,
-  pendingChange,
-  CLIENT_FIELDS,
-  type ClientFields,
-  type LocalClientRow,
-  type PushResult,
-  type ServerClient,
-  type WireChange,
-} from "./clients-model";
+import type { Table } from "dexie";
+import { clientOps, type ClientFields } from "./clients-model";
 import { META_KEYS, readMeta, writeMeta, type LocalDatabase } from "./local-db";
+import { patientOps, type PatientFields } from "./patients-model";
+import {
+  hasPending,
+  type LocalRow,
+  type PushResult,
+  type RecordOps,
+  type ServerRecord,
+  type WireChange,
+} from "./record-model";
 
 /** Why a synchronisation round could not finish. */
 export type SyncErrorKind = "offline" | "read_only" | "forbidden" | "unauthenticated" | "mfa_required" | "unknown";
@@ -31,7 +28,9 @@ export class SyncError extends Error {
 export interface SyncApi {
   pushClients(changes: WireChange[]): Promise<PushResult[]>;
   /** Records with a `seq` greater than `afterSeq`, in `seq` order. */
-  pullClients(afterSeq: number, limit: number): Promise<ServerClient[]>;
+  pullClients(afterSeq: number, limit: number): Promise<ServerRecord<ClientFields>[]>;
+  pushPatients(changes: WireChange[]): Promise<PushResult[]>;
+  pullPatients(afterSeq: number, limit: number): Promise<ServerRecord<PatientFields>[]>;
 }
 
 export interface SyncOutcome {
@@ -42,6 +41,48 @@ export interface SyncOutcome {
   error: SyncError | null;
 }
 
+/** One kind of synchronised record: where it is stored, how it behaves, and how to reach the server. */
+interface SyncTable<F extends object> {
+  table(db: LocalDatabase): Table<LocalRow<F>, string>;
+  ops: RecordOps<F>;
+  cursorKey: string;
+  push(api: SyncApi, changes: WireChange[]): Promise<PushResult[]>;
+  pull(api: SyncApi, afterSeq: number, limit: number): Promise<ServerRecord<F>[]>;
+  /**
+   * Decides, per round, which pending rows may be sent now. A row that has to
+   * wait is left exactly as it is – no error, nothing lost – and goes out in a
+   * later round.
+   */
+  readyToSend?(db: LocalDatabase): Promise<(row: LocalRow<F>) => boolean>;
+}
+
+const clientsTable: SyncTable<ClientFields> = {
+  table: (db) => db.clients,
+  ops: clientOps,
+  cursorKey: META_KEYS.clientsCursor,
+  push: (api, changes) => api.pushClients(changes),
+  pull: (api, afterSeq, limit) => api.pullClients(afterSeq, limit),
+};
+
+const patientsTable: SyncTable<PatientFields> = {
+  table: (db) => db.patients,
+  ops: patientOps,
+  cursorKey: META_KEYS.patientsCursor,
+  push: (api, changes) => api.pushPatients(changes),
+  pull: (api, afterSeq, limit) => api.pullPatients(afterSeq, limit),
+  // A patient waits while its owner is still unknown to the server (for
+  // instance because the owner was refused and has not been corrected yet);
+  // sending it now would only get it refused as well.
+  async readyToSend(db) {
+    const owners = await db.clients.toArray();
+    const unknownToServer = new Set(owners.filter((owner) => owner.server === null).map((owner) => owner.id));
+    return (row) => {
+      const ownerId = row.pending.clientId ?? row.server?.clientId;
+      return ownerId === undefined || !unknownToServer.has(ownerId);
+    };
+  },
+};
+
 const PUSH_BATCH = 100;
 const PULL_PAGE = 500;
 /**
@@ -51,51 +92,18 @@ const PULL_PAGE = 500;
  */
 const PULL_OVERLAP = 100;
 
-function sameFieldValue(a: unknown, b: unknown): boolean {
-  return (a ?? null) === (b ?? null);
-}
-
-/**
- * The user may edit a record while it is being sent. Only what was actually
- * sent is acknowledged; later edits stay pending, on top of the server's answer.
- */
-function reconcileAfterPush(
-  sent: LocalClientRow,
-  current: LocalClientRow,
-  result: PushResult,
-  now: number,
-): LocalClientRow | null {
-  const acknowledged = applyPushResult(sent, result, now);
-  if (acknowledged === null) return null;
-
-  // Refused or already deleted: the answer applies to the row as it is now.
-  if (result.status === "invalid" || result.status === "forbidden") {
-    return applyPushResult(current, result, now);
-  }
-
-  let merged: LocalClientRow | null = acknowledged;
-
-  if (current.pendingDelete && !sent.pendingDelete) {
-    return deleteLocalClient(merged, current.touchedAt);
-  }
-
-  const later: Partial<ClientFields> = {};
-  for (const field of CLIENT_FIELDS) {
-    if (!(field in current.pending)) continue;
-    const wasSent = field in sent.pending && sameFieldValue(sent.pending[field], current.pending[field]);
-    if (!wasSent) (later as Record<string, unknown>)[field] = current.pending[field];
-  }
-  if (Object.keys(later).length > 0) {
-    merged = editLocalClient(merged, later, current.touchedAt);
-  }
-  return merged;
-}
-
-async function pushAll(db: LocalDatabase, api: SyncApi): Promise<{ pushed: number; refused: number }> {
-  const rows = await db.clients.toArray();
+async function pushAll<F extends object>(
+  db: LocalDatabase,
+  kind: SyncTable<F>,
+  api: SyncApi,
+): Promise<{ pushed: number; refused: number }> {
+  const store = kind.table(db);
+  const ready = kind.readyToSend ? await kind.readyToSend(db) : () => true;
+  const rows = await store.toArray();
   const queue = rows
-    .map((row) => ({ row, change: pendingChange(row) }))
-    .filter((entry): entry is { row: LocalClientRow; change: WireChange } => entry.change !== null)
+    .filter(ready)
+    .map((row) => ({ row, change: kind.ops.pendingChange(row) }))
+    .filter((entry): entry is { row: LocalRow<F>; change: WireChange } => entry.change !== null)
     // Oldest edits first, so the server sees them in the order they were made.
     .sort((a, b) => a.row.touchedAt - b.row.touchedAt);
 
@@ -104,19 +112,22 @@ async function pushAll(db: LocalDatabase, api: SyncApi): Promise<{ pushed: numbe
 
   for (let start = 0; start < queue.length; start += PUSH_BATCH) {
     const batch = queue.slice(start, start + PUSH_BATCH);
-    const results = await api.pushClients(batch.map((entry) => entry.change));
+    const results = await kind.push(
+      api,
+      batch.map((entry) => entry.change),
+    );
     const byId = new Map(results.map((result) => [result.id, result]));
 
-    await db.transaction("rw", db.clients, async () => {
+    await db.transaction("rw", store, async () => {
       for (const { row: sent } of batch) {
         const result = byId.get(sent.id);
         if (!result) continue;
 
-        const current = (await db.clients.get(sent.id)) ?? sent;
-        const next = reconcileAfterPush(sent, current, result, Date.now());
+        const current = (await store.get(sent.id)) ?? sent;
+        const next = kind.ops.reconcileAfterPush(sent, current, result, Date.now());
 
-        if (next === null) await db.clients.delete(sent.id);
-        else await db.clients.put(next);
+        if (next === null) await store.delete(sent.id);
+        else await store.put(next);
 
         if (result.status === "invalid" || result.status === "forbidden") refused += 1;
         else pushed += 1;
@@ -127,20 +138,26 @@ async function pushAll(db: LocalDatabase, api: SyncApi): Promise<{ pushed: numbe
   return { pushed, refused };
 }
 
-async function pullAll(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<number> {
-  const stored = await readMeta(db, META_KEYS.clientsCursor);
+async function pullAll<F extends object>(
+  db: LocalDatabase,
+  kind: SyncTable<F>,
+  organizationId: string,
+  api: SyncApi,
+): Promise<number> {
+  const store = kind.table(db);
+  const stored = await readMeta(db, kind.cursorKey);
   let cursor = typeof stored === "number" ? stored : 0;
   let pulled = 0;
 
   for (;;) {
-    const page = await api.pullClients(Math.max(0, cursor - PULL_OVERLAP), PULL_PAGE);
+    const page = await kind.pull(api, Math.max(0, cursor - PULL_OVERLAP), PULL_PAGE);
 
-    await db.transaction("rw", db.clients, async () => {
+    await db.transaction("rw", store, async () => {
       for (const incoming of page) {
-        const existing = await db.clients.get(incoming.id);
-        const next = applyPulled(existing, incoming, organizationId);
+        const existing = await store.get(incoming.id);
+        const next = kind.ops.applyPulled(existing, incoming, organizationId);
         if (next !== existing) {
-          await db.clients.put(next);
+          await store.put(next);
           pulled += 1;
         }
       }
@@ -149,7 +166,7 @@ async function pullAll(db: LocalDatabase, organizationId: string, api: SyncApi):
     const newest = page.reduce((max, record) => Math.max(max, record.seq), cursor);
     const advanced = newest > cursor;
     cursor = newest;
-    await writeMeta(db, META_KEYS.clientsCursor, cursor);
+    await writeMeta(db, kind.cursorKey, cursor);
 
     // A short page is the end; so is a page that moved nothing forward.
     if (page.length < PULL_PAGE || !advanced) break;
@@ -158,25 +175,56 @@ async function pullAll(db: LocalDatabase, organizationId: string, api: SyncApi):
   return pulled;
 }
 
-/**
- * One round of synchronisation: send what was changed on this device, then
- * fetch what changed elsewhere. Safe to call at any time and as often as you
- * like; when the network is down it fails quietly and everything stays queued.
- */
-export async function syncClients(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
+async function syncKind<F extends object>(
+  db: LocalDatabase,
+  kind: SyncTable<F>,
+  organizationId: string,
+  api: SyncApi,
+): Promise<SyncOutcome> {
   const outcome: SyncOutcome = { pushed: 0, pulled: 0, refused: 0, error: null };
 
   try {
-    const sent = await pushAll(db, api);
+    const sent = await pushAll(db, kind, api);
     outcome.pushed = sent.pushed;
     outcome.refused = sent.refused;
-    outcome.pulled = await pullAll(db, organizationId, api);
+    outcome.pulled = await pullAll(db, kind, organizationId, api);
     await writeMeta(db, META_KEYS.lastSyncAt, Date.now());
   } catch (error) {
     outcome.error = error instanceof SyncError ? error : new SyncError("unknown", String(error));
   }
 
   return outcome;
+}
+
+/**
+ * One round of synchronisation for clients: send what was changed on this
+ * device, then fetch what changed elsewhere. Safe to call at any time and as
+ * often as you like; when the network is down it fails quietly and everything
+ * stays queued.
+ */
+export function syncClients(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
+  return syncKind(db, clientsTable, organizationId, api);
+}
+
+export function syncPatients(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
+  return syncKind(db, patientsTable, organizationId, api);
+}
+
+/**
+ * Everything, in dependency order: clients first, because a patient refers to
+ * its owner and the server refuses a patient whose owner it does not know yet.
+ */
+export async function syncAll(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
+  const clients = await syncClients(db, organizationId, api);
+  if (clients.error) return clients;
+
+  const patients = await syncPatients(db, organizationId, api);
+  return {
+    pushed: clients.pushed + patients.pushed,
+    pulled: clients.pulled + patients.pulled,
+    refused: clients.refused + patients.refused,
+    error: patients.error,
+  };
 }
 
 export interface SyncCounts {
@@ -187,9 +235,12 @@ export interface SyncCounts {
 }
 
 export async function countPending(db: LocalDatabase): Promise<SyncCounts> {
-  const rows = await db.clients.toArray();
+  const rows: { problem: string | null; pendingDelete: boolean; pending: object }[] = [
+    ...(await db.clients.toArray()),
+    ...(await db.patients.toArray()),
+  ];
   return {
-    pending: rows.filter((row) => hasPending(row) && !row.problem).length,
+    pending: rows.filter((row) => hasPending(row as LocalRow<object>) && !row.problem).length,
     problems: rows.filter((row) => row.problem !== null).length,
   };
 }

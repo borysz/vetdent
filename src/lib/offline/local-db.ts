@@ -1,5 +1,6 @@
 import Dexie, { type Table } from "dexie";
 import type { LocalClientRow } from "./clients-model";
+import type { LocalPatientRow } from "./patients-model";
 
 export interface MetaEntry {
   key: string;
@@ -12,12 +13,18 @@ export interface MetaEntry {
  */
 export class LocalDatabase extends Dexie {
   clients!: Table<LocalClientRow, string>;
+  patients!: Table<LocalPatientRow, string>;
   meta!: Table<MetaEntry, string>;
 
   constructor(name: string) {
     super(name);
     this.version(1).stores({
       clients: "id, organizationId, touchedAt",
+      meta: "key",
+    });
+    this.version(2).stores({
+      clients: "id, organizationId, touchedAt",
+      patients: "id, organizationId, touchedAt",
       meta: "key",
     });
   }
@@ -29,6 +36,7 @@ export function databaseName(userId: string, organizationId: string): string {
 
 export const META_KEYS = {
   clientsCursor: "clients.cursor",
+  patientsCursor: "patients.cursor",
   lastSyncAt: "lastSyncAt",
 } as const;
 

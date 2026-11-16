@@ -81,6 +81,15 @@ class FakeServer implements SyncApi {
     return results;
   }
 
+  // Patients are exercised in the "patients" tests below; the client tests do not use them.
+  async pushPatients(): Promise<PushResult[]> {
+    return [];
+  }
+
+  async pullPatients(): Promise<never[]> {
+    return [];
+  }
+
   async pullClients(afterSeq: number, limit: number): Promise<ServerClient[]> {
     if (this.down) throw new SyncError("offline");
     this.pullCalls.push(afterSeq);

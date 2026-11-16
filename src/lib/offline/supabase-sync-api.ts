@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import type { PushResult, PushStatus, ServerClient, WireChange } from "./clients-model";
+import type { ServerPatient } from "./patients-model";
 import { SyncError, type SyncApi, type SyncErrorKind } from "./sync-engine";
 
 const PUSH_STATUSES: readonly PushStatus[] = ["applied", "unchanged", "invalid", "forbidden", "deleted"];
@@ -38,6 +39,46 @@ export function createSupabaseSyncApi(supabase: SupabaseClient<Database>, organi
       });
       if (error) throw new SyncError(kindOf(error), error.message);
       return parsePushResults(data);
+    },
+
+    async pushPatients(changes: WireChange[]): Promise<PushResult[]> {
+      const { data, error } = await supabase.rpc("sync_push_patients", {
+        p_organization_id: organizationId,
+        p_changes: changes as never,
+      });
+      if (error) throw new SyncError(kindOf(error), error.message);
+      return parsePushResults(data);
+    },
+
+    async pullPatients(afterSeq: number, limit: number): Promise<ServerPatient[]> {
+      const { data, error } = await supabase
+        .from("patients")
+        .select(
+          "id, client_id, name, species, breed, birth_date, sex, neutered, weight_kg, microchip, notes, rev, seq, deleted_at, updated_at",
+        )
+        .eq("organization_id", organizationId)
+        .gt("seq", afterSeq)
+        .order("seq", { ascending: true })
+        .limit(limit);
+      if (error) throw new SyncError(kindOf(error), error.message);
+
+      return data.map((row) => ({
+        id: row.id,
+        clientId: row.client_id,
+        name: row.name,
+        species: row.species,
+        breed: row.breed,
+        birthDate: row.birth_date,
+        sex: row.sex,
+        neutered: row.neutered,
+        weightKg: row.weight_kg,
+        microchip: row.microchip,
+        notes: row.notes,
+        rev: row.rev,
+        seq: row.seq,
+        deletedAt: row.deleted_at,
+        updatedAt: row.updated_at,
+      }));
     },
 
     async pullClients(afterSeq: number, limit: number): Promise<ServerClient[]> {

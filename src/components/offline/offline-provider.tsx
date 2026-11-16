@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { databaseName, LocalDatabase, META_KEYS, readMeta } from "@/lib/offline/local-db";
 import { createSupabaseSyncApi } from "@/lib/offline/supabase-sync-api";
-import { countPending, syncClients, type SyncErrorKind } from "@/lib/offline/sync-engine";
+import { countPending, syncAll, type SyncErrorKind } from "@/lib/offline/sync-engine";
 
 export interface OfflineStatus {
   online: boolean;
@@ -98,7 +98,7 @@ export function OfflineProvider({ userId, organizationId, canWrite, canDelete, c
     setSyncing(true);
     try {
       const api = createSupabaseSyncApi(createSupabaseBrowserClient(), organizationId);
-      const outcome = await syncClients(db, organizationId, api);
+      const outcome = await syncAll(db, organizationId, api);
       setError(outcome.error?.kind ?? null);
     } finally {
       running.current = false;
