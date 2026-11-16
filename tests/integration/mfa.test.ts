@@ -46,6 +46,21 @@ function totp(secret: string, atMs: number): string {
   return code.toString().padStart(6, "0");
 }
 
+/**
+ * A code can be used only once, so a second verification has to wait until
+ * the 30-second window has moved on. (Guessing the next window's code instead
+ * is flaky when the local clock and the server's differ by a few seconds.)
+ */
+async function nextUnusedCode(secret: string, lastUsedAtMs: number): Promise<string> {
+  const usedPeriod = Math.floor(lastUsedAtMs / 30_000);
+  while (Math.floor(Date.now() / 30_000) <= usedPeriod) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  return totp(secret, Date.now());
+}
+
+let lastCodeUsedAt = 0;
+
 const email = `itest-${randomUUID().slice(0, 8)}-mfa@vetdent.test`;
 const password = `${randomUUID()}${randomUUID()}`;
 let userId: string;
@@ -88,7 +103,8 @@ describe("two-step verification", () => {
     factorId = enrolled.data!.id;
     secret = enrolled.data!.totp.secret;
 
-    const verified = await firstSession.auth.mfa.challengeAndVerify({ factorId, code: totp(secret, Date.now()) });
+    lastCodeUsedAt = Date.now();
+    const verified = await firstSession.auth.mfa.challengeAndVerify({ factorId, code: totp(secret, lastCodeUsedAt) });
     expect(verified.error).toBeNull();
 
     const organizations = await firstSession.from("organizations").select("id");
@@ -111,18 +127,15 @@ describe("two-step verification", () => {
     const members = await passwordOnly.rpc("list_members", { p_organization_id: organizationId });
     expect(members.error?.message).toBe("mfa_required");
 
-    // After the second step, the same session is let through. The next
-    // period's code is used because a code cannot be used twice.
-    const verified = await passwordOnly.auth.mfa.challengeAndVerify({
-      factorId,
-      code: totp(secret, Date.now() + 30_000),
-    });
+    // After the second step, the same session is let through.
+    const code = await nextUnusedCode(secret, lastCodeUsedAt);
+    const verified = await passwordOnly.auth.mfa.challengeAndVerify({ factorId, code });
     expect(verified.error).toBeNull();
 
     const after = await passwordOnly.from("organizations").select("id");
     expect(after.error).toBeNull();
     expect(after.data).toHaveLength(1);
-  });
+  }, 90_000);
 
   test("recovery codes cannot be read or written through the API", async () => {
     const asUser = await firstSession.from("mfa_recovery_codes").select("id");
@@ -133,6 +146,17 @@ describe("two-step verification", () => {
 
     const asAnonymous = await anonymous.from("mfa_recovery_codes").select("id");
     expect(asAnonymous.error).not.toBeNull();
+  });
+
+  test("the server's secret-key client is not blocked by the check", async () => {
+    // A fresh client, so nothing from the other clients in this file can leak in.
+    const server = createClient<Database>(url!, secretKey!, stateless);
+
+    const read = await server.from("mfa_recovery_codes").select("id").limit(1);
+    expect(read.error).toBeNull();
+
+    const members = await server.from("memberships").select("id").limit(1);
+    expect(members.error).toBeNull();
   });
 
   test("visitors who are not signed in are unaffected", async () => {

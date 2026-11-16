@@ -25,15 +25,15 @@ A döntések és az eltérések a tervtől a [`docs/DONTESEK.md`](docs/DONTESEK.
 | Kész | Még hátravan |
 |---|---|
 | Regisztráció, bejelentkezés, kijelentkezés | Saját levélküldő és magyar levélsablonok (addig a meghívó hivatkozását kézzel kell továbbítani) |
-| Elfelejtett jelszó és új jelszó beállítása | Tartalékkódok a kétlépcsős azonosításhoz |
-| Fiók létrehozása: rendelő vagy egyéni állatorvos; váltás több fiók között | A kétlépcsős azonosítás kötelezővé tétele egy rendelőben |
-| Munkatársak: meghívás, szerepkör, felfüggesztés, eltávolítás, kilépés | Aktív munkamenetek listája (most csak „kijelentkezés minden más eszközről” van) |
-| Meghívó elfogadása (belépéssel vagy regisztrációval) | Fióktörlés és adatexport |
+| Elfelejtett jelszó és új jelszó beállítása | A kétlépcsős azonosítás kötelezővé tétele egy rendelőben |
+| Fiók létrehozása: rendelő vagy egyéni állatorvos; váltás több fiók között | Aktív munkamenetek listája (most csak „kijelentkezés minden más eszközről” van) |
+| Munkatársak: meghívás, szerepkör, felfüggesztés, eltávolítás, kilépés | Fióktörlés és adatexport |
+| Meghívó elfogadása (belépéssel vagy regisztrációval) | |
 | Profil: név, titulus, jelszócsere | |
-| Kétlépcsős azonosítás hitelesítő alkalmazással, az adatbázisban is kikényszerítve | |
+| Kétlépcsős azonosítás hitelesítő alkalmazással és tartalékkódokkal, az adatbázisban is kikényszerítve | |
 | Fiók adatainak szerkesztése | |
 | Adatbázisséma sorszintű védelemmel; a szabályok adatbázis-függvényekben | |
-| 32 integrációs teszt a fiókok elszigetelésére, a szabályokra és a kétlépcsős azonosításra | |
+| 34 integrációs teszt a fiókok elszigetelésére, a szabályokra és a kétlépcsős azonosításra | |
 
 ## Futtatás helyben
 
