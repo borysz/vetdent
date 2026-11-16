@@ -816,6 +816,7 @@ export type Database = {
           finalized_at: string | null
           finalized_by: string | null
           follow_up_date: string | null
+          general_note: string | null
           home_brushing: string | null
           id: string
           last_fed_at: string | null
@@ -849,6 +850,7 @@ export type Database = {
           finalized_at?: string | null
           finalized_by?: string | null
           follow_up_date?: string | null
+          general_note?: string | null
           home_brushing?: string | null
           id: string
           last_fed_at?: string | null
@@ -882,6 +884,7 @@ export type Database = {
           finalized_at?: string | null
           finalized_by?: string | null
           follow_up_date?: string | null
+          general_note?: string | null
           home_brushing?: string | null
           id?: string
           last_fed_at?: string | null

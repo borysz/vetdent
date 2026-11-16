@@ -22,6 +22,7 @@ export async function OfflineBoundary({ children }: { children: React.ReactNode 
         finalize: permissions.has("visits.finalize") && fullAccess,
         reopen: permissions.has("visits.reopen") && fullAccess,
       }}
+      features={entitlements?.features ?? []}
       userName={profile ? [profile.title, profile.fullName].filter(Boolean).join(" ") : ""}
     >
       {children}

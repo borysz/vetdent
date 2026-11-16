@@ -31,6 +31,7 @@ export const VISIT_FIELDS = [
   "feedingAdvice",
   "followUpDate",
   "readyToFinalize",
+  "generalNote",
 ] as const;
 export type VisitField = (typeof VISIT_FIELDS)[number];
 
@@ -59,6 +60,8 @@ export interface VisitFields {
   followUpDate: string | null;
   /** Marked on a device that cannot finalise right now (offline or without the right). */
   readyToFinalize: boolean;
+  /** A note on the whole visit; also where a dictated text goes that names no tooth. */
+  generalNote: string | null;
 }
 
 export const VISIT_WIRE_FIELD: Readonly<Record<VisitField, string>> = {
@@ -80,6 +83,7 @@ export const VISIT_WIRE_FIELD: Readonly<Record<VisitField, string>> = {
   feedingAdvice: "feeding_advice",
   followUpDate: "follow_up_date",
   readyToFinalize: "ready_to_finalize",
+  generalNote: "general_note",
 };
 
 export const EMPTY_VISIT_FIELDS: VisitFields = {
@@ -101,6 +105,7 @@ export const EMPTY_VISIT_FIELDS: VisitFields = {
   feedingAdvice: null,
   followUpDate: null,
   readyToFinalize: false,
+  generalNote: null,
 };
 
 export const visitSpec: RecordSpec<VisitFields> = {

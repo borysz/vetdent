@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { levelKey, quickKey } from "@/components/dental/keys";
 import { ToothShape } from "@/components/dental/tooth-shape";
@@ -65,6 +65,8 @@ interface OdontogramProps {
   /** Final visit, or no right to edit. */
   locked: boolean;
   save: (changes: ReadonlyMap<number, ToothParts>) => Promise<void>;
+  /** Told whenever the selection changes (the dictation uses it to find the tooth a note is about). */
+  onSelectionChange?: (selected: readonly number[]) => void;
 }
 
 /**
@@ -72,7 +74,7 @@ interface OdontogramProps {
  * on the left of the screen. Tap a tooth for its sheet; long-press or "select"
  * for several; the quick-entry panel gives them a finding at once.
  */
-export function Odontogram({ species, chart, locked, save }: OdontogramProps) {
+export function Odontogram({ species, chart, locked, save, onSelectionChange }: OdontogramProps) {
   const t = useTranslations("dental");
   const rows = getOdontogramRows(species);
 
@@ -87,6 +89,10 @@ export function Odontogram({ species, chart, locked, save }: OdontogramProps) {
   const [redoStack, setRedoStack] = useState<Step[]>([]);
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressed = useRef(false);
+
+  useEffect(() => {
+    onSelectionChange?.([...selected]);
+  }, [selected, onSelectionChange]);
 
   const marksOf = (tooth: number): ToothMarks => chart.get(tooth)?.marks ?? EMPTY_MARKS;
   const toParts = (marks: ReadonlyMap<number, ToothMarks>) =>

@@ -30,6 +30,8 @@ export interface OfflineContextValue {
   canDelete: boolean;
   /** What the user may do with visits (treatment records); `write` also needs a full-access subscription. */
   visitRights: VisitRights;
+  /** Features of the plan (for example `dictation`, `templates`). */
+  features: readonly string[];
   /** The user's own name with title, to prefill the treating vet; empty if unknown. */
   userName: string;
   status: OfflineStatus;
@@ -75,6 +77,7 @@ interface OfflineProviderProps {
   canWrite: boolean;
   canDelete: boolean;
   visitRights: VisitRights;
+  features: readonly string[];
   userName: string;
   children: React.ReactNode;
 }
@@ -85,6 +88,7 @@ export function OfflineProvider({
   canWrite,
   canDelete,
   visitRights,
+  features,
   userName,
   children,
 }: OfflineProviderProps) {
@@ -154,6 +158,7 @@ export function OfflineProvider({
       canWrite,
       canDelete,
       visitRights,
+      features,
       userName,
       status: {
         online,
@@ -166,7 +171,7 @@ export function OfflineProvider({
       syncNow,
       syncSoon,
     }),
-    [db, organizationId, canWrite, canDelete, visitRights, userName, online, syncing, counts, lastSyncAt, error, syncNow, syncSoon],
+    [db, organizationId, canWrite, canDelete, visitRights, features, userName, online, syncing, counts, lastSyncAt, error, syncNow, syncSoon],
   );
 
   return (

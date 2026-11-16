@@ -311,6 +311,26 @@
     "switchSubmit": "Váltás",
     "roleInOrganization": "{role} · {type}"
   },
+  "dictation": {
+    "start": "Diktálás indítása",
+    "stop": "Diktálás leállítása",
+    "listening": "Hallgatom… Mondja a szöveget, majd álljon meg.",
+    "confirmTitle": "Ezt értettem. Rögzítsem?",
+    "text": "A felismert szöveg (javítható)",
+    "target": "Hová kerüljön?",
+    "general": "Általános megjegyzés a lapon",
+    "tooth": "A(z) {number} fog megjegyzése",
+    "accept": "Rögzítés",
+    "again": "Újra diktálom",
+    "discard": "Elvetem",
+    "errors": {
+      "unsupported": "Ez a böngésző nem támogatja a beszédfelismerést. Chrome vagy Edge böngészőben használható.",
+      "offline": "A beszédfelismeréshez internetkapcsolat kell; most nincs kapcsolat. A szöveget begépelheti.",
+      "denied": "A mikrofon használata nincs engedélyezve a böngészőben.",
+      "noSpeech": "Nem hallottam szöveget. Próbálja újra.",
+      "failed": "A beszédfelismerés nem sikerült. Próbálja újra, vagy gépelje be a szöveget."
+    }
+  },
   "dental": {
     "toothTypes": {
       "incisor": "metszőfog",
@@ -567,7 +587,8 @@
       "dietType": "Táp típusa",
       "sutures": "Varratok típusa és leírása",
       "feedingAdvice": "Táplálási javaslat a műtét utáni napokra",
-      "followUpDate": "Kontroll időpontja"
+      "followUpDate": "Kontroll időpontja",
+      "generalNote": "Általános megjegyzés a fogászati státuszhoz"
     },
     "choose": "Válasszon…",
     "asaOption": "ASA {value}",

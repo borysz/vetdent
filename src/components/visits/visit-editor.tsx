@@ -42,7 +42,9 @@ import {
   type Medication,
 } from "@/lib/offline/visit-lists";
 import type { VisitFields, VisitView } from "@/lib/offline/visits-model";
+import { Dictation } from "@/components/dictation/dictation";
 import { Odontogram } from "@/components/dental/odontogram";
+import { appendText, type DictationTarget } from "@/domain/dictation/triadan";
 import { loadChart, saveTeeth } from "@/lib/offline/teeth-store";
 import { getVisit, removeVisit, updateVisit } from "@/lib/offline/visits-store";
 import { patientPath, routes } from "@/lib/routes";
@@ -96,11 +98,12 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
   const tPatients = useTranslations("patients");
   const format = useFormatter();
   const router = useRouter();
-  const { db, organizationId, canWrite, visitRights, status, syncNow, syncSoon } = useRequiredOffline();
+  const { db, organizationId, canWrite, visitRights, features, status, syncNow, syncSoon } = useRequiredOffline();
 
   const locked = visit.status === "final" || !visitRights.write || !canWrite;
   // The dental chart: one record per tooth, read from the device like everything else.
   const chart = useLiveQuery(() => (db ? loadChart(db, visit.id) : undefined), [db, visit.id]);
+  const canDictate = features.includes("dictation") && !locked;
 
   const [visitDate, setVisitDate] = useState(visit.visitDate);
   const [veterinarian, setVeterinarian] = useState(visit.veterinarianName ?? "");
@@ -118,6 +121,8 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
   const [medications, setMedications] = useState<Medication[]>(() => parseMedications(visit.medications));
   const [feedingAdvice, setFeedingAdvice] = useState(visit.feedingAdvice ?? "");
   const [followUp, setFollowUp] = useState(visit.followUpDate ?? "");
+  const [generalNote, setGeneralNote] = useState(visit.generalNote ?? "");
+  const [selectedTeeth, setSelectedTeeth] = useState<readonly number[]>([]);
 
   const [errors, setErrors] = useState<Partial<Record<string, VisitValidationKey>>>({});
   const [saving, setSaving] = useState(false);
@@ -330,6 +335,7 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </div>
           <LongText
             id="visit-blood"
+            dictate={canDictate}
             label={t("fields.bloodSummary")}
             rows={2}
             value={blood}
@@ -370,6 +376,7 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </fieldset>
           <LongText
             id="visit-complaint-notes"
+            dictate={canDictate}
             label={t("fields.complaintNotes")}
             value={complaintNotes}
             error={error("complaintNotes")}
@@ -405,6 +412,7 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
             species={patient.species}
             chart={chart}
             locked={locked}
+            onSelectionChange={setSelectedTeeth}
             save={async (changes) => {
               if (!db) return;
               await saveTeeth(db, organizationId, visit.id, changes);
@@ -414,6 +422,15 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
         ) : (
           <p className="text-muted-foreground">{t("loading")}</p>
         )}
+        <LongText
+          id="visit-general-note"
+          dictate={canDictate}
+          label={t("fields.generalNote")}
+          value={generalNote}
+          error={error("generalNote")}
+          disabled={locked}
+          onChange={textSaver(setGeneralNote, "generalNote", 2000)}
+        />
       </section>
 
       <fieldset disabled={locked} className="flex min-w-0 flex-col gap-8">
@@ -477,6 +494,7 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </div>
           <LongText
             id="visit-sutures"
+            dictate={canDictate}
             label={t("fields.sutures")}
             value={sutures}
             error={error("sutures")}
@@ -534,6 +552,7 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </div>
           <LongText
             id="visit-feeding"
+            dictate={canDictate}
             label={t("fields.feedingAdvice")}
             value={feedingAdvice}
             error={error("feedingAdvice")}
@@ -558,6 +577,10 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </div>
         </section>
       </fieldset>
+
+      {canDictate && patient ? (
+        <Dictation floating species={patient.species} selectedTeeth={selectedTeeth} onAccept={(text, target) => void acceptDictation(text, target)} />
+      ) : null}
 
       <Lifecycle visit={visit} flush={flush} syncNow={syncNow} organizationId={organizationId} />
 
@@ -589,6 +612,20 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
       </div>
     </div>
   );
+
+  /** A confirmed dictation: to the tooth's note, or to the visit's general note. */
+  async function acceptDictation(text: string, target: DictationTarget | null) {
+    if (!target || target.kind === "general") {
+      const next = appendText(generalNote, text);
+      setGeneralNote(next);
+      save({ generalNote: textOrNull(next) });
+      return;
+    }
+    if (!db) return;
+    const existing = chart?.get(target.tooth)?.note ?? "";
+    await saveTeeth(db, organizationId, visit.id, new Map([[target.tooth, { note: appendText(existing, text) }]]));
+    syncSoon();
+  }
 
   function changeFollowUp(value: string) {
     setFollowUp(value);
@@ -639,19 +676,27 @@ interface LongTextProps {
   label: string;
   value: string;
   rows?: number;
+  /** A microphone beside the label: dictated text is added to the field after confirmation. */
+  dictate?: boolean;
   error?: string;
+  /** Outside the form fieldset a field has to be disabled by itself. */
+  disabled?: boolean;
   onChange: (value: string) => void;
 }
 
-function LongText({ id, label, value, rows = 3, error, onChange }: LongTextProps) {
+function LongText({ id, label, value, rows = 3, dictate, error, disabled, onChange }: LongTextProps) {
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={id}>{label}</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label htmlFor={id}>{label}</Label>
+        {dictate ? <Dictation label={label} onAccept={(text) => onChange(appendText(value, text))} /> : null}
+      </div>
       <textarea
         id={id}
         rows={rows}
         value={value}
         aria-invalid={error ? true : undefined}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
         className={textareaClass}
       />

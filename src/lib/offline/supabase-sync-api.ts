@@ -102,7 +102,7 @@ export function createSupabaseSyncApi(supabase: SupabaseClient<Database>, organi
       const { data, error } = await supabase
         .from("visits")
         .select(
-          "id, patient_id, visit_date, veterinarian_name, assistant_name, asa_status, last_fed_at, blood_summary, weight_kg, complaint_tags, complaint_notes, home_brushing, diet_type, anesthesia_blocks, sutures, medications, feeding_advice, follow_up_date, ready_to_finalize, status, finalized_at, rev, seq, deleted_at, updated_at",
+          "id, patient_id, visit_date, veterinarian_name, assistant_name, asa_status, last_fed_at, blood_summary, weight_kg, complaint_tags, complaint_notes, home_brushing, diet_type, anesthesia_blocks, sutures, medications, feeding_advice, follow_up_date, ready_to_finalize, general_note, status, finalized_at, rev, seq, deleted_at, updated_at",
         )
         .eq("organization_id", organizationId)
         .gt("seq", afterSeq)
@@ -130,6 +130,7 @@ export function createSupabaseSyncApi(supabase: SupabaseClient<Database>, organi
         feedingAdvice: row.feeding_advice,
         followUpDate: row.follow_up_date,
         readyToFinalize: row.ready_to_finalize,
+        generalNote: row.general_note,
         status: row.status,
         finalizedAt: row.finalized_at,
         rev: row.rev,

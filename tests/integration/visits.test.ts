@@ -229,6 +229,18 @@ describe("creating a visit", () => {
     expect(results.map((result) => result.status)).toEqual(Array(11).fill("invalid"));
   });
 
+  test("the general note is cleaned, and limited to 2000 characters", async () => {
+    const noted = randomUUID();
+    const [ok] = await pushVisits(aron, clinicId, [
+      upsert(noted, null, { patient_id: patientId, visit_date: "2026-11-16", general_note: "  Sipolynyílás a 104-es foggyökérnél  " }),
+    ]);
+    expect(ok.status).toBe("applied");
+    expect((await visitRow(noted)).general_note).toBe("Sipolynyílás a 104-es foggyökérnél");
+
+    const [tooLong] = await pushVisits(aron, clinicId, [upsert(noted, 1, { general_note: "x".repeat(2001) })]);
+    expect(tooLong.status).toBe("invalid");
+  });
+
   test("the patient of a visit cannot be changed afterwards", async () => {
     const [result] = await pushVisits(aron, clinicId, [upsert(id, 1, { patient_id: randomUUID() })]);
     expect(result.status).toBe("invalid");
