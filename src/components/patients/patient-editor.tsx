@@ -82,7 +82,8 @@ function EditorForm({ existing, owners, canWrite, canDelete }: EditorFormProps) 
         event.preventDefault();
         if (readOnly || !db) return;
 
-        const data = new FormData(event.currentTarget);
+        const form = event.currentTarget;
+        const data = new FormData(form);
         const text = (name: string) => String(data.get(name) ?? "");
         const parsed = parsePatientForm({
           clientId: text("clientId"),
@@ -112,6 +113,9 @@ function EditorForm({ existing, owners, canWrite, canDelete }: EditorFormProps) 
             await updatePatient(db, existing.id, editable);
           } else {
             await createPatient(db, organizationId, parsed.fields);
+            // The app keeps pages it navigated away from alive (to preserve their state), so
+            // a "new" form would still show what was just saved the next time it is opened.
+            form.reset();
           }
           syncSoon();
           router.push(routes.patients);

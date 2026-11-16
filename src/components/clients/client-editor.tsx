@@ -91,7 +91,8 @@ function EditorForm({ existing, canWrite, canDelete, onSave, onDelete }: EditorF
         event.preventDefault();
         if (readOnly) return;
 
-        const data = new FormData(event.currentTarget);
+        const form = event.currentTarget;
+        const data = new FormData(form);
         const text = (name: string) => String(data.get(name) ?? "");
         const parsed = parseClientForm({
           fullName: text("fullName"),
@@ -110,6 +111,9 @@ function EditorForm({ existing, canWrite, canDelete, onSave, onDelete }: EditorF
         setSaving(true);
         try {
           await onSave(parsed.fields);
+          // The app keeps pages it navigated away from alive (to preserve their state), so
+          // a "new" form would still show what was just saved the next time it is opened.
+          if (!existing) form.reset();
         } finally {
           setSaving(false);
         }
