@@ -261,7 +261,18 @@
     "challengeTitle": "Kétlépcsős azonosítás",
     "challengeLead": "Adja meg a hitelesítő alkalmazásában látható 6 jegyű kódot.",
     "challengeSubmit": "Belépés",
+    "recoveryTitle": "Tartalékkódok",
+    "recoveryBody": "Ha elveszíti a hitelesítőjét, egy tartalékkóddal kikapcsolhatja a kétlépcsős azonosítást, majd újra beállíthatja. Minden kód egyszer használható. Mentse el őket biztonságos helyre – később nem jeleníthetők meg újra.",
+    "recoveryCopy": "Kódok másolása",
+    "recoveryCopied": "Kimásolva",
+    "recoveryRegenerate": "Új tartalékkódok kérése",
+    "recoveryRegenerateConfirm": "Az eddigi tartalékkódok érvényüket vesztik. Folytatja?",
+    "recoveryUseTitle": "Nem fér hozzá a hitelesítőjéhez?",
+    "recoveryUseBody": "Adjon meg egy tartalékkódot. Ezzel kikapcsolja a kétlépcsős azonosítást, amelyet utána a profiljában újra beállíthat.",
+    "recoveryCode": "Tartalékkód",
+    "recoveryUseSubmit": "Belépés tartalékkóddal",
     "errors": {
+      "recoveryInvalid": "A tartalékkód hibás, vagy már felhasználták.",
       "codeFormat": "A kód 6 számjegyből áll.",
       "codeInvalid": "A kód hibás vagy lejárt. Próbálja újra.",
       "generic": "Hiba történt. Próbálja újra később."

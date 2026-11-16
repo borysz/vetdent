@@ -3,7 +3,13 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { getCurrentUser } from "@/lib/auth/dal";
+import { getCurrentUser, requireUser } from "@/lib/auth/dal";
+import {
+  consumeRecoveryCode,
+  deleteRecoveryCodes,
+  issueRecoveryCodes,
+  removeAllFactors,
+} from "@/lib/auth/recovery-codes";
 import { field, type FormState } from "@/lib/forms";
 import { routes, safeNextPath } from "@/lib/routes";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -59,14 +65,29 @@ export async function confirmMfaEnrollmentAction(_previous: FormState, formData:
   const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId, code });
   if (error) return { status: "error", message: t("codeInvalid") };
 
+  // Shown exactly once, right after switching two-step verification on.
+  const codes = await issueRecoveryCodes(user.id);
+
   refresh();
-  return { status: "success" };
+  return { status: "success", data: { codes: codes.join("\n") } };
+}
+
+/** Replaces the recovery codes; the old ones stop working. Needs a fully verified session. */
+export async function regenerateRecoveryCodesAction(): Promise<FormState> {
+  const t = await getTranslations("mfa.errors");
+  const user = await requireUser();
+
+  const supabase = await createSupabaseServerClient();
+  const factors = await supabase.auth.mfa.listFactors();
+  if ((factors.data?.totp.length ?? 0) === 0) return { status: "error", message: t("generic") };
+
+  const codes = await issueRecoveryCodes(user.id);
+  return { status: "success", data: { codes: codes.join("\n") } };
 }
 
 export async function disableMfaAction(): Promise<FormState> {
   const t = await getTranslations("mfa.errors");
-  const user = await getCurrentUser();
-  if (!user) redirect(routes.login);
+  const user = await requireUser();
 
   const supabase = await createSupabaseServerClient();
   const factors = await supabase.auth.mfa.listFactors();
@@ -74,11 +95,35 @@ export async function disableMfaAction(): Promise<FormState> {
     const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
     if (error) return { status: "error", message: t("generic") };
   }
+  await deleteRecoveryCodes(user.id);
 
   // The session still says "fully verified"; refresh it so it matches reality.
   await supabase.auth.refreshSession();
   refresh();
   return { status: "success" };
+}
+
+/**
+ * Lost authenticator: a recovery code switches two-step verification off for
+ * the account, so the user can sign in with the password and set it up again.
+ * Each code works once.
+ */
+export async function redeemRecoveryCodeAction(_previous: FormState, formData: FormData): Promise<FormState> {
+  const t = await getTranslations("mfa.errors");
+  const user = await getCurrentUser();
+  if (!user) redirect(routes.login);
+  if (!user.mfaPending) redirect(routes.app);
+
+  // `user.id` comes from the verified session token, never from the form.
+  const accepted = await consumeRecoveryCode(user.id, field(formData, "recoveryCode"));
+  if (!accepted) return { status: "error", message: t("recoveryInvalid") };
+
+  await removeAllFactors(user.id);
+  await deleteRecoveryCodes(user.id);
+
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.refreshSession();
+  redirect(routes.profile);
 }
 
 /** Second step of sign-in: verifies a code and continues to the requested page. */

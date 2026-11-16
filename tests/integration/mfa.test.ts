@@ -124,6 +124,17 @@ describe("two-step verification", () => {
     expect(after.data).toHaveLength(1);
   });
 
+  test("recovery codes cannot be read or written through the API", async () => {
+    const asUser = await firstSession.from("mfa_recovery_codes").select("id");
+    expect(asUser.error).not.toBeNull();
+
+    const forged = await firstSession.from("mfa_recovery_codes").insert({ user_id: userId, code_hash: "x" });
+    expect(forged.error).not.toBeNull();
+
+    const asAnonymous = await anonymous.from("mfa_recovery_codes").select("id");
+    expect(asAnonymous.error).not.toBeNull();
+  });
+
   test("visitors who are not signed in are unaffected", async () => {
     const { error } = await anonymous.rpc("get_invitation", { p_token: "0".repeat(64) });
     expect(error).toBeNull();

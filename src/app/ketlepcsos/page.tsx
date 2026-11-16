@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/auth/auth-card";
 import { MfaChallengeForm } from "@/components/auth/mfa-challenge-form";
+import { RecoveryCodeForm } from "@/components/auth/recovery-code-form";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { signOutAction } from "@/lib/auth/actions";
 import { getCurrentUser } from "@/lib/auth/dal";
@@ -50,5 +51,10 @@ async function ChallengeGate() {
   if (!user) redirect(routes.login);
   if (!user.mfaPending) redirect(routes.app);
 
-  return <MfaChallengeForm />;
+  return (
+    <div className="flex flex-col gap-6">
+      <MfaChallengeForm />
+      <RecoveryCodeForm />
+    </div>
+  );
 }

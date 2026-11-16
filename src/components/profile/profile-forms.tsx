@@ -1,12 +1,18 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ActionForm } from "@/components/forms/action-form";
 import { FormField } from "@/components/forms/form-field";
 import { FormError } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
-import { confirmMfaEnrollmentAction, disableMfaAction, startMfaEnrollmentAction } from "@/lib/auth/mfa-actions";
+import { Button } from "@/components/ui/button";
+import {
+  confirmMfaEnrollmentAction,
+  disableMfaAction,
+  regenerateRecoveryCodesAction,
+  startMfaEnrollmentAction,
+} from "@/lib/auth/mfa-actions";
 import { initialFormState } from "@/lib/forms";
 import { changePasswordAction, updateProfileAction } from "@/lib/profile/actions";
 
@@ -81,19 +87,66 @@ export function ChangePasswordForm() {
   );
 }
 
+/** One-time display of freshly issued recovery codes. */
+function RecoveryCodes({ codes }: { codes: string }) {
+  const t = useTranslations("mfa");
+  const [copied, setCopied] = useState(false);
+
+  return (
+    <div className="rounded-xl border border-warning bg-warning-soft p-4">
+      <h3 className="font-semibold">{t("recoveryTitle")}</h3>
+      <p className="mt-1 text-sm">{t("recoveryBody")}</p>
+      <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 font-mono text-base select-all sm:max-w-sm">
+        {codes.split("\n").map((code) => (
+          <li key={code}>{code}</li>
+        ))}
+      </ul>
+      <Button
+        type="button"
+        variant="outline"
+        className="mt-3 bg-card"
+        onClick={async () => {
+          await navigator.clipboard.writeText(codes);
+          setCopied(true);
+        }}
+      >
+        {copied ? t("recoveryCopied") : t("recoveryCopy")}
+      </Button>
+    </div>
+  );
+}
+
 /** Switches two-step verification on (QR code, then first code) or off. */
 export function MfaSettings({ enabled }: { enabled: boolean }) {
   const t = useTranslations("mfa");
   const [enrollment, startEnrollment] = useActionState(startMfaEnrollmentAction, initialFormState);
   const [confirmation, confirmEnrollment] = useActionState(confirmMfaEnrollmentAction, initialFormState);
+  const [regeneration, regenerate] = useActionState(regenerateRecoveryCodesAction, initialFormState);
 
   if (enabled) {
+    // Codes exist in the browser only right after they were issued.
+    const issued =
+      (regeneration.status === "success" ? regeneration.data?.codes : undefined) ??
+      (confirmation.status === "success" ? confirmation.data?.codes : undefined);
+
     return (
       <div className="flex flex-col gap-4">
         <p>{t("onBody")}</p>
-        <ActionForm action={disableMfaAction} confirmMessage={t("disableConfirm")} className="flex flex-wrap gap-3">
-          <SubmitButton variant="outline">{t("disable")}</SubmitButton>
-        </ActionForm>
+        {issued ? <RecoveryCodes codes={issued} /> : null}
+        <div className="flex flex-wrap items-start gap-3">
+          <form
+            action={regenerate}
+            onSubmit={(event) => {
+              if (!window.confirm(t("recoveryRegenerateConfirm"))) event.preventDefault();
+            }}
+          >
+            <SubmitButton variant="outline">{t("recoveryRegenerate")}</SubmitButton>
+          </form>
+          <ActionForm action={disableMfaAction} confirmMessage={t("disableConfirm")} className="flex flex-wrap gap-3">
+            <SubmitButton variant="outline">{t("disable")}</SubmitButton>
+          </ActionForm>
+        </div>
+        <FormError message={regeneration.status === "error" ? regeneration.message : undefined} />
       </div>
     );
   }
