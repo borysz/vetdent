@@ -65,16 +65,15 @@ A `.env.local` **nincs a Gitben** (Supabase URL, publishable és secret kulcs); 
 
 ## Állapot (2026-11-16)
 
-Kész: 1. alapozás · 2. felhasználók/fiókok/meghívók/profil/MFA+tartalékkódok · 3. jogosultságok és napló · 4. előfizetés **alapja** (csomagok, próbaidő, keretek, csak olvasható mód, árazási oldal) · 5. offline réteg nagy része · 6. gazdik, páciensek, irányítópult.
+Kész: 1. alapozás · 2. felhasználók/fiókok/meghívók/profil/MFA+tartalékkódok · 3. jogosultságok és napló · 4. előfizetés **alapja** (csomagok, próbaidő, keretek, csak olvasható mód, árazási oldal) · 5. offline réteg (helyi adatbázis, szinkron, PIN-zár, **service worker** a `public/sw.js`-ben; az ütközések megjelenítése hátravan) · 6. gazdik, páciensek, irányítópult · 7. **kezelési lap váza** (`visits` tábla, `sync_push_visits`, `finalize_visit`/`reopen_visit`, `/app/vizitek/[id]`; döntések: `docs/DONTESEK.md`).
 
 **Elhalasztva a demó utánra** (a demó ingyenes): Stripe-fizetés, Számlázz.hu-számlázás, platform-admin felület.
 
 Hátravan, javasolt sorrendben:
-1. **A betöltési hiba kivizsgálása** (`NYITOTT_KERDESEK.md` 18. pont) – teljes oldalbetöltéskor időnként nem aktiválódik az oldal; előbb ezt kell tisztázni.
-2. **Service worker** (kapcsolat nélküli indítás; Next-dokumentáció: `progressive-web-apps.md`, Serwist) és az **ütközések megjelenítése** a felületen.
-3. **7. fázis – kezelési lap** (PROJEKT_PROMPT 8.2, 8.11): fejléc, anamnézis, műtéti napló, utókezelés; piszkozat → lezárt; lezárni/újranyitni csak online és csak `visits.finalize`/`visits.reopen` jogosultsággal.
-4. **8. fázis – odontogram** (8.3–8.6): saját SVG-fogak, kijelölés → gyorsgomb, színkódolás, tasakmélység, visszavonás.
-5. 9. fotók/sablonok/diktálás · 10. gazdi-PDF + e-mail · 11. lezárás (adatexport, biztonsági átnézés).
+1. **A betöltési hiba kivizsgálása** (`NYITOTT_KERDESEK.md` 18. pont) – teljes oldalbetöltéskor nem aktiválódik az `/app` alatti oldal (a böngészőpanelben éles módban is reprodukálható; a szerver HTML-je teljes, a kliens nem hydratál; kliensoldali navigációval minden megy). Előbb ezt kell tisztázni.
+2. A **service worker és a kezelési lap valódi böngészős próbája** (offline indítás, offline szerkesztés a vizit lapján), az **ütközések megjelenítése** a felületen.
+3. **8. fázis – odontogram** (8.3–8.6): saját SVG-fogak, kijelölés → gyorsgomb, színkódolás, tasakmélység, visszavonás.
+4. 9. fotók/sablonok/diktálás · 10. gazdi-PDF + e-mail · 11. lezárás (adatexport, biztonsági átnézés).
 A 2. fázis maradéka: levélküldés és magyar levélsablonok, fióktörlés/adatexport, kötelező MFA rendelőnként (kérdéseik a `NYITOTT_KERDESEK.md`-ben).
 
 ## A felhasználóval való együttműködés

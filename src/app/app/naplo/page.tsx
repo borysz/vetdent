@@ -66,6 +66,9 @@ async function AuditLog() {
     if (action === "member.role_changed") {
       return t("audit.details.roleChange", { from: roleLabel(record.from), to: roleLabel(record.to) });
     }
+    if (action === "visit.reopened" && typeof record.reason === "string") {
+      return t("audit.details.reopenReason", { reason: record.reason });
+    }
     if (action === "organization.updated" && Array.isArray(record.fields)) {
       const fields = record.fields.filter(isAuditedOrganizationField).map((field) => t(`audit.fields.${field}`));
       return fields.length > 0 ? t("audit.details.fields", { fields: fields.join(", ") }) : null;

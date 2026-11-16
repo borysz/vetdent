@@ -15,6 +15,7 @@ export const routes = {
   clients: "/app/gazdik",
   newClient: "/app/gazdik/uj",
   patients: "/app/paciensek",
+  visits: "/app/vizitek",
   newPatient: "/app/paciensek/uj",
   members: "/app/munkatarsak",
   organization: "/app/fiok",
@@ -30,6 +31,10 @@ export function clientPath(id: string): string {
 
 export function patientPath(id: string): string {
   return `${routes.patients}/${id}`;
+}
+
+export function visitPath(id: string): string {
+  return `${routes.visits}/${id}`;
 }
 
 /** The new-patient form, optionally with the owner already chosen. */

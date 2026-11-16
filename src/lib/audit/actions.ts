@@ -14,6 +14,8 @@ export const AUDIT_ACTIONS = [
   "member.reactivated",
   "member.removed",
   "member.left",
+  "visit.finalized",
+  "visit.reopened",
   "auth.sign_in",
   "auth.sign_out",
   "auth.password_changed",

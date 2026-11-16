@@ -2,6 +2,7 @@ import type { Table } from "dexie";
 import { clientOps, type ClientFields } from "./clients-model";
 import { META_KEYS, readMeta, writeMeta, type LocalDatabase } from "./local-db";
 import { patientOps, type PatientFields } from "./patients-model";
+import { visitOps, type ServerVisit, type VisitFields } from "./visits-model";
 import {
   hasPending,
   type LocalRow,
@@ -31,6 +32,8 @@ export interface SyncApi {
   pullClients(afterSeq: number, limit: number): Promise<ServerRecord<ClientFields>[]>;
   pushPatients(changes: WireChange[]): Promise<PushResult[]>;
   pullPatients(afterSeq: number, limit: number): Promise<ServerRecord<PatientFields>[]>;
+  pushVisits(changes: WireChange[]): Promise<PushResult[]>;
+  pullVisits(afterSeq: number, limit: number): Promise<ServerVisit[]>;
 }
 
 export interface SyncOutcome {
@@ -80,6 +83,20 @@ const patientsTable: SyncTable<PatientFields> = {
       const ownerId = row.pending.clientId ?? row.server?.clientId;
       return ownerId === undefined || !unknownToServer.has(ownerId);
     };
+  },
+};
+
+const visitsTable: SyncTable<VisitFields> = {
+  table: (db) => db.visits,
+  ops: visitOps,
+  cursorKey: META_KEYS.visitsCursor,
+  push: (api, changes) => api.pushVisits(changes),
+  pull: (api, afterSeq, limit) => api.pullVisits(afterSeq, limit),
+  // A visit waits while its patient is still unknown to the server.
+  async readyToSend(db) {
+    const patients = await db.patients.toArray();
+    const unknownToServer = new Set(patients.filter((patient) => patient.server === null).map((patient) => patient.id));
+    return (row) => !unknownToServer.has(row.pending.patientId ?? row.server?.patientId ?? "");
   },
 };
 
@@ -210,20 +227,32 @@ export function syncPatients(db: LocalDatabase, organizationId: string, api: Syn
   return syncKind(db, patientsTable, organizationId, api);
 }
 
+export function syncVisits(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
+  return syncKind(db, visitsTable, organizationId, api);
+}
+
 /**
  * Everything, in dependency order: clients first, because a patient refers to
- * its owner and the server refuses a patient whose owner it does not know yet.
+ * its owner and the server refuses a patient whose owner it does not know yet; visits last, for the same reason.
  */
 export async function syncAll(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
   const clients = await syncClients(db, organizationId, api);
   if (clients.error) return clients;
 
   const patients = await syncPatients(db, organizationId, api);
-  return {
+  const upToPatients = {
     pushed: clients.pushed + patients.pushed,
     pulled: clients.pulled + patients.pulled,
     refused: clients.refused + patients.refused,
-    error: patients.error,
+  };
+  if (patients.error) return { ...upToPatients, error: patients.error };
+
+  const visits = await syncVisits(db, organizationId, api);
+  return {
+    pushed: upToPatients.pushed + visits.pushed,
+    pulled: upToPatients.pulled + visits.pulled,
+    refused: upToPatients.refused + visits.refused,
+    error: visits.error,
   };
 }
 
@@ -238,6 +267,7 @@ export async function countPending(db: LocalDatabase): Promise<SyncCounts> {
   const rows: { problem: string | null; pendingDelete: boolean; pending: object }[] = [
     ...(await db.clients.toArray()),
     ...(await db.patients.toArray()),
+    ...(await db.visits.toArray()),
   ];
   return {
     pending: rows.filter((row) => hasPending(row as LocalRow<object>) && !row.problem).length,

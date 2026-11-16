@@ -90,6 +90,15 @@ class FakeServer implements SyncApi {
     return [];
   }
 
+  // Visits have their own tests (`visits-store.test.ts`).
+  async pushVisits(): Promise<PushResult[]> {
+    return [];
+  }
+
+  async pullVisits(): Promise<never[]> {
+    return [];
+  }
+
   async pullClients(afterSeq: number, limit: number): Promise<ServerClient[]> {
     if (this.down) throw new SyncError("offline");
     this.pullCalls.push(afterSeq);

@@ -23,7 +23,6 @@ export default function DashboardPage() {
       </div>
 
       <DashboardOverview />
-      <p className="text-sm text-muted-foreground">{t("dashboard.visitsSoon")}</p>
     </>
   );
 }

@@ -119,6 +119,13 @@ describe("editing and deleting on the device", () => {
 
 /** A server that only records what it is sent, and refuses a patient whose owner it has not seen yet. */
 class OrderCheckingServer implements SyncApi {
+  async pushVisits(): Promise<PushResult[]> {
+    return [];
+  }
+  async pullVisits(): Promise<never[]> {
+    return [];
+  }
+
   clientIds = new Set<string>();
   patientIds = new Set<string>();
   log: string[] = [];

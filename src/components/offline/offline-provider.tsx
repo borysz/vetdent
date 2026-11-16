@@ -28,10 +28,20 @@ export interface OfflineContextValue {
   /** The subscription allows changes (not read-only mode). */
   canWrite: boolean;
   canDelete: boolean;
+  /** What the user may do with visits (treatment records); `write` also needs a full-access subscription. */
+  visitRights: VisitRights;
+  /** The user's own name with title, to prefill the treating vet; empty if unknown. */
+  userName: string;
   status: OfflineStatus;
   syncNow: () => Promise<void>;
   /** Sync shortly, e.g. after a local edit; several calls in a row make one round. */
   syncSoon: () => void;
+}
+
+export interface VisitRights {
+  write: boolean;
+  finalize: boolean;
+  reopen: boolean;
 }
 
 const OfflineContext = createContext<OfflineContextValue | null>(null);
@@ -64,10 +74,20 @@ interface OfflineProviderProps {
   organizationId: string;
   canWrite: boolean;
   canDelete: boolean;
+  visitRights: VisitRights;
+  userName: string;
   children: React.ReactNode;
 }
 
-export function OfflineProvider({ userId, organizationId, canWrite, canDelete, children }: OfflineProviderProps) {
+export function OfflineProvider({
+  userId,
+  organizationId,
+  canWrite,
+  canDelete,
+  visitRights,
+  userName,
+  children,
+}: OfflineProviderProps) {
   const online = useSyncExternalStore(
     subscribeOnline,
     () => navigator.onLine,
@@ -133,6 +153,8 @@ export function OfflineProvider({ userId, organizationId, canWrite, canDelete, c
       organizationId,
       canWrite,
       canDelete,
+      visitRights,
+      userName,
       status: {
         online,
         syncing,
@@ -144,7 +166,7 @@ export function OfflineProvider({ userId, organizationId, canWrite, canDelete, c
       syncNow,
       syncSoon,
     }),
-    [db, organizationId, canWrite, canDelete, online, syncing, counts, lastSyncAt, error, syncNow, syncSoon],
+    [db, organizationId, canWrite, canDelete, visitRights, userName, online, syncing, counts, lastSyncAt, error, syncNow, syncSoon],
   );
 
   return (

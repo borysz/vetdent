@@ -96,6 +96,13 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 **10. A Supabase-projekt a parancssori eszközben „production” jelöléssel szerepel.**
 - Ez a Supabase fő ágának neve, nem azt jelenti, hogy éles rendszer. Élesítéshez külön projekt kell (a kérdéslista H6 pontja); az integrációs teszteket éles projekten soha nem szabad futtatni.
 
+**11. A kezelési lap (7. fázis) böngészős próbája.** (2026-11-16)
+- Kipróbálva a böngészőpanelben (éles build): új vizit a páciens oldaláról, automatikus mentés, szinkron a szerverre, lezárás, újranyitás indoklással, piszkozat törlése. Nem próbáltam: offline szerkesztés a vizit lapján, két eszköz egyidejű szerkesztése, jogosultság nélküli felhasználó, telefonos és fekvő/álló tablet nézet.
+- A teljes oldalbetöltés a panelben itt is megakadt az `/app` alatt (lásd 18. pont): éles módban is, a szerver HTML-je hibátlan és teljes. Kliensoldali navigációval (`window.next.router.push`) minden működött. A hiba tehát nem a kezelési lapé, de a 18. pont továbbra is az első teendő.
+- A próba két naplóbejegyzést hagyott a fiók naplójában (`visit.finalized`, `visit.reopened`, indoklás: „Próba: a felület kipróbálása”); a naplóbejegyzések nem törölhetők.
+- Hátravan: az ütközések megjelenítése (a lezárt lapra érkező elutasított szerkesztések is ide kerülnek), a „ki van még a lapon” jelzés, a lezárási figyelmeztetések (az odontogram után).
+- Az `entitlements` integrációs teszt „14 napos próbaidő” ellenőrzése 14,00002 napot mért (határ: 14); a gép órája másodpercekkel eltér a szerverétől. Nem a kezelési laphoz tartozik; ha gyakran előfordul, a határt kerekíteni kell.
+
 ## A 2. fázisból nyitva maradt
 
 | Tétel | Mi kell hozzá |

@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { PatientEditor } from "@/components/patients/patient-editor";
+import { PatientVisits } from "@/components/visits/patient-visits";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("patients");
@@ -25,5 +26,10 @@ export default function EditPatientPage({ params }: PageProps<"/app/paciensek/[i
 
 async function Editor({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  return <PatientEditor id={id} />;
+  return (
+    <>
+      <PatientEditor id={id} />
+      <PatientVisits patientId={id} />
+    </>
+  );
 }

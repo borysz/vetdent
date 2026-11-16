@@ -201,12 +201,13 @@ export function recordOps<F extends object>(spec: RecordSpec<F>) {
         }
 
         // Keep showing what the user entered; the next pull replaces it with the server's copy.
+        // Whatever else the server told us about the record (for example its status) is kept.
         const merged = {
+          ...(row.server ?? spec.empty),
           id: row.id,
           seq: row.server?.seq ?? 0,
           deletedAt: row.server?.deletedAt ?? null,
           updatedAt: new Date(now).toISOString(),
-          ...(row.server ? pickFields(row.server) : spec.empty),
           ...row.pending,
           rev,
         } as ServerRecord<F>;

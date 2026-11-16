@@ -1,5 +1,5 @@
 import { OfflineProvider } from "@/components/offline/offline-provider";
-import { getEntitlements, getPermissions, requireActiveMembership } from "@/lib/auth/dal";
+import { getEntitlements, getPermissions, getProfile, requireActiveMembership } from "@/lib/auth/dal";
 
 /**
  * Gives the signed-in area its offline layer: the user, the organization and
@@ -8,14 +8,21 @@ import { getEntitlements, getPermissions, requireActiveMembership } from "@/lib/
  */
 export async function OfflineBoundary({ children }: { children: React.ReactNode }) {
   const { user, membership } = await requireActiveMembership();
-  const [permissions, entitlements] = await Promise.all([getPermissions(), getEntitlements()]);
+  const [permissions, entitlements, profile] = await Promise.all([getPermissions(), getEntitlements(), getProfile()]);
+  const fullAccess = entitlements?.access === "full";
 
   return (
     <OfflineProvider
       userId={user.id}
       organizationId={membership.organization.id}
-      canWrite={permissions.has("clients.write") && entitlements?.access === "full"}
-      canDelete={permissions.has("clients.delete") && entitlements?.access === "full"}
+      canWrite={permissions.has("clients.write") && fullAccess}
+      canDelete={permissions.has("clients.delete") && fullAccess}
+      visitRights={{
+        write: permissions.has("visits.write") && fullAccess,
+        finalize: permissions.has("visits.finalize") && fullAccess,
+        reopen: permissions.has("visits.reopen") && fullAccess,
+      }}
+      userName={profile ? [profile.title, profile.fullName].filter(Boolean).join(" ") : ""}
     >
       {children}
     </OfflineProvider>

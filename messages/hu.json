@@ -311,6 +311,146 @@
     "switchSubmit": "Váltás",
     "roleInOrganization": "{role} · {type}"
   },
+  "visits": {
+    "patientVisits": "Vizitek",
+    "noVisits": "Ennek a páciensnek még nincs kezelési lapja.",
+    "newVisit": "Új vizit",
+    "visitOn": "Vizit: {date}",
+    "withoutVet": "kezelőorvos nélkül",
+    "status": {
+      "draft": "Piszkozat",
+      "final": "Lezárt"
+    },
+    "readyBadge": "Lezárásra kész",
+    "editTitle": "Kezelési lap",
+    "back": "Vissza a páciensekhez",
+    "loading": "Betöltés az eszközről…",
+    "notFound": "Ez a kezelési lap nem található.",
+    "readOnlyAccount": "Az előfizetés lejárt, ezért a kezelési lap csak olvasható.",
+    "readOnlyRights": "Önnek nincs joga a kezelési lap szerkesztéséhez.",
+    "finalNotice": "A lap le van zárva, a tartalma nem módosítható. Módosítani csak újranyitással lehet.",
+    "finalizedAt": "Lezárva: {date}",
+    "problemInvalid": "A szerver nem fogadta el a lap egy módosítását. Ellenőrizze a mezőket, és javítsa a hibásat.",
+    "problemForbidden": "Ehhez a módosításhoz nincs jogosultsága, ezért a szerver nem fogadta el.",
+    "sectionNav": "A lap szekciói",
+    "sections": {
+      "header": "Páciens és vizit adatai",
+      "history": "Előzmények és indikáció",
+      "dental": "Fogászati státusz",
+      "procedures": "Beavatkozási és műtéti napló",
+      "aftercare": "Utókezelési terv és hazaadó lap"
+    },
+    "saveState": {
+      "saving": "Mentés az eszközre…",
+      "savedOnDevice": "Mentve az eszközön",
+      "synced": "Szinkronizálva"
+    },
+    "header": {
+      "owner": "Gazdi",
+      "patient": "Állat",
+      "species": "Faj",
+      "breed": "Fajta",
+      "age": "Kor",
+      "neutered": "Ivartalanított",
+      "yes": "igen",
+      "no": "nem",
+      "weight": "Törzsadat szerinti testtömeg",
+      "ageValue": "{years} év {months} hó",
+      "unknown": "nincs megadva"
+    },
+    "fields": {
+      "visitDate": "Vizit dátuma",
+      "veterinarianName": "Kezelőorvos",
+      "assistantName": "Asszisztens",
+      "asaStatus": "Anesztéziai státusz (ASA)",
+      "lastFedAt": "Utolsó etetés ideje",
+      "bloodSummary": "Előzetes vérvizsgálat röviden",
+      "weightKg": "Testtömeg a viziten (kg)",
+      "complaintTags": "Fő panasz",
+      "complaintNotes": "A panasz részletei",
+      "homeBrushing": "Fogmosás otthon (gyakoriság)",
+      "dietType": "Táp típusa",
+      "sutures": "Varratok típusa és leírása",
+      "feedingAdvice": "Táplálási javaslat a műtét utáni napokra",
+      "followUpDate": "Kontroll időpontja"
+    },
+    "choose": "Válasszon…",
+    "asaOption": "ASA {value}",
+    "tags": {
+      "halitosis": "Bűzös lehelet",
+      "tartar": "Fogkő",
+      "drooling": "Nyálzás",
+      "eating_difficulty": "Táplálkozási nehézség",
+      "pain": "Fájdalom jelzése"
+    },
+    "blocks": {
+      "title": "Helyi érzéstelenítő blokkok",
+      "empty": "Még nincs rögzített blokk.",
+      "nerve": "Ideg (pl. n. infraorbitalis)",
+      "side": "Oldal",
+      "agent": "Helyi érzéstelenítő",
+      "dose": "Adag",
+      "add": "Blokk hozzáadása",
+      "remove": "Blokk törlése",
+      "sides": {
+        "none": "nincs megadva",
+        "left": "bal",
+        "right": "jobb",
+        "both": "mindkét oldal"
+      }
+    },
+    "medications": {
+      "title": "Gyógyszeres terápia",
+      "empty": "Még nincs rögzített gyógyszer.",
+      "name": "Készítmény",
+      "dose": "Adag",
+      "frequency": "Gyakoriság",
+      "duration": "Időtartam",
+      "add": "Gyógyszer hozzáadása",
+      "remove": "Gyógyszer törlése"
+    },
+    "followUpHint": "Varrat esetén 10–14 nap múlvára javasolt kontrollt tűzni.",
+    "followUpSuggest": "Javaslat: 12 nap múlva",
+    "dentalSoon": "Az odontogram (fogképlet) a következő fázisban készül el; ide kerül majd a fogak állapota és a tasakmélység.",
+    "lifecycle": {
+      "finalize": "Lap lezárása",
+      "finalizeConfirm": "Lezárja a kezelési lapot? Lezárás után a tartalma csak újranyitással módosítható.",
+      "finalizing": "Lezárás…",
+      "offlineHint": "A lezáráshoz internetkapcsolat kell. Kapcsolat nélkül a lap „lezárásra kész” jelölést kaphat, és a kapcsolat visszatérésekor lezárható.",
+      "markReady": "Jelölés: lezárásra kész",
+      "unmarkReady": "A jelölés visszavonása",
+      "noRightHint": "A lezáráshoz szakmai jogosultság kell. A lapot „lezárásra kész” jelöléssel jelezheti a lezárásra jogosultnak.",
+      "reopen": "Újranyitás",
+      "reopenTitle": "A kezelési lap újranyitása",
+      "reopenBody": "Az újranyitás indoklása kötelező, és a naplóba kerül.",
+      "reopenReason": "Az újranyitás oka",
+      "reopenSubmit": "Újranyitom a lapot",
+      "reopening": "Újranyitás…",
+      "cancel": "Mégse",
+      "waitForSync": "Előbb a lap módosításait fel kell tölteni a szerverre. Próbálja újra néhány másodperc múlva.",
+      "readyOffer": "A lap „lezárásra kész”. Lezárja most?"
+    },
+    "lifecycleErrors": {
+      "offline": "Nincs kapcsolat a szerverrel; a lezáráshoz és az újranyitáshoz internet kell.",
+      "forbidden": "Ehhez nincs jogosultsága.",
+      "read_only": "Az előfizetés lejárt, ezért a fiók csak olvasható.",
+      "visit_not_found": "A kezelési lap nem található a szerveren. Lehet, hogy még nem töltődött fel.",
+      "already_final": "A lap már le van zárva.",
+      "not_final": "A lap nincs lezárva.",
+      "missing_required": "A lezáráshoz meg kell adni a kezelőorvost és az ASA-státuszt.",
+      "reason_required": "Adja meg az újranyitás okát (legalább 3 karakter).",
+      "unknown": "Hiba történt. Próbálja újra később."
+    },
+    "delete": "Piszkozat törlése",
+    "deleteConfirm": "Biztosan törli ezt a piszkozatot? A művelet nem vonható vissza.",
+    "validation": {
+      "dateInvalid": "Adjon meg valós dátumot (legfeljebb holnapig).",
+      "weightInvalid": "A testtömeg 0 és 200 kg közötti szám legyen.",
+      "dateTimeInvalid": "Adjon meg valós dátumot és időt.",
+      "followUpInvalid": "Adjon meg valós dátumot (legfeljebb két évre előre).",
+      "tooLong": "A szöveg túl hosszú."
+    }
+  },
   "dashboard": {
     "title": "Irányítópult",
     "welcome": "Üdvözöljük, {name}!",
@@ -320,7 +460,8 @@
     "patientsCount": "Páciensek",
     "recentPatients": "Legutóbbi páciensek",
     "recentEmpty": "Még nincs páciens. Vegyen fel egy gazdit, majd az állatát.",
-    "visitsSoon": "A mai vizitek és a félbehagyott kezelési lapok a kezelési lap elkészültével itt jelennek majd meg."
+    "drafts": "Félbehagyott kezelési lapok",
+    "draftsEmpty": "Nincs félbehagyott kezelési lap."
   },
   "nav": {
     "label": "Fő navigáció",
@@ -468,6 +609,10 @@
         "removed": "Eltávolított egy munkatársat",
         "left": "Kilépett a fiókból"
       },
+      "visit": {
+        "finalized": "Lezárt egy kezelési lapot",
+        "reopened": "Újranyitott egy kezelési lapot"
+      },
       "auth": {
         "sign_in": "Bejelentkezett",
         "sign_out": "Kijelentkezett",
@@ -480,7 +625,8 @@
     "details": {
       "invitation": "{email} · {role}",
       "roleChange": "{from} → {to}",
-      "fields": "Módosított mezők: {fields}"
+      "fields": "Módosított mezők: {fields}",
+      "reopenReason": "Indoklás: {reason}"
     },
     "fields": {
       "name": "név",

@@ -110,6 +110,26 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | A testtömeg a páciens aktuális értéke; a mérések előzményei (idővonal) a kezelési lapokhoz kapcsolódnak, még nem készültek el. | A prompt a lapon rögzített testtömegről beszél. | 7. fázis |
 | A testtömeg tizedesvesszővel és ponttal is megadható; két tizedesre kerekítve tárolódik. | Magyar felhasználók vesszőt írnak. | `parsePatientForm` |
 
+## Kezelési lap (7. fázis)
+
+| Döntés | Indok | Mit érint, ha változik |
+|---|---|---|
+| A vizit ugyanazt a szinkronszerződést és eszközoldali szabálykészletet használja, mint a gazdi és a páciens (`visits-model.ts`, `sync_push_visits`). | Egy megoldás, ami már be van próbálva; a mezőszintű összefésülés és az ütközések rögzítése ingyen jár. | – |
+| A lista jellegű részek (fő panasz címkéi, helyi blokkok, gyógyszerek) a szinkronban **JSON-szövegként** utaznak, egyetlen mezőként; az adatbázisban `jsonb`. A szöveg kanonikus (fix kulcssorrend, a címkék a katalógus sorrendjében), hogy az azonos tartalom azonos szöveg legyen. | A szinkronprotokoll csak skalárt visz, és a „változott-e” döntés egyenlőségvizsgálat. Hátrány: két eszköz ugyanazon lista két különböző soráról a teljes listára ütközik (az utolsó írás nyer, a másik az ütközések közé kerül). | `visit-lists.ts`, `clean_visit_field` |
+| A **lezárás és az újranyitás nem része a szinkronnak**: külön adatbázis-függvény (`finalize_visit`, `reopen_visit`), csak online, szerveren ellenőrzött jogosultsággal (`visits.finalize`, `visits.reopen`), naplózva (`visit.finalized`, `visit.reopened`). | A prompt 8.11 pontja. Az eszköz a lezárt állapotot lehívással tudja meg. | – |
+| Újranyitáshoz indoklás kell (3–500 karakter), amely a naplóba kerül. | A prompt: „indoklás kötelező, naplózott”. | `reopen_visit` |
+| A **lezárt vizit nem szerkeszthető**. Ha olyan eszközről érkezik szerkesztés, amely a lezárás idején offline volt, a szerver **nem alkalmazza**, de a `sync_conflicts` táblába menti (az eszköz értéke „felülírt”, a lezárt lap értéke „érvényes”), és „változatlan”-nak nyugtázza, hogy az eszközön ne maradjon örökké függő szerkesztés. | Adat csendben nem veszhet el, de a lezárt tartalmat sem szabad megváltoztatni. Az ütközések megjelenítése a felületen még hátravan. | `sync_push_visits` |
+| Lezárt vizit eszközről nem törölhető (`forbidden`); piszkozat igen. | A lezárt lap a kórlap része. | `sync_push_visits` |
+| Lezáráskor kötelező: kezelőorvos neve és ASA-státusz. A vizit dátuma az adatbázisban mindig kötelező. | A prompt 8.11 pontja. A „tervezett, de el nem végzett beavatkozás” figyelmeztetés az odontogram után készül. | `finalize_visit` |
+| A **kezelőorvos és az asszisztens szabad szöveg**, a vizit létrehozásakor a belépett felhasználó neve kerül a kezelőorvos mezőbe, ha lezárási joga van. | A prompt „a szervezet állatorvosai közül” választást kér; ehhez a munkatársak listáját az eszközre is le kellene tölteni. Nem sürgős, a lap használható nélküle. | `PatientVisits` |
+| Az utolsó etetés ideje **zóna nélküli időpont** (`timestamp`), a rendelő helyi ideje. | A nap eseménye, nem abszolút időpont; így a kliens és a szerver szövege egyezik. | `visits.last_fed_at` |
+| A páciens a vizit létrehozása után nem változtatható; csak a saját rendelő élő páciense választható. | Idegen fiók adatához ne lehessen kapcsolódni. | `sync_push_visits` |
+| A kezelési lap **automatikusan ment** az eszközre (fél másodperc gépelés-szünet után) és elhagyáskor is; a fejléc mutatja a „mentve az eszközön” / „szinkronizálva” állapotot. | A prompt 8.2 pontja. | `VisitEditor` |
+| Lezárás előtt a felület kényszeríti a feltöltést (`flush` + `syncNow`); ha a lap módosításai nem jutnak el a szerverre, nem zár. | Különben a lezárt példány hiányozna a legutóbbi módosításokból. | `Lifecycle` |
+| Offline vagy lezárási jog nélkül a lap „lezárásra kész” jelölést kaphat; ez szinkronizálódik, a jogosult látja. | A prompt 8.11 pontja. A kapcsolat visszatérésekor a lezárás felajánlása a jelölésnél jelenik meg. | `readyToFinalize` |
+| A „ki van még a lapon” (egyidejű szerkesztők jelzése) **nem készült el**. | Valós idejű jelenléthez külön csatorna kell; mezőszintű összefésülés és ütközésrögzítés viszont van. | Nyitott kérdés |
+| A fogászati státusz (C szekció) helye a lapon jelölve van, tartalma a 8. fázisban (odontogram) készül. | A váz a 7. fázis feladata. | 8. fázis |
+
 ## Szakmai tartalom
 
 | Döntés | Indok | Mit érint, ha változik |

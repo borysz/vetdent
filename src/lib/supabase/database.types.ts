@@ -713,6 +713,144 @@ export type Database = {
           },
         ]
       }
+      visits: {
+        Row: {
+          anesthesia_blocks: Json
+          asa_status: number | null
+          assistant_name: string | null
+          blood_summary: string | null
+          complaint_notes: string | null
+          complaint_tags: Json
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          diet_type: string | null
+          feeding_advice: string | null
+          field_revs: Json
+          finalized_at: string | null
+          finalized_by: string | null
+          follow_up_date: string | null
+          home_brushing: string | null
+          id: string
+          last_fed_at: string | null
+          medications: Json
+          organization_id: string
+          patient_id: string
+          ready_to_finalize: boolean
+          rev: number
+          seq: number
+          status: Database["public"]["Enums"]["visit_status"]
+          sutures: string | null
+          updated_at: string
+          updated_by: string | null
+          veterinarian_name: string | null
+          visit_date: string
+          weight_kg: number | null
+        }
+        Insert: {
+          anesthesia_blocks?: Json
+          asa_status?: number | null
+          assistant_name?: string | null
+          blood_summary?: string | null
+          complaint_notes?: string | null
+          complaint_tags?: Json
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          diet_type?: string | null
+          feeding_advice?: string | null
+          field_revs?: Json
+          finalized_at?: string | null
+          finalized_by?: string | null
+          follow_up_date?: string | null
+          home_brushing?: string | null
+          id: string
+          last_fed_at?: string | null
+          medications?: Json
+          organization_id: string
+          patient_id: string
+          ready_to_finalize?: boolean
+          rev?: number
+          seq?: number
+          status?: Database["public"]["Enums"]["visit_status"]
+          sutures?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          veterinarian_name?: string | null
+          visit_date: string
+          weight_kg?: number | null
+        }
+        Update: {
+          anesthesia_blocks?: Json
+          asa_status?: number | null
+          assistant_name?: string | null
+          blood_summary?: string | null
+          complaint_notes?: string | null
+          complaint_tags?: Json
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          diet_type?: string | null
+          feeding_advice?: string | null
+          field_revs?: Json
+          finalized_at?: string | null
+          finalized_by?: string | null
+          follow_up_date?: string | null
+          home_brushing?: string | null
+          id?: string
+          last_fed_at?: string | null
+          medications?: Json
+          organization_id?: string
+          patient_id?: string
+          ready_to_finalize?: boolean
+          rev?: number
+          seq?: number
+          status?: Database["public"]["Enums"]["visit_status"]
+          sutures?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          veterinarian_name?: string | null
+          visit_date?: string
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visits_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visits_finalized_by_fkey"
+            columns: ["finalized_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visits_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visits_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visits_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -744,6 +882,10 @@ export type Database = {
           p_type: Database["public"]["Enums"]["organization_type"]
         }
         Returns: string
+      }
+      finalize_visit: {
+        Args: { p_organization_id: string; p_visit_id: string }
+        Returns: undefined
       }
       get_invitation: {
         Args: { p_token: string }
@@ -806,6 +948,14 @@ export type Database = {
       }
       my_permissions: { Args: { p_organization_id: string }; Returns: string[] }
       remove_member: { Args: { p_membership_id: string }; Returns: undefined }
+      reopen_visit: {
+        Args: {
+          p_organization_id: string
+          p_reason: string
+          p_visit_id: string
+        }
+        Returns: undefined
+      }
       resolve_sync_conflict: {
         Args: { p_conflict_id: number }
         Returns: undefined
@@ -829,6 +979,10 @@ export type Database = {
         Args: { p_changes: Json; p_organization_id: string }
         Returns: Json
       }
+      sync_push_visits: {
+        Args: { p_changes: Json; p_organization_id: string }
+        Returns: Json
+      }
       update_member: {
         Args: {
           p_is_clinician?: boolean
@@ -846,6 +1000,7 @@ export type Database = {
       plan_audience: "clinic" | "individual"
       species: "dog" | "cat"
       subscription_status: "trialing" | "active" | "past_due" | "canceled"
+      visit_status: "draft" | "final"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -980,6 +1135,7 @@ export const Constants = {
       plan_audience: ["clinic", "individual"],
       species: ["dog", "cat"],
       subscription_status: ["trialing", "active", "past_due", "canceled"],
+      visit_status: ["draft", "final"],
     },
   },
 } as const

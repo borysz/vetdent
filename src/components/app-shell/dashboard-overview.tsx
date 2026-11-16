@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import { useRequiredOffline } from "@/components/offline/offline-provider";
 import { buttonVariants } from "@/components/ui/button";
 import { recentPatients } from "@/lib/offline/patients-store";
-import { patientPath, routes } from "@/lib/routes";
+import { listDraftVisits } from "@/lib/offline/visits-store";
+import { patientPath, routes, visitPath } from "@/lib/routes";
 
 /** Counts and the most recently touched patients, read from the device so it works offline. */
 export function DashboardOverview() {
@@ -21,7 +22,8 @@ export function DashboardOverview() {
       db.patients.where("organizationId").equals(organizationId).filter((row) => !row.pendingDelete && !row.server?.deletedAt).count(),
       recentPatients(db, organizationId, 5),
     ]);
-    return { clients, patients, recent };
+    const drafts = await listDraftVisits(db, organizationId, 5);
+    return { clients, patients, recent, drafts };
   }, [db, organizationId]);
 
   if (!overview) return <p className="text-muted-foreground">{t("loadingOverview")}</p>;
@@ -38,6 +40,29 @@ export function DashboardOverview() {
           <dd className="text-3xl font-semibold">{overview.patients}</dd>
         </Link>
       </dl>
+
+      <section aria-labelledby="draft-visits" className="flex flex-col gap-3">
+        <h2 id="draft-visits" className="text-xl font-semibold">
+          {t("drafts")}
+        </h2>
+        {overview.drafts.length === 0 ? (
+          <p className="text-muted-foreground">{t("draftsEmpty")}</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {overview.drafts.map((visit) => (
+              <li key={visit.id}>
+                <Link
+                  href={visitPath(visit.id)}
+                  className="flex min-h-touch flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl border bg-card px-4 py-2 hover:bg-accent/40"
+                >
+                  <span className="font-semibold">{visit.patientName || tPatients("ownerUnknown")}</span>
+                  <span className="text-sm text-muted-foreground">{visit.visitDate}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <section aria-labelledby="recent-patients" className="flex flex-col gap-3">
         <h2 id="recent-patients" className="text-xl font-semibold">
