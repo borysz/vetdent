@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { isAuthRetryableFetchError } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 import { publicEnv } from "@/lib/env";
 import type { Database } from "./database.types";
@@ -13,6 +14,7 @@ import type { Database } from "./database.types";
 export async function updateSession(request: NextRequest): Promise<{
   response: NextResponse;
   isSignedIn: boolean;
+  authUnreachable: boolean;
 }> {
   let response = NextResponse.next({ request });
 
@@ -43,7 +45,12 @@ export async function updateSession(request: NextRequest): Promise<{
 
   // Verifies the token signature and refreshes it when needed. Do not run
   // other code between creating the client and this call.
-  const { data } = await supabase.auth.getClaims();
+  const { data, error } = await supabase.auth.getClaims();
 
-  return { response, isSignedIn: Boolean(data?.claims) };
+  return {
+    response,
+    isSignedIn: Boolean(data?.claims),
+    // Could not ask the auth server: the answer to "signed in?" is unknown, not "no".
+    authUnreachable: Boolean(error && isAuthRetryableFetchError(error)),
+  };
 }

@@ -207,6 +207,11 @@
       "molar": "zápfog"
     }
   },
+  "errorPage": {
+    "title": "Az oldal most nem tölthető be",
+    "body": "A szerver nem válaszolt. A mentetlen változásai az eszközön biztonságban vannak. Próbálja újra, vagy ellenőrizze az internetkapcsolatot.",
+    "retry": "Újrapróbálom"
+  },
   "notFound": {
     "title": "Az oldal nem található",
     "body": "A keresett oldal nem létezik, vagy áthelyezték.",

@@ -74,6 +74,15 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Kérés: nyisd meg a böngészőpanelt, vagy próbáld ki te: bejelentkezés → Gazdik → új gazdi felvétele → a böngésző fejlesztői eszközeiben „Offline” mód → szerkesztés → újra online, és nézd meg, feltöltődik-e a változás.
 - Válasz:
 
+**18. MEGOLDANDÓ: a teljes oldalbetöltés időnként nem „éled fel” a fejlesztői környezetben.** (2026-11-16)
+- Tünet: frissítés után (pl. `/app/paciensek`, `/app`, `/app/gazdik`) az oldal a „Betöltés az eszközről…” szövegnél marad, mert a React nem kapcsolja át interaktívra (a `div#S:0` stream-szegmens rejtve marad, a header/menü elemein nincs React-kötés). Menüből kattintva minden működik.
+- Mért adatok: a fejlesztői szerver naplójában `AuthRetryableFetchError: fetch failed` hibák; a böngészőben „The server could not finish this Suspense boundary… Switched to client rendering” és „Router action dispatched before initialization”. Külön Node-szkript ugyanarról a gépről 12/12 alkalommal elérte a Supabase-t (30–110 ms). A szerveroldali renderelés 300–500 ms alatt lefut.
+- Gyanúk: (1) a panel által indított szerverfolyamat környezete; (2) a céges hálózati védelem (Sophos) szakaszos beavatkozása; (3) munkamenet-frissítés (`getClaims`) hibája a szerveroldali renderben. Közös nevező, hogy a szerveroldali Supabase-hívás hibája a teljes `OfflineBoundary` Suspense-határt elrontja.
+- Próba: `npm run dev` a saját terminálban, majd `http://localhost:3000/app/paciensek` frissítése. Ha ott működik, a hiba a panel környezetében van.
+- Részben megoldva (2026-11-16): ha a szerver nem éri el az auth szervert, az már nem számít „nincs bejelentkezve”-nek (nem dob ki a belépési oldalra, a proxy sem irányít át), hanem hibaoldal jelenik meg „Újrapróbálom” gombbal (`src/app/app/error.tsx`). Ez a tünetet szelídíti, az okot nem szünteti meg.
+- Még hátravan: a kliensoldali offline réteg a szervertől függetlenül is induljon el (service worker, 5. fázis maradéka), és az ok kiderítése a fenti próbával.
+- Válasz:
+
 ## Tudnivaló, teendő nélkül is rendben van
 
 **8. Az `npm audit` 7 közepes súlyosságú sérülékenységet jelez a függőségekben.**

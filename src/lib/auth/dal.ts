@@ -1,4 +1,5 @@
 import "server-only";
+import { isAuthRetryableFetchError } from "@supabase/supabase-js";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -54,6 +55,12 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.getClaims();
+  // "The auth server could not be reached" is not "nobody is signed in": treating it that way
+  // would bounce a signed-in user to the login page over a network hiccup. Fail the render
+  // instead, so the error page (with a retry button) is shown.
+  if (error && isAuthRetryableFetchError(error)) {
+    throw new Error("The authentication server could not be reached");
+  }
   if (error || !data?.claims) return null;
 
   const { sub, email } = data.claims;

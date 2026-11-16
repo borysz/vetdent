@@ -20,7 +20,11 @@ Tabletre tervezett, előfizetéses webalkalmazás kutyák és macskák fogászat
 
 A döntések és az eltérések a tervtől a [`docs/DONTESEK.md`](docs/DONTESEK.md) fájlban, a menet közben felmerült kérdések a [`docs/NYITOTT_KERDESEK.md`](docs/NYITOTT_KERDESEK.md) fájlban vannak.
 
-### A 3. fázis tartalma
+### Ismert, megoldandó hibák
+
+- **Teljes oldalbetöltés időnként nem aktiválódik a fejlesztői környezetben** – részletek és próbalépések: [`docs/NYITOTT_KERDESEK.md`](docs/NYITOTT_KERDESEK.md) 18. pont.
+
+## A 3. fázis tartalma
 
 - **Jogosultságkulcsok:** a kód jogosultságot ellenőriz (pl. `members.manage`), nem szerepkört. Hogy melyik szerepkör mit tehet, az adatbázis `permissions` és `role_permissions` táblája mondja meg; ebből olvas az alkalmazás és az adatbázis sorszintű védelme is.
 - **Szerepkörök oldal:** csak olvasható áttekintés arról, melyik szerepkör mit tehet.

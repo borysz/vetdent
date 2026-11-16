@@ -11,8 +11,12 @@ import { updateSession } from "@/lib/supabase/proxy";
  * row level security.
  */
 export async function proxy(request: NextRequest) {
-  const { response, isSignedIn } = await updateSession(request);
+  const { response, isSignedIn, authUnreachable } = await updateSession(request);
   const { pathname, search } = request.nextUrl;
+
+  // If the auth server cannot be reached we do not know whether the user is signed in.
+  // Redirecting would log them out of view over a network hiccup; let the page decide.
+  if (authUnreachable) return response;
 
   const redirectTo = (path: string, next?: string) => {
     const url = request.nextUrl.clone();
