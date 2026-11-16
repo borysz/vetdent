@@ -19,6 +19,7 @@ export const DB_ERROR_KEYS = [
   "email_not_confirmed",
   "member_not_found",
   "last_owner",
+  "mfa_required",
 ] as const;
 
 export type DbErrorKey = (typeof DB_ERROR_KEYS)[number] | "unknown";

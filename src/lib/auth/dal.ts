@@ -21,6 +21,13 @@ export type OrganizationType = Database["public"]["Enums"]["organization_type"];
 export interface CurrentUser {
   readonly id: string;
   readonly email: string;
+  /**
+   * The user has two-step verification switched on, but this session has only
+   * passed the password step. Such a session may do nothing but complete the
+   * challenge. (The database refuses its requests too – this flag only decides
+   * where to send the user.)
+   */
+  readonly mfaPending: boolean;
 }
 
 export interface Membership {
@@ -50,20 +57,27 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const { sub, email } = data.claims;
   if (typeof sub !== "string" || sub.length === 0) return null;
 
-  return { id: sub, email: typeof email === "string" ? email : "" };
+  const { data: assurance } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  const mfaPending = assurance?.nextLevel === "aal2" && assurance.currentLevel !== "aal2";
+
+  return { id: sub, email: typeof email === "string" ? email : "", mfaPending };
 });
 
-/** Like `getCurrentUser`, but sends anonymous visitors to the login page. */
+/**
+ * Like `getCurrentUser`, but sends anonymous visitors to the login page and
+ * half-verified sessions to the two-step challenge.
+ */
 export async function requireUser(): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user) redirect(routes.login);
+  if (user.mfaPending) redirect(routes.mfaChallenge);
   return user;
 }
 
 /** The user's active memberships, oldest first. Suspended ones are left out. */
 export const getMemberships = cache(async (): Promise<readonly Membership[]> => {
   const user = await getCurrentUser();
-  if (!user) return [];
+  if (!user || user.mfaPending) return [];
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -112,7 +126,7 @@ export interface Profile {
 /** The signed-in user's own profile; `null` when not signed in. */
 export const getProfile = cache(async (): Promise<Profile | null> => {
   const user = await getCurrentUser();
-  if (!user) return null;
+  if (!user || user.mfaPending) return null;
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase

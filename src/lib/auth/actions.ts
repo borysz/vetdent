@@ -43,7 +43,15 @@ export async function signInAction(_previous: FormState, formData: FormData): Pr
     return { status: "error", message: t(`errors.${authErrorKey(error)}`), values };
   }
 
-  redirect(safeNextPath(field(formData, "next")));
+  const next = safeNextPath(field(formData, "next"));
+
+  // With two-step verification switched on, the password is only the first step.
+  const { data: assurance } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assurance?.nextLevel === "aal2" && assurance.currentLevel !== "aal2") {
+    redirect(`${routes.mfaChallenge}?next=${encodeURIComponent(next)}`);
+  }
+
+  redirect(next);
 }
 
 export async function signUpAction(_previous: FormState, formData: FormData): Promise<FormState> {
@@ -59,13 +67,16 @@ export async function signUpAction(_previous: FormState, formData: FormData): Pr
     };
   }
 
+  // Where to continue after the e-mail is confirmed (e.g. back to an invitation).
+  const next = safeNextPath(field(formData, "next"), routes.onboarding);
+
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.fullName },
-      emailRedirectTo: callbackUrl(routes.onboarding),
+      emailRedirectTo: callbackUrl(next),
     },
   });
 
@@ -79,7 +90,7 @@ export async function signUpAction(_previous: FormState, formData: FormData): Pr
 
   // If e-mail confirmation is switched off in the project, we are signed in already.
   if (data.session) {
-    redirect(routes.onboarding);
+    redirect(next);
   }
 
   return { status: "success" };

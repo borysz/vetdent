@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/auth/auth-card";
@@ -27,7 +28,10 @@ export default function SignUpPage() {
         </p>
       }
     >
-      <SignUpForm />
+      {/* The form reads the URL (?next=), which is only known at request time. */}
+      <Suspense fallback={null}>
+        <SignUpForm />
+      </Suspense>
     </AuthCard>
   );
 }

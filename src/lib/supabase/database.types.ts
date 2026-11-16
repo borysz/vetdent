@@ -247,6 +247,20 @@ export type Database = {
           state: string
         }[]
       }
+      list_members: {
+        Args: { p_organization_id: string }
+        Returns: {
+          email: string
+          full_name: string
+          is_clinician: boolean
+          joined_at: string
+          membership_id: string
+          role: Database["public"]["Enums"]["member_role"]
+          status: Database["public"]["Enums"]["member_status"]
+          title: string
+          user_id: string
+        }[]
+      }
       remove_member: { Args: { p_membership_id: string }; Returns: undefined }
       revoke_invitation: {
         Args: { p_invitation_id: string }

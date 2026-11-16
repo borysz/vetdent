@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { AccountMenu } from "@/components/app-shell/account-menu";
+import { MainNav } from "@/components/app-shell/main-nav";
 import { ConnectivityStatus } from "@/components/connectivity-status";
 import { routes } from "@/lib/routes";
 
@@ -27,6 +28,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </Suspense>
         </div>
       </header>
+      {/* Reads the current path, which is request-time data during prerendering. */}
+      <Suspense fallback={<div className="h-touch border-b bg-card" />}>
+        <MainNav />
+      </Suspense>
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6">{children}</main>
     </>
   );

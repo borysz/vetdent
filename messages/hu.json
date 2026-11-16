@@ -165,6 +165,115 @@
     "emptyTitle": "Itt még nincs mit mutatni",
     "emptyBody": "A mai vizitek, a félbehagyott kezelési lapok és a legutóbbi páciensek itt jelennek majd meg."
   },
+  "nav": {
+    "label": "Fő navigáció",
+    "dashboard": "Irányítópult",
+    "members": "Munkatársak",
+    "organization": "Fiók adatai",
+    "profile": "Profil"
+  },
+  "members": {
+    "title": "Munkatársak",
+    "lead": "A fiók tagjai és a függőben lévő meghívók.",
+    "individualTitle": "Egyéni fiókban nincsenek munkatársak",
+    "individualBody": "Munkatársak meghívásához a fiókot rendelővé kell alakítani. Ez az előfizetés beállításainál lesz elérhető.",
+    "readOnlyNote": "A munkatársak kezeléséhez tulajdonosi vagy admin szerepkör kell.",
+    "you": "Ön",
+    "noName": "(nincs megadva név)",
+    "roleLabel": "Szerepkör",
+    "clinician": "Állatorvosként is dolgozik",
+    "statuses": {
+      "active": "Aktív",
+      "suspended": "Felfüggesztve"
+    },
+    "save": "Mentés",
+    "suspend": "Felfüggesztés",
+    "reactivate": "Visszaállítás",
+    "remove": "Eltávolítás",
+    "leave": "Kilépés a fiókból",
+    "removeConfirm": "Biztosan megszünteti a hozzáférését? A korábban rögzített adatai megmaradnak.",
+    "leaveConfirm": "Biztosan kilép ebből a fiókból?",
+    "inviteTitle": "Munkatárs meghívása",
+    "inviteLead": "A meghívó 7 napig érvényes, és csak a megadott e-mail-címmel fogadható el.",
+    "inviteSubmit": "Meghívó létrehozása",
+    "inviteCreatedTitle": "A meghívó elkészült",
+    "inviteCreatedBody": "Az e-mail-küldés még nincs beállítva, ezért a hivatkozást Önnek kell eljuttatnia a meghívottnak ({email}). A hivatkozás csak most látható.",
+    "copy": "Hivatkozás másolása",
+    "copied": "Kimásolva",
+    "pendingTitle": "Függőben lévő meghívók",
+    "pendingEmpty": "Nincs függőben lévő meghívó.",
+    "expires": "Lejár: {date}",
+    "revoke": "Visszavonás",
+    "revokeConfirm": "Biztosan visszavonja a meghívót?",
+    "validation": {
+      "emailInvalid": "Érvényes e-mail-címet adjon meg.",
+      "roleInvalid": "Válasszon szerepkört."
+    }
+  },
+  "invitation": {
+    "title": "Meghívó",
+    "pending": "{organization} meghívta Önt {role} szerepkörbe.",
+    "forEmail": "A meghívó erre a címre szól: {email}",
+    "accept": "Meghívó elfogadása",
+    "needAccount": "Az elfogadáshoz jelentkezzen be, vagy regisztráljon ezzel az e-mail-címmel.",
+    "wrongAccount": "Ön jelenleg másik címmel ({current}) van bejelentkezve. Jelentkezzen ki, és lépjen be a meghívott címmel.",
+    "states": {
+      "notFound": "A meghívó nem található. Ellenőrizze a hivatkozást.",
+      "accepted": "Ezt a meghívót már elfogadták.",
+      "revoked": "Ezt a meghívót visszavonták.",
+      "expired": "A meghívó lejárt. Kérjen újat a fiók tulajdonosától."
+    },
+    "toApp": "Tovább az alkalmazásba"
+  },
+  "profile": {
+    "title": "Profil",
+    "detailsTitle": "Személyes adatok",
+    "emailLabel": "E-mail-cím",
+    "titleField": "Titulus",
+    "titleHint": "Például: dr.",
+    "save": "Mentés",
+    "saved": "Elmentve.",
+    "passwordTitle": "Jelszó módosítása",
+    "passwordSubmit": "Jelszó módosítása",
+    "passwordSaved": "A jelszó megváltozott.",
+    "sessionsTitle": "Munkamenetek",
+    "sessionsBody": "Ha más eszközön is be van jelentkezve, ott egy lépésben megszüntetheti a bejelentkezést.",
+    "signOutOthers": "Kijelentkezés minden más eszközről",
+    "signedOutOthers": "A többi eszközön megszűnt a bejelentkezés.",
+    "validation": {
+      "fullNameRequired": "Adja meg a nevét.",
+      "tooLong": "A megadott érték túl hosszú."
+    }
+  },
+  "mfa": {
+    "title": "Kétlépcsős azonosítás",
+    "offBody": "Bekapcsolás után bejelentkezéskor a jelszó mellett egy hitelesítő alkalmazás 6 jegyű kódját is kérjük.",
+    "onBody": "A kétlépcsős azonosítás be van kapcsolva.",
+    "start": "Bekapcsolás",
+    "scan": "Olvassa be a QR-kódot a hitelesítő alkalmazásával, majd adja meg a megjelenő 6 jegyű kódot.",
+    "qrAlt": "QR-kód a hitelesítő alkalmazáshoz",
+    "secretLabel": "Ha nem tudja beolvasni, ezt a kulcsot írja be kézzel:",
+    "code": "6 jegyű kód",
+    "confirm": "Megerősítés",
+    "cancel": "Mégse",
+    "disable": "Kikapcsolás",
+    "disableConfirm": "Biztosan kikapcsolja a kétlépcsős azonosítást?",
+    "challengeTitle": "Kétlépcsős azonosítás",
+    "challengeLead": "Adja meg a hitelesítő alkalmazásában látható 6 jegyű kódot.",
+    "challengeSubmit": "Belépés",
+    "errors": {
+      "codeFormat": "A kód 6 számjegyből áll.",
+      "codeInvalid": "A kód hibás vagy lejárt. Próbálja újra.",
+      "generic": "Hiba történt. Próbálja újra később."
+    }
+  },
+  "organization": {
+    "title": "Fiók adatai",
+    "typeLabel": "Fióktípus",
+    "save": "Mentés",
+    "saved": "Elmentve.",
+    "readOnlyNote": "A fiók adatait tulajdonos vagy admin módosíthatja."
+  },
   "roles": {
     "owner": "Tulajdonos",
     "admin": "Admin",
@@ -193,6 +302,7 @@
     "email_not_confirmed": "Előbb erősítse meg az e-mail-címét.",
     "member_not_found": "A munkatárs nem található.",
     "last_owner": "A fióknak legalább egy aktív tulajdonosa kell legyen.",
+    "mfa_required": "A művelethez kétlépcsős azonosítás szükséges. Jelentkezzen be újra.",
     "unknown": "Hiba történt. Próbálja újra később."
   }
 }

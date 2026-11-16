@@ -8,11 +8,26 @@ export const routes = {
   authCallback: "/auth/callback",
   authConfirm: "/auth/confirm",
   onboarding: "/kezdes",
+  mfaChallenge: "/ketlepcsos",
+  invitation: "/meghivo",
   app: "/app",
+  members: "/app/munkatarsak",
+  organization: "/app/fiok",
+  profile: "/app/profil",
 } as const;
 
+/** Path of the page where an invitation is shown and accepted. */
+export function invitationPath(token: string): string {
+  return `${routes.invitation}/${token}`;
+}
+
 /** Signed-in users only; everyone else is sent to the login page. */
-export const protectedPrefixes: readonly string[] = [routes.app, routes.onboarding, routes.newPassword];
+export const protectedPrefixes: readonly string[] = [
+  routes.app,
+  routes.onboarding,
+  routes.newPassword,
+  routes.mfaChallenge,
+];
 
 /** Pages that make no sense once signed in. */
 export const guestOnlyPaths: readonly string[] = [routes.login, routes.signUp, routes.forgotPassword];

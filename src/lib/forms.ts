@@ -17,7 +17,12 @@ export type FormState =
       fieldErrors?: Readonly<Record<string, string>>;
       values?: Readonly<Record<string, string>>;
     }
-  | { status: "success"; message?: string };
+  | {
+      status: "success";
+      message?: string;
+      /** Extra, non-secret values the form needs to show the result. */
+      data?: Readonly<Record<string, string>>;
+    };
 
 export const initialFormState: FormState = { status: "idle" };
 
