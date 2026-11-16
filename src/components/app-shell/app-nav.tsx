@@ -14,6 +14,7 @@ export async function AppNav() {
 
   const items: NavItem[] = [
     { href: routes.app, label: t("dashboard"), exact: true },
+    { href: routes.clients, label: t("clients") },
     { href: routes.members, label: t("members") },
     { href: routes.organization, label: t("organization") },
   ];

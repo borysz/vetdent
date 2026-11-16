@@ -12,7 +12,61 @@
     "online": "Online",
     "offline": "Nincs kapcsolat",
     "onlineHint": "Az eszköz kapcsolódik a hálózathoz.",
-    "offlineHint": "Az eszköz jelenleg nem éri el a hálózatot."
+    "offlineHint": "Az eszköz jelenleg nem éri el a hálózatot.",
+    "syncing": "Szinkronizálás…",
+    "synced": "Szinkronizálva",
+    "pending": "{count, plural, one {1 függő változás} other {# függő változás}}",
+    "problems": "{count, plural, one {1 elutasított változás} other {# elutasított változás}}",
+    "lastSync": "Utolsó szinkron: {time}",
+    "neverSynced": "Még nem volt szinkron",
+    "syncNow": "Szinkronizálás most",
+    "savedOnDevice": "A változások az eszközön mentve vannak, és a kapcsolat visszatérésekor feltöltődnek.",
+    "errors": {
+      "offline": "A szerver nem érhető el.",
+      "read_only": "Az előfizetés lejárt, ezért a változások nem tölthetők fel.",
+      "forbidden": "Ehhez a művelethez nincs jogosultsága.",
+      "unauthenticated": "A munkamenet lejárt. Jelentkezzen be újra; a mentetlen változások nem vesznek el.",
+      "mfa_required": "A feltöltéshez kétlépcsős azonosítás szükséges. Jelentkezzen be újra.",
+      "unknown": "A szinkronizálás nem sikerült. Később újra próbáljuk."
+    }
+  },
+  "clients": {
+    "title": "Gazdik",
+    "lead": "A gazdik adatai az eszközön is tárolódnak, ezért internetkapcsolat nélkül is megnyithatók és szerkeszthetők.",
+    "new": "Új gazdi",
+    "search": "Keresés névre, telefonszámra, e-mail-címre",
+    "emptyTitle": "Még nincs gazdi",
+    "emptyBody": "Az első gazdi felvételéhez használja az „Új gazdi” gombot.",
+    "noResults": "Nincs találat.",
+    "loading": "Betöltés az eszközről…",
+    "unsent": "Még nincs feltöltve",
+    "problem": "A szerver elutasította",
+    "count": "{count, plural, one {1 gazdi} other {# gazdi}}",
+    "newTitle": "Új gazdi",
+    "editTitle": "Gazdi adatai",
+    "notFound": "Ez a gazdi nem található az eszközön. Lehet, hogy törölték.",
+    "back": "Vissza a gazdikhoz",
+    "save": "Mentés",
+    "saved": "Mentve az eszközön.",
+    "delete": "Gazdi törlése",
+    "deleteConfirm": "Biztosan törli ezt a gazdit?",
+    "readOnly": "Az előfizetés lejárt, ezért a gazdik csak megtekinthetők.",
+    "noPermission": "A gazdik szerkesztéséhez nincs jogosultsága.",
+    "problemInvalid": "A szerver elutasította ezt a módosítást, mert egy adat érvénytelen. Javítsa az adatot, és mentse újra.",
+    "problemForbidden": "A szerver elutasította ezt a módosítást, mert nincs hozzá jogosultsága.",
+    "fields": {
+      "fullName": "Név",
+      "phone": "Telefonszám",
+      "email": "E-mail-cím",
+      "address": "Cím",
+      "notes": "Megjegyzés",
+      "emailConsent": "Hozzájárult, hogy e-mailben kapjon összefoglalót"
+    },
+    "validation": {
+      "nameRequired": "Adja meg a gazdi nevét.",
+      "emailInvalid": "Érvényes e-mail-címet adjon meg.",
+      "tooLong": "A megadott érték túl hosszú."
+    }
   },
   "home": {
     "statusBadge": "Fejlesztés alatt",
@@ -169,6 +223,7 @@
   "nav": {
     "label": "Fő navigáció",
     "dashboard": "Irányítópult",
+    "clients": "Gazdik",
     "members": "Munkatársak",
     "organization": "Fiók adatai",
     "billing": "Előfizetés",

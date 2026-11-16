@@ -68,6 +68,12 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Javaslat: a demó időtartamára hosszú próbaidő (pl. 365 nap), és a fizetős csomagok bevezetésekor külön döntés a meglévő demófiókokról.
 - Válasz:
 
+**17. A gazdik felületét (offline) még nem sikerült a böngészőben kipróbálni.** (2026-11-16)
+- Mi történt: a kód elkészült, a típusellenőrzés, a lint, a build és a 101 egységteszt hibátlan, a szinkronprotokoll 21 integrációs tesztje is átment. A böngészős kipróbálás viszont nem sikerült: a böngészőpanel rejtve volt, és a fejlesztői szerver a Supabase Auth felé `fetch failed` hibát kapott, miközben ugyanarról a gépről egy különálló Node-szkript elérte a Supabase-t.
+- Gyanú: a gépen vállalati TLS-vizsgáló (Sophos) van, amely a Supabase felé a korábbinál másként viselkedik; a közvetlen adatbázis-kapcsolat (`supabase db push`) ugyanezért nem működött, a migrációt a HTTPS-es `db query` úton vittem fel, és a migrációs előzményt kézzel rögzítettem.
+- Kérés: nyisd meg a böngészőpanelt, vagy próbáld ki te: bejelentkezés → Gazdik → új gazdi felvétele → a böngésző fejlesztői eszközeiben „Offline” mód → szerkesztés → újra online, és nézd meg, feltöltődik-e a változás.
+- Válasz:
+
 ## Tudnivaló, teendő nélkül is rendben van
 
 **8. Az `npm audit` 7 közepes súlyosságú sérülékenységet jelez a függőségekben.**

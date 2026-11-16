@@ -12,6 +12,8 @@ export const routes = {
   mfaChallenge: "/ketlepcsos",
   invitation: "/meghivo",
   app: "/app",
+  clients: "/app/gazdik",
+  newClient: "/app/gazdik/uj",
   members: "/app/munkatarsak",
   organization: "/app/fiok",
   billing: "/app/elofizetes",
@@ -19,6 +21,10 @@ export const routes = {
   auditLog: "/app/naplo",
   profile: "/app/profil",
 } as const;
+
+export function clientPath(id: string): string {
+  return `${routes.clients}/${id}`;
+}
 
 /** Path of the page where an invitation is shown and accepted. */
 export function invitationPath(token: string): string {

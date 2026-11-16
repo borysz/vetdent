@@ -1,7 +1,8 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
-import { useTranslations } from "next-intl";
+import { useOffline } from "@/components/offline/offline-provider";
 import { cn } from "@/lib/utils";
 
 function subscribe(onChange: () => void): () => void {
@@ -18,25 +19,68 @@ const getSnapshot = (): boolean => navigator.onLine;
 const getServerSnapshot = (): boolean => true;
 
 /**
- * Always-visible connection indicator. For now it reflects the browser's
- * network state; the offline layer will extend it with the number of changes
- * waiting to be synchronised and the time of the last successful sync.
+ * Always-visible connection indicator. Inside the signed-in area it also
+ * shows how many changes are waiting to be sent and when the last
+ * synchronisation finished, and lets the user start one.
  */
 export function ConnectivityStatus() {
   const t = useTranslations("connectivity");
+  const format = useFormatter();
   const isOnline = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const offline = useOffline();
+  const status = offline?.status;
+
+  const label = !isOnline
+    ? t("offline")
+    : status?.syncing
+      ? t("syncing")
+      : status && status.pending > 0
+        ? t("pending", { count: status.pending })
+        : status?.error
+          ? t(`errors.${status.error}`)
+          : status
+            ? t("synced")
+            : t("online");
+
+  const attention = !isOnline || Boolean(status && (status.problems > 0 || status.error));
+  const detail = [
+    !isOnline ? t("savedOnDevice") : null,
+    status && status.problems > 0 ? t("problems", { count: status.problems }) : null,
+    status
+      ? status.lastSyncAt
+        ? t("lastSync", { time: format.dateTime(new Date(status.lastSyncAt), { timeStyle: "short" }) })
+        : t("neverSynced")
+      : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <span
-      role="status"
-      title={isOnline ? t("onlineHint") : t("offlineHint")}
-      className={cn(
-        "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-sm font-medium",
-        isOnline ? "bg-card text-muted-foreground" : "border-warning bg-warning-soft text-warning",
-      )}
-    >
-      <span aria-hidden="true" className={cn("size-2.5 rounded-full", isOnline ? "bg-tooth-healthy" : "bg-warning")} />
-      {isOnline ? t("online") : t("offline")}
-    </span>
+    <div className="flex flex-wrap items-center gap-2">
+      <span
+        role="status"
+        title={detail || (isOnline ? t("onlineHint") : t("offlineHint"))}
+        className={cn(
+          "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-sm font-medium",
+          attention ? "border-warning bg-warning-soft text-warning" : "bg-card text-muted-foreground",
+        )}
+      >
+        <span
+          aria-hidden="true"
+          className={cn("size-2.5 rounded-full", attention ? "bg-warning" : "bg-tooth-healthy", status?.syncing && "animate-pulse")}
+        />
+        {label}
+      </span>
+      {offline && isOnline ? (
+        <button
+          type="button"
+          onClick={() => void offline.syncNow()}
+          disabled={status?.syncing}
+          className="h-9 rounded-full px-3 text-sm font-medium text-primary underline-offset-4 hover:underline disabled:opacity-50"
+        >
+          {t("syncNow")}
+        </button>
+      ) : null}
+    </div>
   );
 }

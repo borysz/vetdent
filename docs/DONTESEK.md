@@ -73,6 +73,20 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | A csomagok és előfizetések táblái felhasználóként közvetlenül nem olvashatók; minden adat függvényen át érkezik (`my_entitlements`, `list_public_plans`). | A Stripe-azonosítók és más rendelők adatai ne szivároghassanak. | – |
 | Az előfizetés oldalon a fizetés helyén tájékoztató szöveg áll. | A Stripe még nincs bekötve (`NYITOTT_KERDESEK.md` 11. pont); nem akartam sehová nem vezető gombot. | A Stripe bekötésekor a csomagválasztó kerül a helyére. |
 
+## Offline réteg
+
+| Döntés | Indok | Mit érint, ha változik |
+|---|---|---|
+| **Saját megoldás:** helyi adatbázis a böngészőben (IndexedDB, Dexie), kimenő változások sora, a szerveren mezőszintű összefésülés. | Nem kell külön szinkronszerver; a fogankénti leletek összefésülési szabályai pontosan ránk szabhatók. A javaslatot a kérdéslista 15. pontjában tettem; válasz nem érkezett, a felhasználó a folytatást kérte. | A `src/lib/offline/` mappa; az új adattípusok ugyanezt a mintát követik. |
+| A szerver nem teljes rekordot, hanem **változásokat** kap: csak a szerkesztett mezőket, és azt a revíziót, amelyről a szerkesztés indult. Különböző mezők szerkesztése két eszközön mind megmarad; ugyanazon mezőé esetén a későbbi írás nyer, a felülírt érték pedig a `sync_conflicts` táblában megmarad. | „Adat csendben nem veszhet el.” | `sync_push_clients` függvény. |
+| A rekordok azonosítóját (UUID) az eszköz adja a létrehozáskor. | Az offline létrehozott rekord azonossága később nem változik; a feltöltés ismételhető, duplikáció nélkül. | – |
+| A törlés sírkő (`deleted_at`), így a többi eszköz is értesül róla. Törölt rekordra érkező szerkesztés nem támasztja fel; a törlés marad. | A prompt: lezárt/törölt állapotra érkező offline módosítás nem íródik rá. | – |
+| Lehívás (pull) a változásfolyam sorszáma (`seq`) szerint, 100 tételes átfedéssel. | Egymást átfedő tranzakciók felcserélt sorrendben fejeződhetnek be; az átfedés ezt kezeli, az ismételt rekordok ártalmatlanok (régebbi változat figyelmen kívül marad). | `PULL_OVERLAP` a `sync-engine.ts`-ben. |
+| Az eszköz adatbázisa felhasználónként és fiókonként külön van (`vetdent:<felhasználó>:<fiók>`). | Közös tableten két felhasználó adata ne keveredjen. | `databaseName` |
+| A felület mindig a helyi adatbázisból olvas és oda ír; a feltöltés a háttérben megy (indításkor, a kapcsolat visszatértekor, fél percenként, és szerkesztés után rögtön). | Az online és offline működés ugyanaz a kód. | `OfflineProvider` |
+| A szerkesztés közben elküldött rekord esetén csak az elküldött mezők nyugtázódnak; az időközben végzett szerkesztés függőben marad. | Különben a nyugtázás elnyelné a friss szerkesztést. Teszttel igazolva. | `reconcileAfterPush` |
+| A rendszer az adatbázis-kapcsolat helyett a **HTTPS-es `db query` úton** vitte fel az 5. fázis migrációját. | A gépen a közvetlen Postgres-kapcsolatot egy TLS-vizsgáló hálózati elem megszakítja; a tanúsítvány-ellenőrzés kikapcsolását (a CLI javaslata) szándékosan nem alkalmaztam. A migrációs előzményt kézzel rögzítettem, hogy a későbbi `db push` ne futtassa újra. | Ha a `db push` újra működik, a következő migrációk a megszokott úton mennek. |
+
 ## Szakmai tartalom
 
 | Döntés | Indok | Mit érint, ha változik |
