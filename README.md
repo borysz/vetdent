@@ -7,8 +7,8 @@ Tabletre tervezett, előfizetéses webalkalmazás kutyák és macskák fogászat
 | Fázis | Tartalom | Állapot |
 |---|---|---|
 | 1 | Alapozás: projektváz, megjelenés, nyelvi réteg, PWA-jegyzék, tesztkeret, fogkatalógus | ✅ kész |
-| 2 | Felhasználók és szervezetek (Supabase Auth) | 🔶 részben kész (lásd lent) |
-| 3 | Jogosultságok és napló | – |
+| 2 | Felhasználók és szervezetek (Supabase Auth) | ✅ kész, néhány tétel döntésre vár (lásd lent) |
+| 3 | Jogosultságok és napló | ✅ kész |
 | 4 | Előfizetés (Stripe) és számlázás (Számlázz.hu) | – |
 | 5 | Offline alapréteg | – |
 | 6 | Törzsadatok: gazdik, páciensek | – |
@@ -18,7 +18,14 @@ Tabletre tervezett, előfizetéses webalkalmazás kutyák és macskák fogászat
 | 10 | Gazdi-PDF és e-mail | – |
 | 11 | Lezárás: tesztek, adatexport, biztonsági átnézés | – |
 
-A döntések és az eltérések a tervtől a [`docs/DONTESEK.md`](docs/DONTESEK.md) fájlban vannak.
+A döntések és az eltérések a tervtől a [`docs/DONTESEK.md`](docs/DONTESEK.md) fájlban, a menet közben felmerült kérdések a [`docs/NYITOTT_KERDESEK.md`](docs/NYITOTT_KERDESEK.md) fájlban vannak.
+
+### A 3. fázis tartalma
+
+- **Jogosultságkulcsok:** a kód jogosultságot ellenőriz (pl. `members.manage`), nem szerepkört. Hogy melyik szerepkör mit tehet, az adatbázis `permissions` és `role_permissions` táblája mondja meg; ebből olvas az alkalmazás és az adatbázis sorszintű védelme is.
+- **Szerepkörök oldal:** csak olvasható áttekintés arról, melyik szerepkör mit tehet.
+- **Napló:** ki, mikor, mit tett a fiókban (fiók létrehozása és módosítása, meghívók, szerepkör-változás, felfüggesztés, eltávolítás, be- és kijelentkezés, jelszócsere, kétlépcsős azonosítás). A bejegyzések az API-n át nem módosíthatók és nem törölhetők.
+- 47 integrációs teszt fedi a fiókok elszigetelését, a szabályokat, a kétlépcsős azonosítást, a jogosultsági mátrixot és a naplót.
 
 ### A 2. fázis állása
 
@@ -33,7 +40,7 @@ A döntések és az eltérések a tervtől a [`docs/DONTESEK.md`](docs/DONTESEK.
 | Kétlépcsős azonosítás hitelesítő alkalmazással és tartalékkódokkal, az adatbázisban is kikényszerítve | |
 | Fiók adatainak szerkesztése | |
 | Adatbázisséma sorszintű védelemmel; a szabályok adatbázis-függvényekben | |
-| 34 integrációs teszt a fiókok elszigetelésére, a szabályokra és a kétlépcsős azonosításra | |
+| Integrációs tesztek a fiókok elszigetelésére, a szabályokra és a kétlépcsős azonosításra | |
 
 ## Futtatás helyben
 

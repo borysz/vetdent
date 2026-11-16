@@ -48,6 +48,18 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | Az integrációs tesztek (`npm run test:integration`) a valódi fejlesztői Supabase-projekten futnak, saját, véletlen adatú tesztfelhasználókkal, amelyeket a végén törölnek. | Docker nélkül nincs helyi adatbázis; a sorszintű védelem csak valódi adatbázison igazolható. | Éles projekten **soha** nem futtathatók. |
 | Böngészős (Playwright) automatizált tesztek még nincsenek; a fő folyamatot kézzel, a böngészőpanelben próbáltam végig. | A böngészők letöltése ezen a gépen lassú; a prompt a 11. fázisra teszi a végponttól végpontig teszteket. | – |
 
+## Jogosultságok és napló
+
+| Döntés | Indok | Mit érint, ha változik |
+|---|---|---|
+| A szerepkör–jogosultság mátrix **az adatbázisban** él (`permissions`, `role_permissions`); az alkalmazás onnan kérdezi le a felhasználó jogosultságait (`my_permissions`), a kódban csak a kulcsok nevei szerepelnek. | Így az alkalmazás és az adatbázis védelme nem térhet el egymástól, és egyedi szerepkör később kódmódosítás nélkül bevezethető. Egy integrációs teszt elbukik, ha a kódbeli és az adatbázisbeli kulcsok eltérnek. | Új jogosultság = migráció + a kulcs felvétele a `permissions.ts`-be és a szövegfájlba. |
+| A mátrix a prompt 6. fejezetének táblázatát követi; az API-n át nem módosítható. | A prompt szerint a rendelő csak megtekinti. | Egyedi szerepkörökhöz szerkesztőfelület és írási szabály kell. |
+| A tulajdonosra vonatkozó szabályok (csak tulajdonos módosíthat tulajdonost, az utolsó tulajdonos védett) szerepkör-alapúak maradtak. | Ezek nem jogosultságok, hanem a tulajdonosi szerep lényegéhez tartoznak. | `update_member`, `set_member_status`, `remove_member`. |
+| A naplót adatbázis-függvények és egy trigger írják, ugyanabban a tranzakcióban, mint a naplózott műveletet. Felhasználóként csak olvasható (`audit.view`), és a szerver titkos kulcsával is csak hozzáadni lehet, módosítani és törölni nem. | „A napló nem módosítható.” Ha a művelet megtörtént, a bejegyzés is megvan; ha nem, az sincs. | – |
+| A be- és kijelentkezés, a jelszócsere és a kétlépcsős azonosítás eseményei minden olyan fiók naplójába bekerülnek, amelynek a felhasználó aktív tagja. Ha a naplózás nem sikerül, a művelet attól még végbemegy (a hiba a szervernaplóba kerül). | A tulajdonos lássa a munkatársai belépéseit; egy sikeres belépést viszont ne tegyen sikertelenné a naplózás hibája. | `log_auth_event` függvény, `src/lib/audit/log-auth-event.ts`. |
+| A napló oldal a legutóbbi 100 bejegyzést mutatja; szűrés, lapozás és export még nincs. | A naplóexport a prompt szerint csomagfüggő funkció, a 4. fázishoz tartozik. | `src/app/app/naplo/page.tsx`. |
+| A napló a rendelő törlésekor vele együtt törlődne. | Rendelőtörlés még nincs; a megőrzési szabály nyitott kérdés (`NYITOTT_KERDESEK.md` 6. pont). | Az `audit_log.organization_id` idegen kulcsa. |
+
 ## Szakmai tartalom
 
 | Döntés | Indok | Mit érint, ha változik |
