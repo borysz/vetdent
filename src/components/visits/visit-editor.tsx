@@ -42,6 +42,7 @@ import {
   type Medication,
 } from "@/lib/offline/visit-lists";
 import type { VisitFields, VisitView } from "@/lib/offline/visits-model";
+import { AttachmentsPanel } from "@/components/attachments/attachments-panel";
 import { Dictation } from "@/components/dictation/dictation";
 import { TemplatePicker } from "@/components/templates/template-picker";
 import { TreatmentTemplateTools } from "@/components/templates/treatment-template-tools";
@@ -57,7 +58,7 @@ const selectClass = "h-touch w-full rounded-lg border border-input bg-card px-3 
 const textareaClass =
   "w-full rounded-lg border border-input bg-card px-3 py-2 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-60";
 const SAVE_DELAY_MS = 500;
-const SECTIONS = ["header", "history", "dental", "procedures", "aftercare"] as const;
+const SECTIONS = ["header", "history", "dental", "attachments", "procedures", "aftercare"] as const;
 
 /** The treatment record of one visit: one scrolling page, saved to the device as you type. */
 export function VisitEditor({ id }: { id: string }) {
@@ -439,6 +440,14 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
             chart={chart}
             locked={locked}
             onSelectionChange={setSelectedTeeth}
+            renderToothExtras={(number) => (
+              <section aria-labelledby="sheet-attachments" className="flex flex-col gap-3">
+                <h3 id="sheet-attachments" className="text-lg font-semibold">
+                  {t("attachmentsOfTooth")}
+                </h3>
+                <AttachmentsPanel visitId={visit.id} species={patient.species} tooth={number} locked={locked} />
+              </section>
+            )}
             save={async (changes) => {
               if (!db) return;
               await saveTeeth(db, organizationId, visit.id, changes);
@@ -461,8 +470,18 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
         />
       </section>
 
-      <fieldset disabled={locked} className="flex min-w-0 flex-col gap-8">
+      <section id="visit-attachments" aria-labelledby="visit-attachments-title" className="flex scroll-mt-24 flex-col gap-3">
+        <h2 id="visit-attachments-title" className="text-xl font-semibold">
+          {t("sections.attachments")}
+        </h2>
+        {patient ? (
+          <AttachmentsPanel visitId={visit.id} species={patient.species} selectedTeeth={selectedTeeth} locked={locked} />
+        ) : (
+          <p className="text-muted-foreground">{t("loading")}</p>
+        )}
+      </section>
 
+      <fieldset disabled={locked} className="flex min-w-0 flex-col gap-8">
         <section id="visit-procedures" aria-labelledby="visit-procedures-title" className="flex scroll-mt-24 flex-col gap-5">
           <h2 id="visit-procedures-title" className="text-xl font-semibold">
             {t("sections.procedures")}

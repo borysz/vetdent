@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      attachments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          field_revs: Json
+          id: string
+          kind: Database["public"]["Enums"]["attachment_kind"]
+          mime_type: string | null
+          organization_id: string
+          original_name: string | null
+          quadrant: number | null
+          rev: number
+          seq: number
+          size_bytes: number | null
+          tooth: number | null
+          updated_at: string
+          updated_by: string | null
+          uploaded: boolean
+          visit_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          field_revs?: Json
+          id: string
+          kind: Database["public"]["Enums"]["attachment_kind"]
+          mime_type?: string | null
+          organization_id: string
+          original_name?: string | null
+          quadrant?: number | null
+          rev?: number
+          seq?: number
+          size_bytes?: number | null
+          tooth?: number | null
+          updated_at?: string
+          updated_by?: string | null
+          uploaded?: boolean
+          visit_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          field_revs?: Json
+          id?: string
+          kind?: Database["public"]["Enums"]["attachment_kind"]
+          mime_type?: string | null
+          organization_id?: string
+          original_name?: string | null
+          quadrant?: number | null
+          rev?: number
+          seq?: number
+          size_bytes?: number | null
+          tooth?: number | null
+          updated_at?: string
+          updated_by?: string | null
+          uploaded?: boolean
+          visit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attachments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attachments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attachments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attachments_visit_id_fkey"
+            columns: ["visit_id"]
+            isOneToOne: false
+            referencedRelation: "visits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -1118,6 +1210,13 @@ export type Database = {
         }[]
       }
       my_permissions: { Args: { p_organization_id: string }; Returns: string[] }
+      my_storage_usage: {
+        Args: { p_organization_id: string }
+        Returns: {
+          limit_bytes: number
+          used_bytes: number
+        }[]
+      }
       remove_member: { Args: { p_membership_id: string }; Returns: undefined }
       reopen_visit: {
         Args: {
@@ -1141,6 +1240,10 @@ export type Database = {
           p_status: Database["public"]["Enums"]["member_status"]
         }
         Returns: undefined
+      }
+      sync_push_attachments: {
+        Args: { p_changes: Json; p_organization_id: string }
+        Returns: Json
       }
       sync_push_clients: {
         Args: { p_changes: Json; p_organization_id: string }
@@ -1173,6 +1276,7 @@ export type Database = {
     }
     Enums: {
       animal_sex: "male" | "female" | "unknown"
+      attachment_kind: "xray" | "before" | "after" | "other"
       member_role: "owner" | "admin" | "vet" | "assistant" | "receptionist"
       member_status: "active" | "suspended"
       organization_type: "clinic" | "individual"
@@ -1309,6 +1413,7 @@ export const Constants = {
   public: {
     Enums: {
       animal_sex: ["male", "female", "unknown"],
+      attachment_kind: ["xray", "before", "after", "other"],
       member_role: ["owner", "admin", "vet", "assistant", "receptionist"],
       member_status: ["active", "suspended"],
       organization_type: ["clinic", "individual"],

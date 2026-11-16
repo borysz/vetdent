@@ -6,6 +6,7 @@ import { SyncError, type SyncApi, type SyncErrorKind } from "./sync-engine";
 import { parseFindings, parsePockets, parseProcedures, serializeFindings, serializePockets, serializeProcedures } from "@/domain/dental/chart";
 import { parsePayload, serializePayload } from "@/domain/dental/template";
 import { serializeBlocks, serializeMedications, serializeTags } from "./visit-lists";
+import type { ServerAttachment } from "./attachments-model";
 import type { ServerTemplate } from "./templates-model";
 import type { ServerTooth } from "./teeth-model";
 import type { ServerVisit } from "./visits-model";
@@ -135,6 +136,42 @@ export function createSupabaseSyncApi(supabase: SupabaseClient<Database>, organi
         generalNote: row.general_note,
         status: row.status,
         finalizedAt: row.finalized_at,
+        rev: row.rev,
+        seq: row.seq,
+        deletedAt: row.deleted_at,
+        updatedAt: row.updated_at,
+      }));
+    },
+
+    async pushAttachments(changes: WireChange[]): Promise<PushResult[]> {
+      const { data, error } = await supabase.rpc("sync_push_attachments", {
+        p_organization_id: organizationId,
+        p_changes: changes as never,
+      });
+      if (error) throw new SyncError(kindOf(error), error.message);
+      return parsePushResults(data);
+    },
+
+    async pullAttachments(afterSeq: number, limit: number): Promise<ServerAttachment[]> {
+      const { data, error } = await supabase
+        .from("attachments")
+        .select("id, visit_id, tooth, quadrant, kind, original_name, uploaded, mime_type, size_bytes, rev, seq, deleted_at, updated_at")
+        .eq("organization_id", organizationId)
+        .gt("seq", afterSeq)
+        .order("seq", { ascending: true })
+        .limit(limit);
+      if (error) throw new SyncError(kindOf(error), error.message);
+
+      return data.map((row) => ({
+        id: row.id,
+        visitId: row.visit_id,
+        tooth: row.tooth,
+        quadrant: row.quadrant,
+        kind: row.kind,
+        originalName: row.original_name,
+        uploaded: row.uploaded,
+        mimeType: row.mime_type,
+        sizeBytes: row.size_bytes,
         rev: row.rev,
         seq: row.seq,
         deletedAt: row.deleted_at,

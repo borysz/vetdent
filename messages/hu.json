@@ -16,6 +16,7 @@
     "syncing": "Szinkronizálás…",
     "synced": "Szinkronizálva",
     "pending": "{count, plural, one {1 függő változás} other {# függő változás}}",
+    "pendingFiles": "{count, plural, one {1 fotó feltöltésre vár} other {# fotó feltöltésre vár}}",
     "problems": "{count, plural, one {1 elutasított változás} other {# elutasított változás}}",
     "lastSync": "Utolsó szinkron: {time}",
     "neverSynced": "Még nem volt szinkron",
@@ -375,6 +376,53 @@
     "withMedications": "A gyógyszerek ({count})",
     "forBothSpecies": "Kutyához és macskához is használható"
   },
+  "attachments": {
+    "kind": "Típus",
+    "kinds": {
+      "xray": "Röntgen",
+      "before": "Előtte",
+      "after": "Utána",
+      "other": "Egyéb"
+    },
+    "target": "Hová tartozik?",
+    "targets": {
+      "visit": "A teljes vizithez",
+      "quadrant": "{number}. kvadráns",
+      "tooth": "{number} fog"
+    },
+    "takePhoto": "Fotó készítése",
+    "chooseFile": "Fájl feltöltése",
+    "quickTitle": "Előtte–utána gyorsfotó",
+    "quickBefore": "Előtte fotó",
+    "quickAfter": "Utána fotó",
+    "quickToTooth": "A fotó a(z) {number} fogához kerül.",
+    "quickToTarget": "A fotó a fent választott helyhez kerül. Egy fog kijelölésekor automatikusan ahhoz.",
+    "none": "Még nincs csatolmány.",
+    "pairsTitle": "Előtte–utána párok",
+    "stored": "Feltöltve",
+    "waiting": "Feltöltésre vár",
+    "uploading": "{count, plural, one {1 fájl feltöltése folyamatban…} other {# fájl feltöltése folyamatban…}}",
+    "waitingForConnection": "{count, plural, one {1 fájl az eszközön van, és a kapcsolat visszatérésekor feltöltődik.} other {# fájl az eszközön van, és a kapcsolat visszatérésekor feltöltődik.}}",
+    "quotaFull": "A csomag tárhelye betelt, ezért a fotók nem töltődnek fel. Törölhet régi csatolmányokat, vagy válthat nagyobb csomagra.",
+    "denied": "A szerver nem fogadta el a fájlt feltöltésre. Ellenőrizze a jogosultságát és az előfizetést.",
+    "retry": "Újrapróbálom",
+    "delete": "Törlés",
+    "deleteConfirm": "Biztosan törli ezt a csatolmányt?",
+    "noPreview": "Nincs előnézet",
+    "close": "Bezárás",
+    "zoomIn": "Nagyítás",
+    "zoomOut": "Kicsinyítés",
+    "zoomReset": "Eredeti méret",
+    "openPdf": "A PDF megnyitása új lapon",
+    "pdfHint": "A PDF a kapcsolat visszatérése után nyitható meg.",
+    "notAvailable": "A kép most nem érhető el (nincs kapcsolat, és az eszközön nincs másolata).",
+    "fileErrors": {
+      "type": "Csak JPEG, PNG, WebP és PDF csatolható.",
+      "size": "A fájl túl nagy (legfeljebb 15 MB).",
+      "empty": "A fájl üres.",
+      "finalVisit": "A lezárt lapra nem tölthető fel új csatolmány; előbb nyissa újra."
+    }
+  },
   "dictation": {
     "start": "Diktálás indítása",
     "stop": "Diktálás leállítása",
@@ -611,11 +659,13 @@
     "finalizedAt": "Lezárva: {date}",
     "problemInvalid": "A szerver nem fogadta el a lap egy módosítását. Ellenőrizze a mezőket, és javítsa a hibásat.",
     "problemForbidden": "Ehhez a módosításhoz nincs jogosultsága, ezért a szerver nem fogadta el.",
+    "attachmentsOfTooth": "Fotók és röntgen ehhez a fogához",
     "sectionNav": "A lap szekciói",
     "sections": {
       "header": "Páciens és vizit adatai",
       "history": "Előzmények és indikáció",
       "dental": "Fogászati státusz",
+      "attachments": "Csatolmányok: fotók és röntgen",
       "procedures": "Beavatkozási és műtéti napló",
       "aftercare": "Utókezelési terv és hazaadó lap"
     },

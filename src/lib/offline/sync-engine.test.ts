@@ -113,6 +113,13 @@ class FakeServer implements SyncApi {
     return [];
   }
 
+  async pushAttachments(): Promise<PushResult[]> {
+    return [];
+  }
+  async pullAttachments(): Promise<never[]> {
+    return [];
+  }
+
   async pullClients(afterSeq: number, limit: number): Promise<ServerClient[]> {
     if (this.down) throw new SyncError("offline");
     this.pullCalls.push(afterSeq);

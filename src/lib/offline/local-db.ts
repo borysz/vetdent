@@ -1,4 +1,6 @@
 import Dexie, { type Table } from "dexie";
+import type { LocalAttachmentRow } from "./attachments-model";
+import type { LocalFileRow } from "./attachments-store";
 import type { LocalClientRow } from "./clients-model";
 import type { LocalPatientRow } from "./patients-model";
 import type { LocalTemplateRow } from "./templates-model";
@@ -20,6 +22,9 @@ export class LocalDatabase extends Dexie {
   visits!: Table<LocalVisitRow, string>;
   teeth!: Table<LocalToothRow, string>;
   templates!: Table<LocalTemplateRow, string>;
+  attachments!: Table<LocalAttachmentRow, string>;
+  /** The files of attachments made on this device (not synchronised as records; uploaded by the upload queue). */
+  files!: Table<LocalFileRow, string>;
   meta!: Table<MetaEntry, string>;
 
   constructor(name: string) {
@@ -56,6 +61,16 @@ export class LocalDatabase extends Dexie {
       templates: "id, organizationId, touchedAt",
       meta: "key",
     });
+    this.version(6).stores({
+      clients: "id, organizationId, touchedAt",
+      patients: "id, organizationId, touchedAt",
+      visits: "id, organizationId, touchedAt",
+      teeth: "id, organizationId, visitId, touchedAt",
+      templates: "id, organizationId, touchedAt",
+      attachments: "id, organizationId, touchedAt",
+      files: "id, organizationId, visitId",
+      meta: "key",
+    });
   }
 }
 
@@ -69,6 +84,7 @@ export const META_KEYS = {
   visitsCursor: "visits.cursor",
   teethCursor: "teeth.cursor",
   templatesCursor: "templates.cursor",
+  attachmentsCursor: "attachments.cursor",
   lastSyncAt: "lastSyncAt",
 } as const;
 

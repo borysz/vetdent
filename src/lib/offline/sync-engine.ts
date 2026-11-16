@@ -2,6 +2,7 @@ import type { Table } from "dexie";
 import { clientOps, type ClientFields } from "./clients-model";
 import { META_KEYS, readMeta, writeMeta, type LocalDatabase } from "./local-db";
 import { patientOps, type PatientFields } from "./patients-model";
+import { attachmentOps, type AttachmentFields, type ServerAttachment } from "./attachments-model";
 import { templateOps, type ServerTemplate, type TemplateFields } from "./templates-model";
 import { toothOps, type ServerTooth, type ToothFields } from "./teeth-model";
 import { visitOps, type ServerVisit, type VisitFields } from "./visits-model";
@@ -40,6 +41,8 @@ export interface SyncApi {
   pullTeeth(afterSeq: number, limit: number): Promise<ServerTooth[]>;
   pushTemplates(changes: WireChange[]): Promise<PushResult[]>;
   pullTemplates(afterSeq: number, limit: number): Promise<ServerTemplate[]>;
+  pushAttachments(changes: WireChange[]): Promise<PushResult[]>;
+  pullAttachments(afterSeq: number, limit: number): Promise<ServerAttachment[]>;
 }
 
 export interface SyncOutcome {
@@ -129,6 +132,20 @@ const templatesTable: SyncTable<TemplateFields> = {
   cursorKey: META_KEYS.templatesCursor,
   push: (api, changes) => api.pushTemplates(changes),
   pull: (api, afterSeq, limit) => api.pullTemplates(afterSeq, limit),
+};
+
+const attachmentsTable: SyncTable<AttachmentFields> = {
+  table: (db) => db.attachments,
+  ops: attachmentOps,
+  cursorKey: META_KEYS.attachmentsCursor,
+  push: (api, changes) => api.pushAttachments(changes),
+  pull: (api, afterSeq, limit) => api.pullAttachments(afterSeq, limit),
+  // An attachment waits while its visit is unknown to the server.
+  async readyToSend(db) {
+    const visits = await db.visits.toArray();
+    const unknownToServer = new Set(visits.filter((visit) => visit.server === null).map((visit) => visit.id));
+    return (row) => !unknownToServer.has(row.pending.visitId ?? row.server?.visitId ?? "");
+  },
 };
 
 const PUSH_BATCH = 100;
@@ -267,6 +284,10 @@ export function syncTemplates(db: LocalDatabase, organizationId: string, api: Sy
   return syncKind(db, templatesTable, organizationId, api);
 }
 
+export function syncAttachments(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
+  return syncKind(db, attachmentsTable, organizationId, api);
+}
+
 export function syncTeeth(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
   return syncKind(db, teethTable, organizationId, api);
 }
@@ -304,11 +325,20 @@ export async function syncAll(db: LocalDatabase, organizationId: string, api: Sy
   if (teeth.error) return { ...upToTeeth, error: teeth.error };
 
   const templates = await syncTemplates(db, organizationId, api);
-  return {
+  const upToTemplates = {
     pushed: upToTeeth.pushed + templates.pushed,
     pulled: upToTeeth.pulled + templates.pulled,
     refused: upToTeeth.refused + templates.refused,
-    error: templates.error,
+  };
+  if (templates.error) return { ...upToTemplates, error: templates.error };
+
+  // Attachments last: the record of a photo can only reach the server after its visit.
+  const attachments = await syncAttachments(db, organizationId, api);
+  return {
+    pushed: upToTemplates.pushed + attachments.pushed,
+    pulled: upToTemplates.pulled + attachments.pulled,
+    refused: upToTemplates.refused + attachments.refused,
+    error: attachments.error,
   };
 }
 
@@ -326,6 +356,7 @@ export async function countPending(db: LocalDatabase): Promise<SyncCounts> {
     ...(await db.visits.toArray()),
     ...(await db.teeth.toArray()),
     ...(await db.templates.toArray()),
+    ...(await db.attachments.toArray()),
   ];
   return {
     pending: rows.filter((row) => hasPending(row as LocalRow<object>) && !row.problem).length,

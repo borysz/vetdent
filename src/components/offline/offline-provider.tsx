@@ -6,7 +6,9 @@ import { DeviceLock } from "@/components/offline/device-lock";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { databaseName, LocalDatabase, META_KEYS, readMeta } from "@/lib/offline/local-db";
 import { createSupabaseSyncApi } from "@/lib/offline/supabase-sync-api";
+import { countPendingFiles } from "@/lib/offline/attachments-store";
 import { countPending, syncAll, type SyncErrorKind } from "@/lib/offline/sync-engine";
+import { uploadPendingFiles } from "@/lib/offline/upload-queue";
 
 export interface OfflineStatus {
   online: boolean;
@@ -15,6 +17,8 @@ export interface OfflineStatus {
   pending: number;
   /** Records the server refused. */
   problems: number;
+  /** Photos and files made on this device that are not in the storage yet. */
+  pendingFiles: number;
   /** When the last round finished successfully (ms since epoch), if ever. */
   lastSyncAt: number | null;
   /** Why the last round failed; `null` after a success. */
@@ -50,6 +54,8 @@ export interface TemplateRights {
 }
 
 export interface VisitRights {
+  /** May add photos, X-rays and other files to a visit. */
+  attach: boolean;
   write: boolean;
   finalize: boolean;
   reopen: boolean;
@@ -126,6 +132,7 @@ export function OfflineProvider({
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const counts = useLiveQuery(() => (db ? countPending(db) : undefined), [db]);
+  const pendingFiles = useLiveQuery(() => (db ? countPendingFiles(db) : undefined), [db]);
   const lastSyncAt = useLiveQuery(async () => {
     if (!db) return undefined;
     const value = await readMeta(db, META_KEYS.lastSyncAt);
@@ -137,7 +144,10 @@ export function OfflineProvider({
     running.current = true;
     setSyncing(true);
     try {
-      const api = createSupabaseSyncApi(createSupabaseBrowserClient(), organizationId);
+      const supabase = createSupabaseBrowserClient();
+      // Files first: a record can only be marked "uploaded" once its file is in the storage.
+      await uploadPendingFiles(db, supabase, organizationId);
+      const api = createSupabaseSyncApi(supabase, organizationId);
       const outcome = await syncAll(db, organizationId, api);
       setError(outcome.error?.kind ?? null);
     } finally {
@@ -177,13 +187,14 @@ export function OfflineProvider({
         syncing,
         pending: counts?.pending ?? 0,
         problems: counts?.problems ?? 0,
+        pendingFiles: pendingFiles ?? 0,
         lastSyncAt: lastSyncAt ?? null,
         error,
       },
       syncNow,
       syncSoon,
     }),
-    [db, organizationId, canWrite, canDelete, visitRights, templateRights, features, userName, online, syncing, counts, lastSyncAt, error, syncNow, syncSoon],
+    [db, organizationId, canWrite, canDelete, visitRights, templateRights, features, userName, online, syncing, counts, pendingFiles, lastSyncAt, error, syncNow, syncSoon],
   );
 
   return (

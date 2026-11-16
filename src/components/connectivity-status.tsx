@@ -36,7 +36,9 @@ export function ConnectivityStatus() {
       ? t("syncing")
       : status && status.pending > 0
         ? t("pending", { count: status.pending })
-        : status?.error
+        : status && status.pendingFiles > 0
+          ? t("pendingFiles", { count: status.pendingFiles })
+          : status?.error
           ? t(`errors.${status.error}`)
           : status
             ? t("synced")

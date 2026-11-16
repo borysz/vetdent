@@ -99,18 +99,29 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 **10. A Supabase-projekt a parancssori eszközben „production” jelöléssel szerepel.**
 - Ez a Supabase fő ágának neve, nem azt jelenti, hogy éles rendszer. Élesítéshez külön projekt kell (a kérdéslista H6 pontja); az integrációs teszteket éles projekten soha nem szabad futtatni.
 
-**11. A kezelési lap (7. fázis) böngészős próbája.** (2026-11-16)
+**19. A kezelési lap (7. fázis) böngészős próbája.** (2026-11-16)
 - Kipróbálva a böngészőpanelben (éles build): új vizit a páciens oldaláról, automatikus mentés, szinkron a szerverre, lezárás, újranyitás indoklással, piszkozat törlése. Nem próbáltam: offline szerkesztés a vizit lapján, két eszköz egyidejű szerkesztése, jogosultság nélküli felhasználó, telefonos és fekvő/álló tablet nézet.
 - A teljes oldalbetöltés a panelben itt is megakadt az `/app` alatt (lásd 18. pont): éles módban is, a szerver HTML-je hibátlan és teljes. Kliensoldali navigációval (`window.next.router.push`) minden működött. A hiba tehát nem a kezelési lapé, de a 18. pont továbbra is az első teendő.
 - A próba két naplóbejegyzést hagyott a fiók naplójában (`visit.finalized`, `visit.reopened`, indoklás: „Próba: a felület kipróbálása”); a naplóbejegyzések nem törölhetők.
 - Hátravan: az ütközések megjelenítése (a lezárt lapra érkező elutasított szerkesztések is ide kerülnek), a „ki van még a lapon” jelzés, a lezárási figyelmeztetések (az odontogram után).
 - Az `entitlements` integrációs teszt „14 napos próbaidő” ellenőrzése 14,00002 napot mért (határ: 14); a gép órája másodpercekkel eltér a szerverétől. Nem a kezelési laphoz tartozik; ha gyakran előfordul, a határt kerekíteni kell.
 
-**12. Az odontogram (8. fázis): ami még nem készült el, és amit nem próbáltam.** (2026-11-16)
+**20. Az odontogram (8. fázis): ami még nem készült el, és amit nem próbáltam.** (2026-11-16)
 - Nem készült el (a prompt kéri, a váz működik nélküle): a színek és prioritásuk, a gyorsgombok sorrendje és az összetett gombok **szervezeti beállítása**; a **4 pontos** tasakmérés módja és a küszöb **fajonkénti** állítása; **telefonon** kvadránsonként váltható nézet (most vízszintesen görgethető sor); a **röntgen** (RX) jelölés megnyitja a csatolt képet (a csatolmányok a 9. fázisban jönnek); a páciens adatlapján a **korábbi fogképletek időrendben** (a vizitek listája megvan, a fogkép nem).
 - Böngészőpanelben kipróbálva (éles build): kijelölés (szemfogak), fogkő T2 négy fogra, fogkő-eltávolítás után a polírozás felajánlása és rögzítése, visszavonás és újra, ecset mód, hiányzó fog és a rá felvett lelet elutasítása, fogadatlap tasakmélységgel és PD-javaslattal, mély tasak jelzése, a szerveren megjelenő rekordok, a lezárt vizit olvasható fogképlete, az áthozatal új vizitre. Nem próbáltam: hosszú nyomás érintőképernyőn (a panelben egérrel nem szimulálható), álló tablet, billentyűzetes használat, két eszköz egyidejű fogképe.
 - Az ütközések megjelenítése és a lezárási figyelmeztetés („tervezett, de el nem végzett beavatkozás”) most már megvalósítható volna: a fogképlet megvan.
 - Fur (furkáció) csak többgyökerű fogra kérhető az alkalmazásban, az adatbázis ezt nem ellenőrzi.
+
+**21. A csatolmányok, sablonok és a diktálás (9. fázis): ami még nem készült el, és amit nem próbáltam.** (2026-11-16)
+- **Valódi eszközön nem próbáltam:** a tablet kamerája (a `capture` jelölésű fájlmező csak a böngészőpanelben, szimulált fájllal ment végig), a mikrofon és a beszédfelismerés (a panel a mikrofont letiltja; a folyamatot egy hamis felismerővel próbáltam), a nyomtatás/PDF. A diktálás csak Chrome-ban és Edge-ben él, és internet kell hozzá.
+- **Takarítás:** az eltávolított csatolmány rekordja rejtett, de **a fájl a bucketben marad** (kliens nem törölhet); a lezárt vizitre késve érkező fotó fájlja is ott marad árván (a rekordja a `sync_conflicts`-ban). Szerveroldali takarító feladat kell hozzá (GDPR-hoz, tárhelyhez is).
+- **Tárhelyhasználat kijelzése:** az adatbázis megvan (`my_storage_usage`), a felületen még nem látszik (előfizetés oldal). A betelt keretet a fotó mellett jelzi, de előre nem figyelmeztet.
+- **Nincs „kiegészítő bejegyzés”** lezárt vizithez (PROJEKT_PROMPT 8.11): lezárás után új röntgen csak újranyitással csatolható.
+- A páciens adatlapján a **csatolmányok idővonala** és a páciensszintű (vizit nélküli) fotó nincs; a fotó mindig egy vizithez tartozik.
+- Az RX jelölés a fog adatlapján a fog csatolmányai között nyitja meg a képet, külön „RX megnyitása” gomb nincs.
+- Az eszközre letöltött kör (a prompt 4.1): a bélyegképek mellett a más eszközről jött csatolmányok **teljes képét** is aláírt linkről kéri a lista; nagy listánál bélyegkép-előállítás a szerveren (vagy a feltöltéskor külön bélyegkép) jobb volna.
+- **Sablonok:** a betöltés nem visszavonható egy lépéssel; a közös sablon két szerkesztőjének azonos mezőn végzett módosítása a szokásos mezőszintű összefésülés szerint ütközik (az ütközés felülete még hátravan). A sablon fogai nem tudnak „csak a többgyökerű fogakra” jellegű szabályt, csak a kód szabályait.
+- **Diktálás:** a fogszám-felismerés számjegyes szövegre épít (Chrome ezt adja); szóval kimondott számot („száznégy”) nem ismer fel. A mértékegység előtti számot (110 mg) kihagyja, de más félreértés lehetséges, ezért van megerősítés.
 
 ## A 2. fázisból nyitva maradt
 

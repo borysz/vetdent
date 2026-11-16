@@ -18,6 +18,7 @@ export async function OfflineBoundary({ children }: { children: React.ReactNode 
       canWrite={permissions.has("clients.write") && fullAccess}
       canDelete={permissions.has("clients.delete") && fullAccess}
       visitRights={{
+        attach: permissions.has("attachments.upload") && fullAccess,
         write: permissions.has("visits.write") && fullAccess,
         finalize: permissions.has("visits.finalize") && fullAccess,
         reopen: permissions.has("visits.reopen") && fullAccess,

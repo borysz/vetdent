@@ -34,10 +34,12 @@ interface ToothSheetProps {
   locked: boolean;
   onChange: (parts: ToothParts) => void;
   onClose: () => void;
+  /** Anything else that belongs to this tooth (its attachments), shown above the note. */
+  extras?: React.ReactNode;
 }
 
 /** The detail sheet of one tooth: findings, procedures, pocket depths and a note. */
-export function ToothSheet({ tooth, species, entry, locked, onChange, onClose }: ToothSheetProps) {
+export function ToothSheet({ tooth, species, entry, locked, onChange, onClose, extras }: ToothSheetProps) {
   const t = useTranslations("dental");
   const dialog = useRef<HTMLDialogElement>(null);
   const marks = entry?.marks ?? EMPTY_MARKS;
@@ -93,6 +95,8 @@ export function ToothSheet({ tooth, species, entry, locked, onChange, onClose }:
           pdSelected={marks.findings.some((finding) => finding.code === "PD")}
           pdBlocked={!canApply(species, tooth, marks, "PD", "2").ok}
         />
+
+        {extras}
 
         <section aria-labelledby="sheet-note" className="flex flex-col gap-2">
           <h3 id="sheet-note" className="text-lg font-semibold">

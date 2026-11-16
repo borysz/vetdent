@@ -65,14 +65,14 @@ A `.env.local` **nincs a Gitben** (Supabase URL, publishable és secret kulcs); 
 
 ## Állapot (2026-11-16)
 
-Kész: 1. alapozás · 2. felhasználók/fiókok/meghívók/profil/MFA+tartalékkódok · 3. jogosultságok és napló · 4. előfizetés **alapja** (csomagok, próbaidő, keretek, csak olvasható mód, árazási oldal) · 5. offline réteg (helyi adatbázis, szinkron, PIN-zár, **service worker** a `public/sw.js`-ben; az ütközések megjelenítése hátravan) · 6. gazdik, páciensek, irányítópult · 7. **kezelési lap váza** (`visits` tábla, `sync_push_visits`, `finalize_visit`/`reopen_visit`, `/app/vizitek/[id]`) · 8. **odontogram** (foganként egy rekord: `visit_teeth`, `sync_push_visit_teeth`; kódtörzs és szabályok: `src/domain/dental/`; felület: `src/components/dental/`; döntések: `docs/DONTESEK.md`).
+Kész: 1. alapozás · 2. felhasználók/fiókok/meghívók/profil/MFA+tartalékkódok · 3. jogosultságok és napló · 4. előfizetés **alapja** (csomagok, próbaidő, keretek, csak olvasható mód, árazási oldal) · 5. offline réteg (helyi adatbázis, szinkron, PIN-zár, **service worker** a `public/sw.js`-ben; az ütközések megjelenítése hátravan) · 6. gazdik, páciensek, irányítópult · 7. **kezelési lap váza** (`visits` tábla, `sync_push_visits`, `finalize_visit`/`reopen_visit`, `/app/vizitek/[id]`) · 9. **csatolmányok** (privát bucket, feltöltési sor offline: `src/lib/offline/upload-queue.ts`, `attachments-store.ts`), **sablonok** (`templates`, `src/domain/dental/template.ts`), **diktálás** (`src/domain/dictation/`, `src/lib/dictation/speech.ts`) · 8. **odontogram** (foganként egy rekord: `visit_teeth`, `sync_push_visit_teeth`; kódtörzs és szabályok: `src/domain/dental/`; felület: `src/components/dental/`; döntések: `docs/DONTESEK.md`).
 
 **Elhalasztva a demó utánra** (a demó ingyenes): Stripe-fizetés, Számlázz.hu-számlázás, platform-admin felület.
 
 Hátravan, javasolt sorrendben:
 1. A **service worker és a kezelési lap valódi böngészős próbája** (offline indítás, offline szerkesztés a vizit lapján), az **ütközések megjelenítése** a felületen. (A korábbi „betöltési hiba” megoldva: a böngészőpanel nem rajzol képkockát fókusz nélkül, ezért a React nem fedi fel a streamelt tartalmat; teljes betöltés után a panelben egy képernyőkép vagy kattintás elég. Lásd `NYITOTT_KERDESEK.md` 18. pont.)
-2. A 8. fázis maradéka (`NYITOTT_KERDESEK.md` 12. pont): szervezeti beállítások (színek, gombok, küszöb), 4 pontos mód, telefonos kvadráns-nézet, korábbi fogképletek idővonala.
-3. 9. fotók/sablonok/diktálás · 10. gazdi-PDF + e-mail · 11. lezárás (adatexport, biztonsági átnézés).
+2. A 8. fázis maradéka (`NYITOTT_KERDESEK.md` 20. pont): szervezeti beállítások (színek, gombok, küszöb), 4 pontos mód, telefonos kvadráns-nézet, korábbi fogképletek idővonala.
+3. 10. gazdi-PDF + e-mail · 11. lezárás (adatexport, biztonsági átnézés).
 A 2. fázis maradéka: levélküldés és magyar levélsablonok, fióktörlés/adatexport, kötelező MFA rendelőnként (kérdéseik a `NYITOTT_KERDESEK.md`-ben).
 
 ## A felhasználóval való együttműködés
