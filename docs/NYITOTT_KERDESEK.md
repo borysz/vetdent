@@ -123,6 +123,12 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - **Sablonok:** a betöltés nem visszavonható egy lépéssel; a közös sablon két szerkesztőjének azonos mezőn végzett módosítása a szokásos mezőszintű összefésülés szerint ütközik (az ütközés felülete még hátravan). A sablon fogai nem tudnak „csak a többgyökerű fogakra” jellegű szabályt, csak a kód szabályait.
 - **Diktálás:** a fogszám-felismerés számjegyes szövegre épít (Chrome ezt adja); szóval kimondott számot („száznégy”) nem ismer fel. A mértékegység előtti számot (110 mg) kihagyja, de más félreértés lehetséges, ezért van megerősítés.
 
+**22. Az álló tablet nézet ellenőrzése (kiemelt követelmény).** (2026-11-16)
+- Ellenőrizve a böngészőpanelben 768×1024-en: a főoldalak (irányítópult, gazdik, páciensek és az új/szerkesztő űrlapok, sablonok, munkatársak, fiók, előfizetés, szerepkörök, napló, profil) és a kezelési lap: **nincs vízszintes túlcsordulás**, nincs nézeten kívüli elem, a 44 px alatti célfelületeket javítottam. 834×1194-en a kezelési lapot és a fogadatlapot néztem meg.
+- Javítva: a fogsor négy sorba rendezve, főmenü tördelése, felső sáv, mikrofon helye, a fogadatlap fejléce (a változtatások a `docs/DONTESEK.md` odontogram-szakaszában).
+- **Nem ellenőriztem:** a képernyőn megjelenő billentyűzet hatását (a tartalom feljebb tolódása), a 810×1080 és a 1024×1366 (nagy tablet) méretet, a fekvő nézetet a változtatások után, a telefont, a nyomtatási nézetet. Az oldalak közül az árak, a belépés, a regisztráció, a meghívó és a kezdő oldalakat sem mértem végig ezen a méreten.
+- Teendő: egy állandó, automatikus ellenőrzés (böngészős teszt a tablet méreteken) felvétele, hogy ez ne csak kézi próba maradjon.
+
 ## A 2. fázisból nyitva maradt
 
 | Tétel | Mi kell hozzá |

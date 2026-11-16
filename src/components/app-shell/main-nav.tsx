@@ -17,7 +17,7 @@ export function MainNav({ label, items }: { label: string; items: readonly NavIt
 
   return (
     <nav aria-label={label} className="border-b bg-card">
-      <ul className="mx-auto flex w-full max-w-6xl gap-1 overflow-x-auto px-4 sm:px-6">
+      <ul className="mx-auto flex w-full max-w-6xl flex-wrap gap-x-1 px-4 sm:px-6">
         {items.map((item) => {
           const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
           return (

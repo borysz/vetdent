@@ -58,7 +58,8 @@ export function ToothSheet({ tooth, species, entry, locked, onChange, onClose, e
       className="m-auto max-h-[92vh] w-[min(100%-1.5rem,42rem)] overflow-y-auto rounded-2xl border bg-card p-5 text-card-foreground backdrop:bg-black/40"
     >
       <div className="flex flex-col gap-6">
-        <div className="flex items-start justify-between gap-4">
+        {/* Stays in view while the long sheet scrolls, so closing it is always one tap away. */}
+        <div className="sticky top-0 z-10 -mx-5 -mt-5 flex items-start justify-between gap-4 border-b bg-card px-5 pb-3 pt-5">
           <div>
             <h2 id="tooth-sheet-title" className="text-2xl font-semibold">
               {tooth.number} · {t(`toothTypes.${tooth.type}`)}

@@ -202,7 +202,7 @@ function EditorForm({ existing, canWrite, canDelete, onSave, onDelete }: EditorF
             {t("save")}
           </Button>
         ) : null}
-        <Link href={routes.clients} className="min-h-touch content-center px-2 font-medium text-primary underline-offset-4 hover:underline">
+        <Link href={routes.clients} className="inline-flex min-h-touch items-center px-2 font-medium text-primary underline-offset-4 hover:underline">
           {t("back")}
         </Link>
         {existing && canDelete ? (

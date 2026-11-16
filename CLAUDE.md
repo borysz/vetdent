@@ -46,6 +46,7 @@ A `.env.local` **nincs a Gitben** (Supabase URL, publishable és secret kulcs); 
 
 ## Szabályok, amelyeket be kell tartani
 
+- **KIEMELTEN FONTOS (a felhasználó kérése): minden oldalnak és felületnek tökéletesen kell megjelennie egy átlagos tablet ÁLLÓ nézetében** (kb. 768–834 px széles, 1024–1194 px magas; a fekvő nézet és az asztali gép mellett is). Nincs vízszintes oldalgörgetés, nincs levágott vagy takart elem, minden gomb elérhető, a tartalom olvasható. Minden új felületet és minden változtatást ellenőrizz ezen a méreten is (`resize_window` `tablet` előbeállítás vagy 768×1024 és 834×1194), mielőtt késznek mondod; ami ott nem tökéletes, az nincs kész. A teljes fogsor (a fogképlet) kivétel nélkül is megjelenjen értelmesen: ha nem fér el egy sorban, azt a felületnek kell megoldania, nem a felhasználónak keresgélnie.
 - **Felületi szöveg csak `messages/hu.json`-ból.** Magázó megszólítás. Szín/méret csak tokenekből (`globals.css`), 44 px-es érintési célfelületek, 16 px-es beviteli mezők.
 - **Ár, keret, titok, belépési adat nem kerül a kódba.** A csomagok és a számlázási beállítások az adatbázisban vannak.
 - **Üzleti szabály adatbázis-függvényben** (`SECURITY DEFINER`, `set search_path = ''`), a táblákra közvetlen írási jog nincs. Hibakódot dobnak (`last_owner`, `read_only`, …), amelyet az alkalmazás fordít (`dbErrors` a szövegfájlban).

@@ -16,6 +16,8 @@ interface DictationProps {
   selectedTeeth?: readonly number[];
   /** A round button that stays on screen, instead of a small one beside a field. */
   floating?: boolean;
+  /** A round button that sits in a bar the caller provides (it stays in view with the bar); messages appear under the bar. */
+  bar?: boolean;
   label?: string;
 }
 
@@ -25,7 +27,7 @@ const targetValue = (target: DictationTarget) => (target.kind === "general" ? "g
  * The microphone: listen, show what was understood, and only after the user
  * confirms (and possibly corrects the text or the place) pass it on.
  */
-export function Dictation({ onAccept, species, selectedTeeth = [], floating = false, label }: DictationProps) {
+export function Dictation({ onAccept, species, selectedTeeth = [], floating = false, bar = false, label }: DictationProps) {
   const t = useTranslations("dictation");
   const session = useRef<Session | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -62,12 +64,20 @@ export function Dictation({ onAccept, species, selectedTeeth = [], floating = fa
   }
 
   const options = species && heard ? targetOptions(text, species, selectedTeeth) : [];
-  const buttonClass = floating ? "fixed bottom-24 right-4 z-20 size-14 rounded-full shadow-lg" : "min-h-touch min-w-touch";
-  const bubble = floating ? "fixed bottom-40 right-4 z-20 max-w-64 rounded-lg border bg-card p-2 shadow" : "";
+  const buttonClass = floating
+    ? "fixed bottom-24 right-4 z-20 size-14 rounded-full shadow-lg"
+    : bar
+      ? "size-touch shrink-0 rounded-full"
+      : "min-h-touch min-w-touch";
+  const bubble = floating
+    ? "fixed bottom-40 right-4 z-20 max-w-64 rounded-lg border bg-card p-2 shadow"
+    : bar
+      ? "fixed right-4 top-24 z-30 max-w-64 rounded-lg border bg-card p-2 shadow"
+      : "";
 
   return (
     <>
-      <div className={floating ? "contents" : "inline-flex flex-col items-start gap-1"}>
+      <div className={floating || bar ? "contents" : "inline-flex flex-col items-start gap-1"}>
         <Button
           type="button"
           variant={listening ? "destructive" : "outline"}

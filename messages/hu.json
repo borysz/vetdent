@@ -451,8 +451,12 @@
       "molar": "zápfog"
     },
     "chart": {
-      "patientRight": "A páciens jobb oldala",
-      "patientLeft": "A páciens bal oldala",
+      "quadrants": {
+        "1": "Jobb felső (101–110)",
+        "2": "Bal felső (201–210)",
+        "3": "Bal alsó (301–311)",
+        "4": "Jobb alsó (401–411)"
+      },
       "upper": "Felső állcsont",
       "lower": "Alsó állkapocs"
     },
@@ -661,6 +665,7 @@
     "problemForbidden": "Ehhez a módosításhoz nincs jogosultsága, ezért a szerver nem fogadta el.",
     "attachmentsOfTooth": "Fotók és röntgen ehhez a fogához",
     "sectionNav": "A lap szekciói",
+    "jumpTo": "Ugrás a szekcióra…",
     "sections": {
       "header": "Páciens és vizit adatai",
       "history": "Előzmények és indikáció",

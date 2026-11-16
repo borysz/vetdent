@@ -78,7 +78,7 @@ export function ConnectivityStatus() {
           type="button"
           onClick={() => void offline.syncNow()}
           disabled={status?.syncing}
-          className="h-9 rounded-full px-3 text-sm font-medium text-primary underline-offset-4 hover:underline disabled:opacity-50"
+          className="min-h-touch rounded-full px-3 text-sm font-medium text-primary underline-offset-4 hover:underline disabled:opacity-50"
         >
           {t("syncNow")}
         </button>

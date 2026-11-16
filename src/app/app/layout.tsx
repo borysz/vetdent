@@ -22,7 +22,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <header className="border-b bg-card">
           <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
             <div className="flex flex-wrap items-center gap-4">
-              <Link href={routes.app} className="text-xl font-semibold tracking-tight text-primary">
+              <Link href={routes.app} className="inline-flex min-h-touch items-center text-xl font-semibold tracking-tight text-primary">
                 {t("app.name")}
               </Link>
               <ConnectivityStatus />

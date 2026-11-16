@@ -43,7 +43,7 @@ export async function SubscriptionBanner() {
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-2.5 sm:px-6">
         <p className="font-medium">{message}</p>
         {canOpenBilling ? (
-          <Link href={routes.billing} className="font-medium underline underline-offset-4">
+          <Link href={routes.billing} className="inline-flex min-h-touch items-center font-medium underline underline-offset-4">
             {t("toBilling")}
           </Link>
         ) : null}

@@ -57,6 +57,17 @@ const LEGEND: readonly { color: Exclude<ToothColor, "none">; swatch: string }[] 
 ];
 
 const QUADRANTS: readonly Quadrant[] = [1, 2, 3, 4];
+
+/** The teeth of a jaw as drawn, split into its two quadrants (patient's right quadrant first, as on the screen). */
+function quadrantsOf(row: readonly ToothDefinition[]): { quadrant: Quadrant; teeth: ToothDefinition[] }[] {
+  const groups: { quadrant: Quadrant; teeth: ToothDefinition[] }[] = [];
+  for (const tooth of row) {
+    const last = groups[groups.length - 1];
+    if (last && last.quadrant === tooth.quadrant) last.teeth.push(tooth);
+    else groups.push({ quadrant: tooth.quadrant, teeth: [tooth] });
+  }
+  return groups;
+}
 const TYPES: readonly ToothType[] = ["incisor", "canine", "premolar", "molar"];
 
 interface OdontogramProps {
@@ -315,29 +326,30 @@ export function Odontogram({ species, chart, locked, save, onSelectionChange, re
         </div>
       ) : null}
 
-      <div className="overflow-x-auto pb-2">
-        <p className="mb-1 flex w-max min-w-full justify-between text-sm text-muted-foreground">
-          <span>{t("chart.patientRight")}</span>
-          <span>{t("chart.patientLeft")}</span>
-        </p>
-        <div className="flex w-max min-w-full flex-col gap-3">
-          {(["upper", "lower"] as const).map((arch) => (
-            <div key={arch} className="flex gap-1" role="group" aria-label={t(`chart.${arch}`)}>
-              {rows[arch].map((tooth, index) => (
-                <ToothCard
-                  key={tooth.number}
-                  tooth={tooth}
-                  separated={index > 0 && rows[arch][index - 1].side !== tooth.side}
-                  selected={selected.has(tooth.number)}
-                  chart={chart}
-                  onClick={() => onToothClick(tooth.number)}
-                  onPressStart={() => startPress(tooth.number)}
-                  onPressEnd={endPress}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+      {/* Each jaw is two rows, one per quadrant, so the whole dentition fits an upright tablet without sideways scrolling. */}
+      <div className="flex flex-col gap-4">
+        {(["upper", "lower"] as const).map((arch) => (
+          <div key={arch} className="flex flex-col gap-2" role="group" aria-label={t(`chart.${arch}`)}>
+            {quadrantsOf(rows[arch]).map((group) => (
+              <div key={group.quadrant} role="group" aria-label={t(`chart.quadrants.${group.quadrant}`)} className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">{t(`chart.quadrants.${group.quadrant}`)}</p>
+                <div className="flex flex-wrap justify-center gap-1">
+                  {group.teeth.map((tooth) => (
+                    <ToothCard
+                      key={tooth.number}
+                      tooth={tooth}
+                      selected={selected.has(tooth.number)}
+                      chart={chart}
+                      onClick={() => onToothClick(tooth.number)}
+                      onPressStart={() => startPress(tooth.number)}
+                      onPressEnd={endPress}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
 
       <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm" aria-label={t("legend.title")}>
@@ -444,7 +456,6 @@ export function Odontogram({ species, chart, locked, save, onSelectionChange, re
 
 interface ToothCardProps {
   tooth: ToothDefinition;
-  separated: boolean;
   selected: boolean;
   chart: VisitChart;
   onClick: () => void;
@@ -452,7 +463,7 @@ interface ToothCardProps {
   onPressEnd: () => void;
 }
 
-function ToothCard({ tooth, separated, selected, chart, onClick, onPressStart, onPressEnd }: ToothCardProps) {
+function ToothCard({ tooth, selected, chart, onClick, onPressStart, onPressEnd }: ToothCardProps) {
   const t = useTranslations("dental");
   const entry = chart.get(tooth.number);
   const marks = entry?.marks ?? EMPTY_MARKS;
@@ -477,7 +488,7 @@ function ToothCard({ tooth, separated, selected, chart, onClick, onPressStart, o
       onPointerLeave={onPressEnd}
       onPointerCancel={onPressEnd}
       onContextMenu={(event) => event.preventDefault()}
-      className={`relative flex min-h-touch w-14 shrink-0 select-none flex-col items-center gap-0.5 rounded-lg border bg-card px-1 pb-1 pt-0.5 ${separated ? "ml-3" : ""} ${selected ? "border-primary ring-2 ring-primary" : ""}`}
+      className={`relative flex min-h-touch w-14 shrink-0 select-none flex-col items-center gap-0.5 rounded-lg border bg-card px-1 pb-1 pt-0.5 ${selected ? "border-primary ring-2 ring-primary" : ""}`}
     >
       <span className="text-sm font-semibold">{tooth.number}</span>
       <ToothShape type={tooth.type} roots={tooth.roots} jaw={tooth.jaw} color={color} className="h-12 w-9" />

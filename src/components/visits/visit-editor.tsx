@@ -184,12 +184,28 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
   return (
     <div className="flex max-w-3xl flex-col gap-8 pb-16">
       <div className="sticky top-0 z-10 -mx-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-background/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6">
-        <nav aria-label={t("sectionNav")} className="flex flex-wrap gap-x-4">
+        {/* A list on an upright tablet (one line instead of three), the links themselves where there is room. */}
+        <select
+          aria-label={t("sectionNav")}
+          value=""
+          onChange={(event) => {
+            document.getElementById(event.target.value)?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          className="h-touch rounded-lg border border-input bg-card px-3 text-base lg:hidden"
+        >
+          <option value="">{t("jumpTo")}</option>
+          {SECTIONS.map((section) => (
+            <option key={section} value={`visit-${section}`}>
+              {t(`sections.${section}`)}
+            </option>
+          ))}
+        </select>
+        <nav aria-label={t("sectionNav")} className="hidden flex-wrap gap-x-4 lg:flex">
           {SECTIONS.map((section) => (
             <a
               key={section}
               href={`#visit-${section}`}
-              className="min-h-touch content-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+              className="inline-flex min-h-touch items-center text-sm font-medium text-primary underline-offset-4 hover:underline"
             >
               {t(`sections.${section}`)}
             </a>
@@ -199,6 +215,9 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           <span className="rounded-full border px-3 py-1 font-medium">{t(`status.${visit.status}`)}</span>
           {readyForFinalize && visit.status === "draft" ? (
             <span className="rounded-full bg-accent px-3 py-1 font-medium">{t("readyBadge")}</span>
+          ) : null}
+          {canDictate && patient ? (
+            <Dictation bar species={patient.species} selectedTeeth={selectedTeeth} onAccept={(text, target) => void acceptDictation(text, target)} />
           ) : null}
           <span className="text-muted-foreground">
             {saving
@@ -629,10 +648,6 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
         </section>
       </fieldset>
 
-      {canDictate && patient ? (
-        <Dictation floating species={patient.species} selectedTeeth={selectedTeeth} onAccept={(text, target) => void acceptDictation(text, target)} />
-      ) : null}
-
       <Lifecycle visit={visit} flush={flush} syncNow={syncNow} organizationId={organizationId} />
 
       {visit.status === "draft" && visitRights.write && canWrite ? (
@@ -656,7 +671,7 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
       <div>
         <Link
           href={patientPath(visit.patientId)}
-          className="min-h-touch content-center px-2 font-medium text-primary underline-offset-4 hover:underline"
+          className="inline-flex min-h-touch items-center px-2 font-medium text-primary underline-offset-4 hover:underline"
         >
           {t("back")}
         </Link>
