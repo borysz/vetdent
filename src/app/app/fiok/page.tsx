@@ -3,8 +3,7 @@ import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { OrganizationForm } from "@/components/organization/organization-form";
-import { requireActiveMembership } from "@/lib/auth/dal";
-import { isManager } from "@/lib/auth/roles";
+import { hasPermission, requireActiveMembership } from "@/lib/auth/dal";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -45,7 +44,7 @@ async function OrganizationContent() {
         <span className="text-foreground">{t(`organizationTypes.${data.type}`)}</span>
       </p>
       <OrganizationForm
-        editable={isManager(membership.role)}
+        editable={await hasPermission("organization.manage")}
         details={{
           type: data.type,
           name: data.name,

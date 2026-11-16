@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { logAuthEvent } from "@/lib/audit/log-auth-event";
 import { ACTIVE_ORGANIZATION_COOKIE } from "@/lib/auth/dal";
 import { authErrorKey } from "@/lib/auth/errors";
 import {
@@ -51,6 +52,7 @@ export async function signInAction(_previous: FormState, formData: FormData): Pr
     redirect(`${routes.mfaChallenge}?next=${encodeURIComponent(next)}`);
   }
 
+  await logAuthEvent(supabase, "auth.sign_in");
   redirect(next);
 }
 
@@ -145,11 +147,16 @@ export async function updatePasswordAction(_previous: FormState, formData: FormD
     return { status: "error", message: t(`errors.${authErrorKey(error)}`) };
   }
 
+  await logAuthEvent(supabase, "auth.password_changed");
   redirect(routes.app);
 }
 
 export async function signOutAction(): Promise<void> {
   const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (claims?.claims) {
+    await logAuthEvent(supabase, "auth.sign_out");
+  }
   await supabase.auth.signOut();
   (await cookies()).delete(ACTIVE_ORGANIZATION_COOKIE);
   redirect(routes.login);

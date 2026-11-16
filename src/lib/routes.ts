@@ -13,6 +13,8 @@ export const routes = {
   app: "/app",
   members: "/app/munkatarsak",
   organization: "/app/fiok",
+  roles: "/app/szerepkorok",
+  auditLog: "/app/naplo",
   profile: "/app/profil",
 } as const;
 

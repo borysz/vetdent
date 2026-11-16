@@ -3,6 +3,7 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { isPermissionKey, type PermissionKey } from "@/lib/auth/permissions";
 import { routes } from "@/lib/routes";
 import type { Database } from "@/lib/supabase/database.types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -141,6 +142,42 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
 
   return data ? { fullName: data.full_name, title: data.title } : null;
 });
+
+/**
+ * The permission keys the user holds in the organization they are working in.
+ * Comes from the database, so the application and row level security always
+ * agree. Empty when there is no session or no organization.
+ */
+export const getPermissions = cache(async (): Promise<ReadonlySet<PermissionKey>> => {
+  const membership = await getActiveMembership();
+  if (!membership) return new Set();
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("my_permissions", {
+    p_organization_id: membership.organization.id,
+  });
+  if (error) {
+    throw new Error(`Could not load permissions: ${error.message}`);
+  }
+
+  return new Set(data.filter(isPermissionKey));
+});
+
+export async function hasPermission(permission: PermissionKey): Promise<boolean> {
+  return (await getPermissions()).has(permission);
+}
+
+/**
+ * For Server Actions and pages that need a permission. Without it the user is
+ * sent back to the dashboard; the database would refuse the operation anyway.
+ */
+export async function requirePermission(
+  permission: PermissionKey,
+): Promise<{ user: CurrentUser; membership: Membership }> {
+  const context = await requireActiveMembership();
+  if (!(await hasPermission(permission))) redirect(routes.app);
+  return context;
+}
 
 /** For pages inside the app: a signed-in user with an organization, or a redirect. */
 export async function requireActiveMembership(): Promise<{ user: CurrentUser; membership: Membership }> {

@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { logAuthEvent } from "@/lib/audit/log-auth-event";
 import { getCurrentUser, requireUser } from "@/lib/auth/dal";
 import {
   consumeRecoveryCode,
@@ -67,6 +68,7 @@ export async function confirmMfaEnrollmentAction(_previous: FormState, formData:
 
   // Shown exactly once, right after switching two-step verification on.
   const codes = await issueRecoveryCodes(user.id);
+  await logAuthEvent(supabase, "auth.mfa_enabled");
 
   refresh();
   return { status: "success", data: { codes: codes.join("\n") } };
@@ -96,6 +98,7 @@ export async function disableMfaAction(): Promise<FormState> {
     if (error) return { status: "error", message: t("generic") };
   }
   await deleteRecoveryCodes(user.id);
+  await logAuthEvent(supabase, "auth.mfa_disabled");
 
   // The session still says "fully verified"; refresh it so it matches reality.
   await supabase.auth.refreshSession();
@@ -123,6 +126,7 @@ export async function redeemRecoveryCodeAction(_previous: FormState, formData: F
 
   const supabase = await createSupabaseServerClient();
   await supabase.auth.refreshSession();
+  await logAuthEvent(supabase, "auth.recovery_code_used");
   redirect(routes.profile);
 }
 
@@ -143,5 +147,6 @@ export async function verifyMfaChallengeAction(_previous: FormState, formData: F
   const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
   if (error) return { status: "error", message: t("codeInvalid") };
 
+  await logAuthEvent(supabase, "auth.sign_in");
   redirect(safeNextPath(field(formData, "next")));
 }

@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_name: string | null
+          created_at: string
+          details: Json
+          id: number
+          organization_id: string | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          created_at?: string
+          details?: Json
+          id?: never
+          organization_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          created_at?: string
+          details?: Json
+          id?: never
+          organization_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           accepted_at: string | null
@@ -206,6 +257,24 @@ export type Database = {
           },
         ]
       }
+      permissions: {
+        Row: {
+          key: string
+          requires_clinician: boolean
+          sort_order: number
+        }
+        Insert: {
+          key: string
+          requires_clinician?: boolean
+          sort_order: number
+        }
+        Update: {
+          key?: string
+          requires_clinician?: boolean
+          sort_order?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -229,6 +298,29 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      role_permissions: {
+        Row: {
+          permission: string
+          role: Database["public"]["Enums"]["member_role"]
+        }
+        Insert: {
+          permission: string
+          role: Database["public"]["Enums"]["member_role"]
+        }
+        Update: {
+          permission?: string
+          role?: Database["public"]["Enums"]["member_role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_fkey"
+            columns: ["permission"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["key"]
+          },
+        ]
       }
     }
     Views: {
@@ -285,6 +377,8 @@ export type Database = {
           user_id: string
         }[]
       }
+      log_auth_event: { Args: { p_event: string }; Returns: undefined }
+      my_permissions: { Args: { p_organization_id: string }; Returns: string[] }
       remove_member: { Args: { p_membership_id: string }; Returns: undefined }
       revoke_invitation: {
         Args: { p_invitation_id: string }

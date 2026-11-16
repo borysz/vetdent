@@ -2,29 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
-const ITEMS = [
-  { key: "dashboard", href: routes.app },
-  { key: "members", href: routes.members },
-  { key: "organization", href: routes.organization },
-  { key: "profile", href: routes.profile },
-] as const;
+export interface NavItem {
+  href: string;
+  label: string;
+  /** Highlight only on an exact match (used for the dashboard, the parent of every other page). */
+  exact?: boolean;
+}
 
 /** Primary navigation of the signed-in area; highlights the current section. */
-export function MainNav() {
-  const t = useTranslations("nav");
+export function MainNav({ label, items }: { label: string; items: readonly NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label={t("label")} className="border-b bg-card">
+    <nav aria-label={label} className="border-b bg-card">
       <ul className="mx-auto flex w-full max-w-6xl gap-1 overflow-x-auto px-4 sm:px-6">
-        {ITEMS.map((item) => {
-          const active = item.href === routes.app ? pathname === item.href : pathname.startsWith(item.href);
+        {items.map((item) => {
+          const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
           return (
-            <li key={item.key}>
+            <li key={item.href}>
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
@@ -35,7 +32,7 @@ export function MainNav() {
                     : "border-transparent text-muted-foreground hover:text-foreground",
                 )}
               >
-                {t(item.key)}
+                {item.label}
               </Link>
             </li>
           );

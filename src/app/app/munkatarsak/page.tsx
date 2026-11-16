@@ -5,8 +5,8 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { ActionForm } from "@/components/forms/action-form";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { InviteForm } from "@/components/members/invite-form";
-import { requireActiveMembership } from "@/lib/auth/dal";
-import { assignableRoles, canManageMember, isManager, type MemberRole } from "@/lib/auth/roles";
+import { hasPermission, requireActiveMembership } from "@/lib/auth/dal";
+import { assignableRoles, canManageMember, type MemberRole } from "@/lib/auth/roles";
 import {
   removeMemberAction,
   revokeInvitationAction,
@@ -54,7 +54,7 @@ async function MembersContent() {
   }
 
   const supabase = await createSupabaseServerClient();
-  const manager = isManager(membership.role);
+  const manager = await hasPermission("members.manage");
 
   const [members, invitations] = await Promise.all([
     supabase.rpc("list_members", { p_organization_id: organizationId }),

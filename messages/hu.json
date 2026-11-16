@@ -170,7 +170,112 @@
     "dashboard": "Irányítópult",
     "members": "Munkatársak",
     "organization": "Fiók adatai",
+    "roles": "Szerepkörök",
+    "auditLog": "Napló",
     "profile": "Profil"
+  },
+  "permissions": {
+    "billing": {
+      "manage": "Előfizetés és számlázási adatok kezelése",
+      "view": "Előfizetés megtekintése"
+    },
+    "organization": {
+      "manage": "Fiók adatainak és beállításainak módosítása"
+    },
+    "members": {
+      "manage": "Munkatársak meghívása, szerepkörök kezelése"
+    },
+    "audit": {
+      "view": "Napló megtekintése"
+    },
+    "catalog": {
+      "manage": "Kódtörzs és szervezeti sablonok szerkesztése"
+    },
+    "clients": {
+      "write": "Gazdik és páciensek felvétele, szerkesztése",
+      "delete": "Gazdi vagy páciens törlése"
+    },
+    "visits": {
+      "read": "Kezelési lap megtekintése",
+      "write": "Kezelési lap létrehozása, szerkesztése (piszkozat)",
+      "finalize": "Kezelési lap lezárása",
+      "reopen": "Lezárt lap újranyitása, kiegészítése"
+    },
+    "attachments": {
+      "upload": "Fotó és röntgen feltöltése"
+    },
+    "summary": {
+      "send_any": "Gazdi-PDF letöltése, küldése bármely lapról",
+      "send_finalized": "Gazdi-PDF letöltése, küldése lezárt lapról"
+    },
+    "templates": {
+      "manage_own": "Saját sablonok"
+    }
+  },
+  "rolesPage": {
+    "title": "Szerepkörök",
+    "lead": "Melyik szerepkör mit tehet a fiókban. A táblázat tájékoztató; a szerepköröket a Munkatársak oldalon lehet kiosztani.",
+    "permissionColumn": "Jogosultság",
+    "allowed": "igen",
+    "notAllowed": "nem",
+    "clinicianOnly": "igen*",
+    "clinicianNote": "* A tulajdonos akkor zárhat le és nyithat újra kezelési lapot, ha állatorvosként is meg van jelölve.",
+    "yourRole": "Az Ön szerepköre: {role}"
+  },
+  "audit": {
+    "title": "Napló",
+    "lead": "Ki, mikor, mit tett a fiókban. A bejegyzések nem módosíthatók és nem törölhetők.",
+    "empty": "Még nincs naplóbejegyzés.",
+    "showing": "A legutóbbi {count} bejegyzés látható.",
+    "unknownActor": "Ismeretlen felhasználó",
+    "unknownAction": "Egyéb művelet ({action})",
+    "columns": {
+      "time": "Időpont",
+      "actor": "Ki",
+      "action": "Mit tett"
+    },
+    "actions": {
+      "organization": {
+        "created": "Létrehozta a fiókot",
+        "updated": "Módosította a fiók adatait"
+      },
+      "invitation": {
+        "created": "Meghívót hozott létre",
+        "revoked": "Visszavont egy meghívót",
+        "accepted": "Elfogadta a meghívót"
+      },
+      "member": {
+        "role_changed": "Szerepkört módosított",
+        "suspended": "Felfüggesztett egy munkatársat",
+        "reactivated": "Visszaállított egy munkatársat",
+        "removed": "Eltávolított egy munkatársat",
+        "left": "Kilépett a fiókból"
+      },
+      "auth": {
+        "sign_in": "Bejelentkezett",
+        "sign_out": "Kijelentkezett",
+        "password_changed": "Jelszót módosított",
+        "mfa_enabled": "Bekapcsolta a kétlépcsős azonosítást",
+        "mfa_disabled": "Kikapcsolta a kétlépcsős azonosítást",
+        "recovery_code_used": "Tartalékkóddal lépett be"
+      }
+    },
+    "details": {
+      "invitation": "{email} · {role}",
+      "roleChange": "{from} → {to}",
+      "fields": "Módosított mezők: {fields}"
+    },
+    "fields": {
+      "name": "név",
+      "tax_number": "adószám",
+      "country": "ország",
+      "postal_code": "irányítószám",
+      "city": "település",
+      "address_line": "cím",
+      "phone": "telefonszám",
+      "email": "e-mail-cím",
+      "type": "fióktípus"
+    }
   },
   "members": {
     "title": "Munkatársak",

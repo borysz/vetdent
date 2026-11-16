@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
+import { logAuthEvent } from "@/lib/audit/log-auth-event";
 import { requireUser } from "@/lib/auth/dal";
 import { authErrorKey } from "@/lib/auth/errors";
 import { newPasswordSchema, type AuthValidationKey } from "@/lib/auth/schemas";
@@ -70,6 +71,7 @@ export async function changePasswordAction(_previous: FormState, formData: FormD
     return { status: "error", message: t(`auth.errors.${authErrorKey(error)}`) };
   }
 
+  await logAuthEvent(supabase, "auth.password_changed");
   return { status: "success", message: t("profile.passwordSaved") };
 }
 
