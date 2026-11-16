@@ -79,7 +79,11 @@ export function OfflineProvider({ userId, organizationId, canWrite, canDelete, c
     () => (typeof window === "undefined" ? null : new LocalDatabase(databaseName(userId, organizationId))),
     [userId, organizationId],
   );
-  useEffect(() => () => db?.close({ disableAutoOpen: false }), [db]);
+  // The connection is deliberately never closed here. React's development mode runs effects twice
+  // (mount, cleanup, mount); closing the database in that cleanup aborted the first live queries,
+  // which then never produced a result – lists stayed on "loading" after a full page load. The
+  // browser closes the connection when the page goes away, and Dexie hands the old connection over
+  // by itself if a newer database version is ever needed.
 
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<SyncErrorKind | null>(null);
