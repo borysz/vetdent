@@ -22,6 +22,9 @@ export async function AppNav() {
   if (permissions.has("billing.view")) {
     items.push({ href: routes.billing, label: t("billing") });
   }
+  if (permissions.has("templates.manage_own")) {
+    items.push({ href: routes.templates, label: t("templates") });
+  }
   items.push({ href: routes.roles, label: t("roles") });
   if (permissions.has("audit.view")) {
     items.push({ href: routes.auditLog, label: t("auditLog") });

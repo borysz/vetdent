@@ -1,6 +1,7 @@
 import Dexie, { type Table } from "dexie";
 import type { LocalClientRow } from "./clients-model";
 import type { LocalPatientRow } from "./patients-model";
+import type { LocalTemplateRow } from "./templates-model";
 import type { LocalToothRow } from "./teeth-model";
 import type { LocalVisitRow } from "./visits-model";
 
@@ -18,6 +19,7 @@ export class LocalDatabase extends Dexie {
   patients!: Table<LocalPatientRow, string>;
   visits!: Table<LocalVisitRow, string>;
   teeth!: Table<LocalToothRow, string>;
+  templates!: Table<LocalTemplateRow, string>;
   meta!: Table<MetaEntry, string>;
 
   constructor(name: string) {
@@ -46,6 +48,14 @@ export class LocalDatabase extends Dexie {
       teeth: "id, organizationId, visitId, touchedAt",
       meta: "key",
     });
+    this.version(5).stores({
+      clients: "id, organizationId, touchedAt",
+      patients: "id, organizationId, touchedAt",
+      visits: "id, organizationId, touchedAt",
+      teeth: "id, organizationId, visitId, touchedAt",
+      templates: "id, organizationId, touchedAt",
+      meta: "key",
+    });
   }
 }
 
@@ -58,6 +68,7 @@ export const META_KEYS = {
   patientsCursor: "patients.cursor",
   visitsCursor: "visits.cursor",
   teethCursor: "teeth.cursor",
+  templatesCursor: "templates.cursor",
   lastSyncAt: "lastSyncAt",
 } as const;
 

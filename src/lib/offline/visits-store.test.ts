@@ -43,6 +43,13 @@ class FakeVisitServer implements SyncApi {
   async pullTeeth(): Promise<never[]> {
     return [];
   }
+
+  async pushTemplates(): Promise<PushResult[]> {
+    return [];
+  }
+  async pullTemplates(): Promise<never[]> {
+    return [];
+  }
   async pushPatients(): Promise<PushResult[]> {
     return [];
   }

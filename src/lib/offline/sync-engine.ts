@@ -2,6 +2,7 @@ import type { Table } from "dexie";
 import { clientOps, type ClientFields } from "./clients-model";
 import { META_KEYS, readMeta, writeMeta, type LocalDatabase } from "./local-db";
 import { patientOps, type PatientFields } from "./patients-model";
+import { templateOps, type ServerTemplate, type TemplateFields } from "./templates-model";
 import { toothOps, type ServerTooth, type ToothFields } from "./teeth-model";
 import { visitOps, type ServerVisit, type VisitFields } from "./visits-model";
 import {
@@ -37,6 +38,8 @@ export interface SyncApi {
   pullVisits(afterSeq: number, limit: number): Promise<ServerVisit[]>;
   pushTeeth(changes: WireChange[]): Promise<PushResult[]>;
   pullTeeth(afterSeq: number, limit: number): Promise<ServerTooth[]>;
+  pushTemplates(changes: WireChange[]): Promise<PushResult[]>;
+  pullTemplates(afterSeq: number, limit: number): Promise<ServerTemplate[]>;
 }
 
 export interface SyncOutcome {
@@ -118,6 +121,14 @@ const teethTable: SyncTable<ToothFields> = {
     return (row) => !unknownToServer.has(row.pending.visitId ?? row.server?.visitId ?? "");
   },
   decorate: (row) => ({ ...row, visitId: row.server?.visitId ?? row.pending.visitId ?? "" }),
+};
+
+const templatesTable: SyncTable<TemplateFields> = {
+  table: (db) => db.templates,
+  ops: templateOps,
+  cursorKey: META_KEYS.templatesCursor,
+  push: (api, changes) => api.pushTemplates(changes),
+  pull: (api, afterSeq, limit) => api.pullTemplates(afterSeq, limit),
 };
 
 const PUSH_BATCH = 100;
@@ -252,6 +263,10 @@ export function syncVisits(db: LocalDatabase, organizationId: string, api: SyncA
   return syncKind(db, visitsTable, organizationId, api);
 }
 
+export function syncTemplates(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
+  return syncKind(db, templatesTable, organizationId, api);
+}
+
 export function syncTeeth(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
   return syncKind(db, teethTable, organizationId, api);
 }
@@ -281,11 +296,19 @@ export async function syncAll(db: LocalDatabase, organizationId: string, api: Sy
   if (visits.error) return { ...upToVisits, error: visits.error };
 
   const teeth = await syncTeeth(db, organizationId, api);
-  return {
+  const upToTeeth = {
     pushed: upToVisits.pushed + teeth.pushed,
     pulled: upToVisits.pulled + teeth.pulled,
     refused: upToVisits.refused + teeth.refused,
-    error: teeth.error,
+  };
+  if (teeth.error) return { ...upToTeeth, error: teeth.error };
+
+  const templates = await syncTemplates(db, organizationId, api);
+  return {
+    pushed: upToTeeth.pushed + templates.pushed,
+    pulled: upToTeeth.pulled + templates.pulled,
+    refused: upToTeeth.refused + templates.refused,
+    error: templates.error,
   };
 }
 
@@ -302,6 +325,7 @@ export async function countPending(db: LocalDatabase): Promise<SyncCounts> {
     ...(await db.patients.toArray()),
     ...(await db.visits.toArray()),
     ...(await db.teeth.toArray()),
+    ...(await db.templates.toArray()),
   ];
   return {
     pending: rows.filter((row) => hasPending(row as LocalRow<object>) && !row.problem).length,

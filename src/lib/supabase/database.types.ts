@@ -713,6 +713,88 @@ export type Database = {
           },
         ]
       }
+      templates: {
+        Row: {
+          body: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          field_revs: Json
+          id: string
+          kind: Database["public"]["Enums"]["template_kind"]
+          name: string
+          organization_id: string
+          payload: Json | null
+          rev: number
+          seq: number
+          shared: boolean
+          species: Database["public"]["Enums"]["species"] | null
+          text_target: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          field_revs?: Json
+          id: string
+          kind: Database["public"]["Enums"]["template_kind"]
+          name: string
+          organization_id: string
+          payload?: Json | null
+          rev?: number
+          seq?: number
+          shared?: boolean
+          species?: Database["public"]["Enums"]["species"] | null
+          text_target?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          field_revs?: Json
+          id?: string
+          kind?: Database["public"]["Enums"]["template_kind"]
+          name?: string
+          organization_id?: string
+          payload?: Json | null
+          rev?: number
+          seq?: number
+          shared?: boolean
+          species?: Database["public"]["Enums"]["species"] | null
+          text_target?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       visit_teeth: {
         Row: {
           created_at: string
@@ -1068,6 +1150,10 @@ export type Database = {
         Args: { p_changes: Json; p_organization_id: string }
         Returns: Json
       }
+      sync_push_templates: {
+        Args: { p_changes: Json; p_organization_id: string }
+        Returns: Json
+      }
       sync_push_visit_teeth: {
         Args: { p_changes: Json; p_organization_id: string }
         Returns: Json
@@ -1093,6 +1179,7 @@ export type Database = {
       plan_audience: "clinic" | "individual"
       species: "dog" | "cat"
       subscription_status: "trialing" | "active" | "past_due" | "canceled"
+      template_kind: "treatment" | "text"
       visit_status: "draft" | "final"
     }
     CompositeTypes: {
@@ -1228,6 +1315,7 @@ export const Constants = {
       plan_audience: ["clinic", "individual"],
       species: ["dog", "cat"],
       subscription_status: ["trialing", "active", "past_due", "canceled"],
+      template_kind: ["treatment", "text"],
       visit_status: ["draft", "final"],
     },
   },

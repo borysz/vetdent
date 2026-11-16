@@ -173,6 +173,12 @@ class FakeTeethServer implements SyncApi {
   async pullVisits(): Promise<never[]> {
     return [];
   }
+  async pushTemplates(): Promise<PushResult[]> {
+    return [];
+  }
+  async pullTemplates(): Promise<never[]> {
+    return [];
+  }
 
   async pushTeeth(changes: WireChange[]): Promise<PushResult[]> {
     if (this.down) throw new SyncError("offline");

@@ -4,7 +4,9 @@ import type { PushResult, PushStatus, ServerClient, WireChange } from "./clients
 import type { ServerPatient } from "./patients-model";
 import { SyncError, type SyncApi, type SyncErrorKind } from "./sync-engine";
 import { parseFindings, parsePockets, parseProcedures, serializeFindings, serializePockets, serializeProcedures } from "@/domain/dental/chart";
+import { parsePayload, serializePayload } from "@/domain/dental/template";
 import { serializeBlocks, serializeMedications, serializeTags } from "./visit-lists";
+import type { ServerTemplate } from "./templates-model";
 import type { ServerTooth } from "./teeth-model";
 import type { ServerVisit } from "./visits-model";
 
@@ -133,6 +135,41 @@ export function createSupabaseSyncApi(supabase: SupabaseClient<Database>, organi
         generalNote: row.general_note,
         status: row.status,
         finalizedAt: row.finalized_at,
+        rev: row.rev,
+        seq: row.seq,
+        deletedAt: row.deleted_at,
+        updatedAt: row.updated_at,
+      }));
+    },
+
+    async pushTemplates(changes: WireChange[]): Promise<PushResult[]> {
+      const { data, error } = await supabase.rpc("sync_push_templates", {
+        p_organization_id: organizationId,
+        p_changes: changes as never,
+      });
+      if (error) throw new SyncError(kindOf(error), error.message);
+      return parsePushResults(data);
+    },
+
+    async pullTemplates(afterSeq: number, limit: number): Promise<ServerTemplate[]> {
+      const { data, error } = await supabase
+        .from("templates")
+        .select("id, kind, name, shared, species, text_target, body, payload, rev, seq, deleted_at, updated_at")
+        .eq("organization_id", organizationId)
+        .gt("seq", afterSeq)
+        .order("seq", { ascending: true })
+        .limit(limit);
+      if (error) throw new SyncError(kindOf(error), error.message);
+
+      return data.map((row) => ({
+        id: row.id,
+        kind: row.kind,
+        name: row.name,
+        shared: row.shared,
+        species: row.species,
+        textTarget: row.text_target,
+        body: row.body,
+        payload: row.payload === null ? null : serializePayload(parsePayload(row.payload)),
         rev: row.rev,
         seq: row.seq,
         deletedAt: row.deleted_at,

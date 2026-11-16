@@ -16,6 +16,7 @@ export const routes = {
   newClient: "/app/gazdik/uj",
   patients: "/app/paciensek",
   visits: "/app/vizitek",
+  templates: "/app/sablonok",
   newPatient: "/app/paciensek/uj",
   members: "/app/munkatarsak",
   organization: "/app/fiok",

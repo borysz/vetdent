@@ -133,6 +133,13 @@ class OrderCheckingServer implements SyncApi {
     return [];
   }
 
+  async pushTemplates(): Promise<PushResult[]> {
+    return [];
+  }
+  async pullTemplates(): Promise<never[]> {
+    return [];
+  }
+
   clientIds = new Set<string>();
   patientIds = new Set<string>();
   log: string[] = [];

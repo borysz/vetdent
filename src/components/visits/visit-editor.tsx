@@ -43,6 +43,10 @@ import {
 } from "@/lib/offline/visit-lists";
 import type { VisitFields, VisitView } from "@/lib/offline/visits-model";
 import { Dictation } from "@/components/dictation/dictation";
+import { TemplatePicker } from "@/components/templates/template-picker";
+import { TreatmentTemplateTools } from "@/components/templates/treatment-template-tools";
+import type { TextKey } from "@/domain/dental/template";
+import type { Species } from "@/domain/teeth/catalog";
 import { Odontogram } from "@/components/dental/odontogram";
 import { appendText, type DictationTarget } from "@/domain/dictation/triadan";
 import { loadChart, saveTeeth } from "@/lib/offline/teeth-store";
@@ -376,6 +380,8 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </fieldset>
           <LongText
             id="visit-complaint-notes"
+            templateTarget="complaint_notes"
+            species={patient?.species}
             dictate={canDictate}
             label={t("fields.complaintNotes")}
             value={complaintNotes}
@@ -407,6 +413,26 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
         <h2 id="visit-dental-title" className="text-xl font-semibold">
           {t("sections.dental")}
         </h2>
+        {patient && chart && !locked ? (
+          <TreatmentTemplateTools
+            species={patient.species}
+            chart={chart}
+            selectedTeeth={selectedTeeth}
+            texts={{
+              ...(feedingAdvice.trim() ? { feeding_advice: feedingAdvice.trim() } : {}),
+              ...(sutures.trim() ? { sutures: sutures.trim() } : {}),
+              ...(complaintNotes.trim() ? { complaint_notes: complaintNotes.trim() } : {}),
+              ...(generalNote.trim() ? { general_note: generalNote.trim() } : {}),
+            }}
+            medications={medications}
+            save={async (changes) => {
+              if (!db) return;
+              await saveTeeth(db, organizationId, visit.id, changes);
+              syncSoon();
+            }}
+            onApplyExtras={applyExtras}
+          />
+        ) : null}
         {patient && chart ? (
           <Odontogram
             species={patient.species}
@@ -424,6 +450,8 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
         )}
         <LongText
           id="visit-general-note"
+          templateTarget="general_note"
+          species={patient?.species}
           dictate={canDictate}
           label={t("fields.generalNote")}
           value={generalNote}
@@ -494,6 +522,8 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </div>
           <LongText
             id="visit-sutures"
+            templateTarget="sutures"
+            species={patient?.species}
             dictate={canDictate}
             label={t("fields.sutures")}
             value={sutures}
@@ -552,6 +582,8 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </div>
           <LongText
             id="visit-feeding"
+            templateTarget="feeding_advice"
+            species={patient?.species}
             dictate={canDictate}
             label={t("fields.feedingAdvice")}
             value={feedingAdvice}
@@ -612,6 +644,39 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
       </div>
     </div>
   );
+
+  /** The texts and medications of a loaded template are added to what the visit already has. */
+  function applyExtras(texts: Partial<Record<TextKey, string>>, extraMedications: readonly Medication[]) {
+    // A text that is already in the field is not added again (loading a template twice is harmless).
+    const add = (current: string, text: string | undefined) => (text && !current.includes(text) ? appendText(current, text) : current);
+    if (texts.feeding_advice) {
+      const next = add(feedingAdvice, texts.feeding_advice);
+      setFeedingAdvice(next);
+      save({ feedingAdvice: textOrNull(next) });
+    }
+    if (texts.sutures) {
+      const next = add(sutures, texts.sutures);
+      setSutures(next);
+      save({ sutures: textOrNull(next) });
+    }
+    if (texts.complaint_notes) {
+      const next = add(complaintNotes, texts.complaint_notes);
+      setComplaintNotes(next);
+      save({ complaintNotes: textOrNull(next) });
+    }
+    if (texts.general_note) {
+      const next = add(generalNote, texts.general_note);
+      setGeneralNote(next);
+      save({ generalNote: textOrNull(next) });
+    }
+    const known = new Set(medications.map((medication) => medication.name.toLowerCase()));
+    const fresh = extraMedications.filter((medication) => !known.has(medication.name.toLowerCase()));
+    if (fresh.length > 0) {
+      const merged = [...medications, ...fresh];
+      setMedications(merged);
+      save({ medications: serializeMedications(merged) });
+    }
+  }
 
   /** A confirmed dictation: to the tooth's note, or to the visit's general note. */
   async function acceptDictation(text: string, target: DictationTarget | null) {
@@ -678,18 +743,26 @@ interface LongTextProps {
   rows?: number;
   /** A microphone beside the label: dictated text is added to the field after confirmation. */
   dictate?: boolean;
+  /** A list of text templates for this field beside the label. */
+  templateTarget?: TextKey;
+  species?: Species;
   error?: string;
   /** Outside the form fieldset a field has to be disabled by itself. */
   disabled?: boolean;
   onChange: (value: string) => void;
 }
 
-function LongText({ id, label, value, rows = 3, dictate, error, disabled, onChange }: LongTextProps) {
+function LongText({ id, label, value, rows = 3, dictate, templateTarget, species, error, disabled, onChange }: LongTextProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor={id}>{label}</Label>
-        {dictate ? <Dictation label={label} onAccept={(text) => onChange(appendText(value, text))} /> : null}
+        <div className="flex flex-wrap items-center gap-2">
+          {templateTarget && !disabled ? (
+            <TemplatePicker target={templateTarget} species={species} onPick={(body) => onChange(appendText(value, body))} />
+          ) : null}
+          {dictate ? <Dictation label={label} onAccept={(text) => onChange(appendText(value, text))} /> : null}
+        </div>
       </div>
       <textarea
         id={id}
