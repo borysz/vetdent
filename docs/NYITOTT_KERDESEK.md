@@ -62,6 +62,12 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Addig is: nem kezdtem el. Javaslatom a saját megoldás, mert nem kell hozzá külön szerver, és a kezelési lap összefésülési szabályai (fogankénti leletek) pontosan ránk szabhatók; cserébe több a saját kód és a teszt.
 - Válasz:
 
+**16. Meddig használható a demó verzió ingyen?** (2026-11-16: a fizetés és a számlázás a demó utánra halasztva)
+- Miért kérdés: jelenleg minden új fiók 14 napos próbaidővel indul, utána csak olvasható lesz. Egy ingyenes demóban ez kizárná a felhasználókat. A 11–13. és 14. kérdés (Stripe, árak, Számlázz.hu, platform-admin) a demó utánra marad.
+- Addig is: a beállítás nem változott (14 nap); a próbaidő hossza az adatbázisban (`billing_settings.trial_days`) kódmódosítás nélkül átállítható.
+- Javaslat: a demó időtartamára hosszú próbaidő (pl. 365 nap), és a fizetős csomagok bevezetésekor külön döntés a meglévő demófiókokról.
+- Válasz:
+
 ## Tudnivaló, teendő nélkül is rendben van
 
 **8. Az `npm audit` 7 közepes súlyosságú sérülékenységet jelez a függőségekben.**
