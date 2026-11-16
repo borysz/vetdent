@@ -16,8 +16,11 @@ export async function AppNav() {
     { href: routes.app, label: t("dashboard"), exact: true },
     { href: routes.members, label: t("members") },
     { href: routes.organization, label: t("organization") },
-    { href: routes.roles, label: t("roles") },
   ];
+  if (permissions.has("billing.view")) {
+    items.push({ href: routes.billing, label: t("billing") });
+  }
+  items.push({ href: routes.roles, label: t("roles") });
   if (permissions.has("audit.view")) {
     items.push({ href: routes.auditLog, label: t("auditLog") });
   }

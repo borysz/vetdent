@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { isPermissionKey, type PermissionKey } from "@/lib/auth/permissions";
+import type { Entitlements } from "@/lib/billing/status";
 import { routes } from "@/lib/routes";
 import type { Database } from "@/lib/supabase/database.types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -161,6 +162,43 @@ export const getPermissions = cache(async (): Promise<ReadonlySet<PermissionKey>
   }
 
   return new Set(data.filter(isPermissionKey));
+});
+
+/**
+ * Plan, subscription status, limits and usage of the organization the user is
+ * working in. `null` when there is no organization (or, defensively, no
+ * subscription row).
+ */
+export const getEntitlements = cache(async (): Promise<Entitlements | null> => {
+  const membership = await getActiveMembership();
+  if (!membership) return null;
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("my_entitlements", {
+    p_organization_id: membership.organization.id,
+  });
+  if (error) {
+    throw new Error(`Could not load the subscription: ${error.message}`);
+  }
+
+  const row = data[0];
+  if (!row) return null;
+
+  return {
+    planKey: row.plan_key,
+    planName: row.plan_name,
+    status: row.status,
+    access: row.access === "full" ? "full" : "read_only",
+    trialEndsAt: row.trial_ends_at,
+    currentPeriodEnd: row.current_period_end,
+    cancelAtPeriodEnd: row.cancel_at_period_end,
+    graceEndsAt: row.grace_ends_at,
+    maxMembers: row.max_members,
+    memberCount: row.member_count,
+    pendingInvitationCount: row.pending_invitation_count,
+    storageGb: row.storage_gb,
+    features: row.features,
+  };
 });
 
 export async function hasPermission(permission: PermissionKey): Promise<boolean> {

@@ -1,6 +1,7 @@
 /** Every path of the application in one place, so links never drift from routes. */
 export const routes = {
   home: "/",
+  pricing: "/arak",
   login: "/belepes",
   signUp: "/regisztracio",
   forgotPassword: "/elfelejtett-jelszo",
@@ -13,6 +14,7 @@ export const routes = {
   app: "/app",
   members: "/app/munkatarsak",
   organization: "/app/fiok",
+  billing: "/app/elofizetes",
   roles: "/app/szerepkorok",
   auditLog: "/app/naplo",
   profile: "/app/profil",

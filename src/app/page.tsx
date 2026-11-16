@@ -20,6 +20,9 @@ export default function HomePage() {
             <ConnectivityStatus />
           </div>
           <nav className="flex items-center gap-2">
+            <Link href={routes.pricing} className={buttonVariants({ variant: "ghost" })}>
+              {t("home.pricing")}
+            </Link>
             <Link href={routes.login} className={buttonVariants({ variant: "outline" })}>
               {t("home.login")}
             </Link>

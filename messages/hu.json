@@ -19,6 +19,7 @@
     "lead": "Az anamnézistől az interaktív fogképleten és a műtéti naplón át a gazdinak szóló összefoglalóig – műtét közben, kesztyűs kézzel, tableten is.",
     "signUp": "Regisztráció",
     "login": "Bejelentkezés",
+    "pricing": "Árak",
     "featuresTitle": "Ami készül",
     "features": {
       "odontogram": {
@@ -170,9 +171,67 @@
     "dashboard": "Irányítópult",
     "members": "Munkatársak",
     "organization": "Fiók adatai",
+    "billing": "Előfizetés",
     "roles": "Szerepkörök",
     "auditLog": "Napló",
     "profile": "Profil"
+  },
+  "billing": {
+    "title": "Előfizetés",
+    "planTitle": "Jelenlegi csomag",
+    "statuses": {
+      "trialing": "Próbaidő",
+      "active": "Aktív",
+      "past_due": "Fizetési hiba",
+      "canceled": "Lemondva"
+    },
+    "readOnlyStatus": "Lejárt – csak olvasható",
+    "trialEnds": "A próbaidő vége: {date}",
+    "periodEnds": "A jelenlegi időszak vége: {date}",
+    "graceEnds": "A türelmi idő vége: {date}",
+    "usageTitle": "Keretek",
+    "seats": "Felhasználók",
+    "seatsValue": "{used} / {max}",
+    "seatsUnlimited": "{used} (korlátlan)",
+    "seatsPending": "Ebből függő meghívó: {count}",
+    "storage": "Tárhely csatolmányokra",
+    "storageValue": "{gb} GB",
+    "featuresTitle": "A csomag tartalma",
+    "features": {
+      "templates": "Sablonok",
+      "dictation": "Diktálás",
+      "pdf_branding": "Saját logó a gazdinak szóló összefoglalón",
+      "member_invites": "Munkatársak meghívása, szerepkörök",
+      "audit_export": "Naplóexport"
+    },
+    "paymentTitle": "Fizetés",
+    "paymentPending": "Az online fizetés még nincs bekötve. A próbaidő alatt minden funkció használható; a csomagválasztás és a fizetés itt lesz elérhető.",
+    "notice": {
+      "trial": "{days, plural, =0 {Ma van a próbaidő utolsó napja.} other {A próbaidőből # nap van hátra.}}",
+      "trialEnded": "A próbaidő lejárt, ezért a fiók csak olvasható. A meglévő adatok megtekinthetők.",
+      "pastDue": "A legutóbbi fizetés nem sikerült. {days, plural, =0 {Mától} other {# nap múlva}} a fiók csak olvasható lesz, ha a fizetés nem rendeződik.",
+      "canceling": "Az előfizetés le van mondva. A fiók eddig használható teljes értékűen: {date}",
+      "readOnly": "Az előfizetés lejárt, ezért a fiók csak olvasható. A meglévő adatok megtekinthetők.",
+      "toBilling": "Előfizetés megnyitása"
+    }
+  },
+  "pricing": {
+    "title": "Árak",
+    "lead": "{days, plural, =0 {Válassza ki az Önnek megfelelő csomagot.} other {Minden csomag # napos ingyenes próbaidővel indul, bankkártya nélkül.}}",
+    "audience": {
+      "clinic": "Rendelőknek",
+      "individual": "Egyéni állatorvosoknak"
+    },
+    "users": "{count, plural, =1 {1 felhasználó} other {Legfeljebb # felhasználó}}",
+    "usersUnlimited": "Korlátlan számú felhasználó",
+    "storage": "{gb} GB tárhely fotóknak és röntgenfelvételeknek",
+    "perMonth": "{price} / hó",
+    "perYear": "{price} / év",
+    "vatNet": "Az árak nettó árak, a {vat}% ÁFA nélkül értendők.",
+    "vatGross": "Az árak tartalmazzák a {vat}% ÁFÁ-t.",
+    "priceSoon": "Az árak hamarosan elérhetők.",
+    "start": "Próbaidő indítása",
+    "empty": "A csomagok jelenleg nem érhetők el."
   },
   "permissions": {
     "billing": {

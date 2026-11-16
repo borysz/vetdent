@@ -60,6 +60,19 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | A napló oldal a legutóbbi 100 bejegyzést mutatja; szűrés, lapozás és export még nincs. | A naplóexport a prompt szerint csomagfüggő funkció, a 4. fázishoz tartozik. | `src/app/app/naplo/page.tsx`. |
 | A napló a rendelő törlésekor vele együtt törlődne. | Rendelőtörlés még nincs; a megőrzési szabály nyitott kérdés (`NYITOTT_KERDESEK.md` 6. pont). | Az `audit_log.organization_id` idegen kulcsa. |
 
+## Előfizetés
+
+| Döntés | Indok | Mit érint, ha változik |
+|---|---|---|
+| A csomagok (név, keretek, funkciók, árak) és a számlázási beállítások (próbaidő hossza, türelmi idő, ÁFA) az adatbázisban vannak; a kódban nincs ár és nincs keret. | A prompt előírása. | `plans`, `billing_settings` táblák; szerkesztőfelületük a platform-adminnal készül el. |
+| Két csomag van: **Egyéni** (1 felhasználó, 10 GB) és **Rendelő** (10 felhasználó, 100 GB). Ár nincs megadva; az árazási oldal ezt kiírja. | A megerősített csomagszerkezet; a számok helykitöltők (`NYITOTT_KERDESEK.md` 12. pont). | Csak adatmódosítás. |
+| Minden új fiók 14 napos próbaidővel indul a típusának megfelelő csomagon; próbaidő alatt a tárhely 2 GB. | A prompt 7.1 és 7.2 pontja. | `billing_settings`. |
+| Hogy egy fiók teljes értékűen használható-e vagy csak olvasható, azt **egyetlen adatbázis-függvény** dönti el az előfizetés állapotából (`private.organization_access`). Az alkalmazás ezt nem számolja újra, csak megjeleníti. | Egy helyen legyen a szabály; a fizetés később csak az állapotot és a dátumokat módosítja. | – |
+| Csak olvasható módban a munkatársak kezelése (szerepkör, felfüggesztés, eltávolítás) tovább működik, új meghívó viszont nem hozható létre. | A rendelőnek lejárt előfizetéssel is tudnia kell hozzáférést megvonni; bővülni viszont ne tudjon. | `create_invitation`, `accept_invitation`. |
+| A felhasználói keretbe a függő meghívók is beleszámítanak. | Különben a keret meghívókkal túlléphető volna. | `private.require_free_seat`. |
+| A csomagok és előfizetések táblái felhasználóként közvetlenül nem olvashatók; minden adat függvényen át érkezik (`my_entitlements`, `list_public_plans`). | A Stripe-azonosítók és más rendelők adatai ne szivároghassanak. | – |
+| Az előfizetés oldalon a fizetés helyén tájékoztató szöveg áll. | A Stripe még nincs bekötve (`NYITOTT_KERDESEK.md` 11. pont); nem akartam sehová nem vezető gombot. | A Stripe bekötésekor a csomagválasztó kerül a helyére. |
+
 ## Szakmai tartalom
 
 | Döntés | Indok | Mit érint, ha változik |

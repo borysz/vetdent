@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { AccountMenu } from "@/components/app-shell/account-menu";
 import { AppNav } from "@/components/app-shell/app-nav";
+import { SubscriptionBanner } from "@/components/app-shell/subscription-banner";
 import { ConnectivityStatus } from "@/components/connectivity-status";
 import { routes } from "@/lib/routes";
 
@@ -31,6 +32,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Depends on the user's permissions and the current path: request-time data. */}
       <Suspense fallback={<div className="h-touch border-b bg-card" />}>
         <AppNav />
+      </Suspense>
+      <Suspense fallback={null}>
+        <SubscriptionBanner />
       </Suspense>
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6">{children}</main>
     </>
