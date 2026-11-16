@@ -10,7 +10,7 @@ Tabletre tervezett, előfizetéses webalkalmazás kutyák és macskák fogászat
 | 2 | Felhasználók és szervezetek (Supabase Auth) | ✅ kész, néhány tétel döntésre vár (lásd lent) |
 | 3 | Jogosultságok és napló | ✅ kész |
 | 4 | Előfizetés (Stripe) és számlázás (Számlázz.hu) | ⏸ **elhalasztva a demó utánra**: a demó verzió ingyenes. Kész az alap (csomagok, próbaidő, keretek, csak olvasható mód, előfizetés és árazási oldal); a fizetés, a számlázás és a platform-admin később készül. |
-| 5 | Offline alapréteg | – |
+| 5 | Offline alapréteg | 🔶 részben kész: helyi adatbázis, szinkronmotor, ütközéskezelés a szerveren, a gazdik felülete (lista, keresés, új, szerkesztés, törlés), állapotjelző. Hátravan: service worker (kapcsolat nélküli indítás), PIN-zár, eszköz zárolása hosszú offline után, az ütközések megjelenítése. A felület böngészős kipróbálása nem sikerült (`docs/NYITOTT_KERDESEK.md` 17. pont). |
 | 6 | Törzsadatok: gazdik, páciensek | – |
 | 7 | Kezelési lap váza | – |
 | 8 | Odontogram | – |

@@ -366,6 +366,104 @@ export type Database = {
           },
         ]
       }
+      patients: {
+        Row: {
+          birth_date: string | null
+          breed: string | null
+          client_id: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          field_revs: Json
+          id: string
+          microchip: string | null
+          name: string
+          neutered: boolean
+          notes: string | null
+          organization_id: string
+          rev: number
+          seq: number
+          sex: Database["public"]["Enums"]["animal_sex"]
+          species: Database["public"]["Enums"]["species"]
+          updated_at: string
+          updated_by: string | null
+          weight_kg: number | null
+        }
+        Insert: {
+          birth_date?: string | null
+          breed?: string | null
+          client_id: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          field_revs?: Json
+          id: string
+          microchip?: string | null
+          name: string
+          neutered?: boolean
+          notes?: string | null
+          organization_id: string
+          rev?: number
+          seq?: number
+          sex?: Database["public"]["Enums"]["animal_sex"]
+          species: Database["public"]["Enums"]["species"]
+          updated_at?: string
+          updated_by?: string | null
+          weight_kg?: number | null
+        }
+        Update: {
+          birth_date?: string | null
+          breed?: string | null
+          client_id?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          field_revs?: Json
+          id?: string
+          microchip?: string | null
+          name?: string
+          neutered?: boolean
+          notes?: string | null
+          organization_id?: string
+          rev?: number
+          seq?: number
+          sex?: Database["public"]["Enums"]["animal_sex"]
+          species?: Database["public"]["Enums"]["species"]
+          updated_at?: string
+          updated_by?: string | null
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patients_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patients_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patients_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       permissions: {
         Row: {
           key: string
@@ -727,6 +825,10 @@ export type Database = {
         Args: { p_changes: Json; p_organization_id: string }
         Returns: Json
       }
+      sync_push_patients: {
+        Args: { p_changes: Json; p_organization_id: string }
+        Returns: Json
+      }
       update_member: {
         Args: {
           p_is_clinician?: boolean
@@ -737,10 +839,12 @@ export type Database = {
       }
     }
     Enums: {
+      animal_sex: "male" | "female" | "unknown"
       member_role: "owner" | "admin" | "vet" | "assistant" | "receptionist"
       member_status: "active" | "suspended"
       organization_type: "clinic" | "individual"
       plan_audience: "clinic" | "individual"
+      species: "dog" | "cat"
       subscription_status: "trialing" | "active" | "past_due" | "canceled"
     }
     CompositeTypes: {
@@ -869,10 +973,12 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      animal_sex: ["male", "female", "unknown"],
       member_role: ["owner", "admin", "vet", "assistant", "receptionist"],
       member_status: ["active", "suspended"],
       organization_type: ["clinic", "individual"],
       plan_audience: ["clinic", "individual"],
+      species: ["dog", "cat"],
       subscription_status: ["trialing", "active", "past_due", "canceled"],
     },
   },
