@@ -311,6 +311,201 @@
     "switchSubmit": "Váltás",
     "roleInOrganization": "{role} · {type}"
   },
+  "dental": {
+    "toothTypes": {
+      "incisor": "metszőfog",
+      "canine": "szemfog",
+      "premolar": "előzápfog",
+      "molar": "zápfog"
+    },
+    "chart": {
+      "patientRight": "A páciens jobb oldala",
+      "patientLeft": "A páciens bal oldala",
+      "upper": "Felső állcsont",
+      "lower": "Alsó állkapocs"
+    },
+    "card": {
+      "noMark": "nincs jelölés",
+      "deepPocket": "mély tasak"
+    },
+    "legend": {
+      "title": "Színek jelentése",
+      "red": "Kihúzandó vagy kihúzott",
+      "blue": "Gyökérkezelt vagy gyökérkezelésre tervezett",
+      "orange": "Gyulladt vagy kezelést igényel",
+      "yellow": "Csak fogkő",
+      "green": "Egészséges",
+      "gray": "Hiányzó fog"
+    },
+    "toolbar": {
+      "select": "Kijelölés",
+      "undo": "Visszavonás",
+      "redo": "Újra",
+      "selected": "Kijelölt fogak: {count}"
+    },
+    "selection": {
+      "title": "Kijelölési segédek",
+      "all": "Mind",
+      "quadrant": {
+        "1": "Jobb felső",
+        "2": "Bal felső",
+        "3": "Bal alsó",
+        "4": "Jobb alsó"
+      },
+      "upper": "Felső ív",
+      "lower": "Alsó ív",
+      "type": {
+        "incisor": "Metszőfogak",
+        "canine": "Szemfogak",
+        "premolar": "Előzápfogak",
+        "molar": "Zápfogak"
+      },
+      "clear": "Kijelölés törlése"
+    },
+    "brush": {
+      "active": "Ecset: {name}. Érintse meg a fogakat, amelyek megkapják.",
+      "off": "Ecset kikapcsolása"
+    },
+    "quick": {
+      "title": "Gyorsbevitel",
+      "chooseLevel": "{name}: válasszon fokozatot",
+      "cancel": "Mégse",
+      "stateTitle": "A beavatkozás állapota",
+      "clearMarks": "Jelölések törlése",
+      "0": "Egészséges",
+      "T": "Fogkő",
+      "G": "Ínygyulladás",
+      "PD": "Parodontitis",
+      "Mob": "Mobilitás",
+      "Fur": "Furkáció",
+      "FX": "Fogtörés",
+      "RES": "Reszorptív lézió",
+      "M": "Hiányzó",
+      "U": "Fogkő-eltávolítás",
+      "POL": "Polírozás",
+      "U+POL": "Fogkő-eltávolítás + polírozás",
+      "EXT": "Fogeltávolítás",
+      "ENDO": "Gyökérkezelés",
+      "RX": "Röntgen"
+    },
+    "state": {
+      "planned": "Tervezett",
+      "done": "Elvégzett"
+    },
+    "codes": {
+      "0": "Egészséges",
+      "T": "Fogkő (tartarus)",
+      "G": "Ínygyulladás (gingivitis)",
+      "PD": "Parodontális betegség",
+      "Mob": "Mobilitás",
+      "Fur": "Furkáció-érintettség (csak többgyökerű fogon)",
+      "FX": "Fogtörés",
+      "RES": "Reszorptív lézió (csak macskánál)",
+      "M": "Hiányzó fog",
+      "U": "Ultrahangos fogkő-eltávolítás",
+      "POL": "Polírozás",
+      "EXT": "Fogeltávolítás",
+      "ENDO": "Gyökérkezelés / vitális pulpakezelés",
+      "RX": "Intraorális röntgen készült"
+    },
+    "levels": {
+      "T": {
+        "1": "T1 enyhe",
+        "2": "T2 közepes",
+        "3": "T3 súlyos, az egész koronát borítja"
+      },
+      "G": {
+        "1": "G1 enyhe vörösség",
+        "2": "G2 ödémás, vérzékeny"
+      },
+      "PD": {
+        "1": "PD1 3 mm alatti tasak",
+        "2": "PD2 3–4 mm",
+        "3": "PD3 4–6 mm",
+        "4": "PD4 6 mm feletti, kifejezett csontvesztés"
+      },
+      "Mob": {
+        "1": "Mob1 1 mm alatti oldalirányú",
+        "2": "Mob2 1 mm feletti oldalirányú",
+        "3": "Mob3 függőleges mozgás is"
+      },
+      "Fur": {
+        "1": "Fur1",
+        "2": "Fur2",
+        "3": "Fur3"
+      },
+      "FX": {
+        "C": "FX-C komplikált koronatörés (nyitott pulpa)",
+        "NC": "FX-NC nem komplikált koronatörés",
+        "R": "FX-R gyökértörés"
+      },
+      "RES": {
+        "1": "TR1 cement-/zománckárosodás",
+        "2": "TR2 dentint érintő",
+        "3": "TR3 pulpát elérő",
+        "4": "TR4 meggyengült korona",
+        "5": "TR5 gyökérmaradványok"
+      },
+      "M": {
+        "missing": "M valóban hiányzik",
+        "prev": "EXT-prev korábban kihúzták",
+        "imp": "IMP impaktált"
+      },
+      "EXT": {
+        "S": "EXT-S egyszerű, zárt",
+        "SURG": "EXT-SURG sebészi (lebeny, fogszeparálás)"
+      },
+      "ENDO": {
+        "closed": "zárt",
+        "open": "nyitott"
+      }
+    },
+    "refusal": {
+      "invalid": "ismeretlen jelölés",
+      "species": "a fajhoz nem tartozó kód",
+      "furcation": "furkáció csak többgyökerű fogon rögzíthető",
+      "missing": "hiányzó fogra nem vehető fel új lelet"
+    },
+    "notice": {
+      "applied": "Alkalmazva: {count} fog.",
+      "skipped": "Kihagyva {count}: {reason}.",
+      "offerPolish": "A fogkő-eltávolítás után a polírozás kötelező lépés. Rögzíti a polírozást is?",
+      "polishYes": "Igen, polírozás is",
+      "polishNo": "Most nem"
+    },
+    "sheet": {
+      "roots": "Gyökerek száma: {count}",
+      "close": "Bezárás",
+      "locked": "A lap le van zárva (vagy nincs joga a szerkesztéshez), ezért a fog adatai csak megtekinthetők.",
+      "findings": "Leletek",
+      "procedures": "Beavatkozások",
+      "mark": "Jelölés",
+      "note": "Megjegyzés a fogról"
+    },
+    "pockets": {
+      "title": "Tasakmélység (mm)",
+      "rows": {
+        "buccal": "bukkális",
+        "palatal": "palatinális",
+        "lingual": "lingvális"
+      },
+      "points": {
+        "mb": "mezio",
+        "b": "közép",
+        "db": "diszto",
+        "ml": "mezio",
+        "l": "közép",
+        "dl": "diszto"
+      },
+      "none": "nincs mérve",
+      "keypad": "Mélység megadása",
+      "clear": "Törlés",
+      "threshold": "A {mm} mm feletti érték pirossal kiemelve jelenik meg.",
+      "deep": "Mély tasak: legfeljebb {mm} mm.",
+      "suggestion": "A mért értékek alapján javasolt: {grade}.",
+      "apply": "Hozzáadás a leletekhez"
+    }
+  },
   "visits": {
     "patientVisits": "Vizitek",
     "noVisits": "Ennek a páciensnek még nincs kezelési lapja.",
@@ -411,7 +606,6 @@
     },
     "followUpHint": "Varrat esetén 10–14 nap múlvára javasolt kontrollt tűzni.",
     "followUpSuggest": "Javaslat: 12 nap múlva",
-    "dentalSoon": "Az odontogram (fogképlet) a következő fázisban készül el; ide kerül majd a fogak állapota és a tasakmélység.",
     "lifecycle": {
       "finalize": "Lap lezárása",
       "finalizeConfirm": "Lezárja a kezelési lapot? Lezárás után a tartalma csak újranyitással módosítható.",

@@ -3,14 +3,16 @@ import type { Database } from "@/lib/supabase/database.types";
 import type { PushResult, PushStatus, ServerClient, WireChange } from "./clients-model";
 import type { ServerPatient } from "./patients-model";
 import { SyncError, type SyncApi, type SyncErrorKind } from "./sync-engine";
+import { parseFindings, parsePockets, parseProcedures, serializeFindings, serializePockets, serializeProcedures } from "@/domain/dental/chart";
 import { serializeBlocks, serializeMedications, serializeTags } from "./visit-lists";
+import type { ServerTooth } from "./teeth-model";
 import type { ServerVisit } from "./visits-model";
 
 const asStrings = (value: unknown): string[] => (Array.isArray(value) ? value.filter((v): v is string => typeof v === "string") : []);
 const asObjects = (value: unknown): Record<string, string>[] =>
   Array.isArray(value) ? value.filter((v): v is Record<string, string> => v !== null && typeof v === "object") : [];
 
-const PUSH_STATUSES: readonly PushStatus[] = ["applied", "unchanged", "invalid", "forbidden", "deleted"];
+const PUSH_STATUSES: readonly PushStatus[] = ["applied", "unchanged", "invalid", "forbidden", "deleted", "locked"];
 
 function kindOf(error: { message?: string; code?: string | null; status?: number }): SyncErrorKind {
   const message = error.message ?? "";
@@ -130,6 +132,40 @@ export function createSupabaseSyncApi(supabase: SupabaseClient<Database>, organi
         readyToFinalize: row.ready_to_finalize,
         status: row.status,
         finalizedAt: row.finalized_at,
+        rev: row.rev,
+        seq: row.seq,
+        deletedAt: row.deleted_at,
+        updatedAt: row.updated_at,
+      }));
+    },
+
+    async pushTeeth(changes: WireChange[]): Promise<PushResult[]> {
+      const { data, error } = await supabase.rpc("sync_push_visit_teeth", {
+        p_organization_id: organizationId,
+        p_changes: changes as never,
+      });
+      if (error) throw new SyncError(kindOf(error), error.message);
+      return parsePushResults(data);
+    },
+
+    async pullTeeth(afterSeq: number, limit: number): Promise<ServerTooth[]> {
+      const { data, error } = await supabase
+        .from("visit_teeth")
+        .select("id, visit_id, tooth, findings, procedures, pockets, note, rev, seq, deleted_at, updated_at")
+        .eq("organization_id", organizationId)
+        .gt("seq", afterSeq)
+        .order("seq", { ascending: true })
+        .limit(limit);
+      if (error) throw new SyncError(kindOf(error), error.message);
+
+      return data.map((row) => ({
+        id: row.id,
+        visitId: row.visit_id,
+        tooth: row.tooth,
+        findings: serializeFindings(parseFindings(row.findings)),
+        procedures: serializeProcedures(parseProcedures(row.procedures)),
+        pockets: serializePockets(parsePockets(row.pockets)),
+        note: row.note,
         rev: row.rev,
         seq: row.seq,
         deletedAt: row.deleted_at,

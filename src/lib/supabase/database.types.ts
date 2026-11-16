@@ -713,6 +713,92 @@ export type Database = {
           },
         ]
       }
+      visit_teeth: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          field_revs: Json
+          findings: Json
+          id: string
+          note: string | null
+          organization_id: string
+          pockets: Json
+          procedures: Json
+          rev: number
+          seq: number
+          tooth: number
+          updated_at: string
+          updated_by: string | null
+          visit_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          field_revs?: Json
+          findings?: Json
+          id: string
+          note?: string | null
+          organization_id: string
+          pockets?: Json
+          procedures?: Json
+          rev?: number
+          seq?: number
+          tooth: number
+          updated_at?: string
+          updated_by?: string | null
+          visit_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          field_revs?: Json
+          findings?: Json
+          id?: string
+          note?: string | null
+          organization_id?: string
+          pockets?: Json
+          procedures?: Json
+          rev?: number
+          seq?: number
+          tooth?: number
+          updated_at?: string
+          updated_by?: string | null
+          visit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visit_teeth_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visit_teeth_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visit_teeth_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visit_teeth_visit_id_fkey"
+            columns: ["visit_id"]
+            isOneToOne: false
+            referencedRelation: "visits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       visits: {
         Row: {
           anesthesia_blocks: Json
@@ -976,6 +1062,10 @@ export type Database = {
         Returns: Json
       }
       sync_push_patients: {
+        Args: { p_changes: Json; p_organization_id: string }
+        Returns: Json
+      }
+      sync_push_visit_teeth: {
         Args: { p_changes: Json; p_organization_id: string }
         Returns: Json
       }

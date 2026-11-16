@@ -106,6 +106,12 @@ A projekt indulása előtti kérdések a [`referencia/TISZTAZANDO_KERDESEK.md`](
 - Hátravan: az ütközések megjelenítése (a lezárt lapra érkező elutasított szerkesztések is ide kerülnek), a „ki van még a lapon” jelzés, a lezárási figyelmeztetések (az odontogram után).
 - Az `entitlements` integrációs teszt „14 napos próbaidő” ellenőrzése 14,00002 napot mért (határ: 14); a gép órája másodpercekkel eltér a szerverétől. Nem a kezelési laphoz tartozik; ha gyakran előfordul, a határt kerekíteni kell.
 
+**12. Az odontogram (8. fázis): ami még nem készült el, és amit nem próbáltam.** (2026-11-16)
+- Nem készült el (a prompt kéri, a váz működik nélküle): a színek és prioritásuk, a gyorsgombok sorrendje és az összetett gombok **szervezeti beállítása**; a **4 pontos** tasakmérés módja és a küszöb **fajonkénti** állítása; **telefonon** kvadránsonként váltható nézet (most vízszintesen görgethető sor); a **röntgen** (RX) jelölés megnyitja a csatolt képet (a csatolmányok a 9. fázisban jönnek); a páciens adatlapján a **korábbi fogképletek időrendben** (a vizitek listája megvan, a fogkép nem).
+- Böngészőpanelben kipróbálva (éles build): kijelölés (szemfogak), fogkő T2 négy fogra, fogkő-eltávolítás után a polírozás felajánlása és rögzítése, visszavonás és újra, ecset mód, hiányzó fog és a rá felvett lelet elutasítása, fogadatlap tasakmélységgel és PD-javaslattal, mély tasak jelzése, a szerveren megjelenő rekordok, a lezárt vizit olvasható fogképlete, az áthozatal új vizitre. Nem próbáltam: hosszú nyomás érintőképernyőn (a panelben egérrel nem szimulálható), álló tablet, billentyűzetes használat, két eszköz egyidejű fogképe.
+- Az ütközések megjelenítése és a lezárási figyelmeztetés („tervezett, de el nem végzett beavatkozás”) most már megvalósítható volna: a fogképlet megvan.
+- Fur (furkáció) csak többgyökerű fogra kérhető az alkalmazásban, az adatbázis ezt nem ellenőrzi.
+
 ## A 2. fázisból nyitva maradt
 
 | Tétel | Mi kell hozzá |

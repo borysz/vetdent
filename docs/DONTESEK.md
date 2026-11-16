@@ -130,6 +130,25 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | A „ki van még a lapon” (egyidejű szerkesztők jelzése) **nem készült el**. | Valós idejű jelenléthez külön csatorna kell; mezőszintű összefésülés és ütközésrögzítés viszont van. | Nyitott kérdés |
 | A fogászati státusz (C szekció) helye a lapon jelölve van, tartalma a 8. fázisban (odontogram) készül. | A váz a 7. fázis feladata. | 8. fázis |
 
+## Odontogram (8. fázis)
+
+| Döntés | Indok | Mit érint, ha változik |
+|---|---|---|
+| A fogképlet **foganként egy rekord** (`visit_teeth`), nem a vizit egy mezője. A rekord azonosítóját a vizit és a fog száma határozza meg (`toothRecordId`), minden eszköz ugyanazt számolja ki. | Két eszköz, amely ugyanazt a fogat rögzíti, **ugyanazt a rekordot** hozza létre, így a szerkesztések mezőszinten összefésülődnek (különben a „vizitenként és fogankénti egy rekord” szabály ütközne). A vizit egy nagy mezőjében két fog szerkesztése is ütközne. | `teeth-id.ts`, `visit_teeth` |
+| A fog rekordja **nem törölhető**; a „törlés” a listák kiürítése. | Törölt (tombstone) rekordot az azonos azonosító miatt nem lehetne újra létrehozni. | `sync_push_visit_teeth` |
+| A kódtörzs (kódok, fokozatok, szabályok) **adat** a `src/domain/dental/codes.ts`-ben, a magyar szövegek a `messages/hu.json` `dental` blokkjában; egy teszt őrzi, hogy minden kódnak és fokozatnak van szövege. Az adatbázis ugyanazt a készletet ellenőrzi. | A prompt: „adatként tárold, ne a komponensbe égesd”. A készletnek két helyen (alkalmazás, adatbázis) kell egyeznie; ha szervezeti kiegészítések jönnek, az adatbázisba kerül a kódtörzs. | `codes.ts`, `valid_findings` |
+| A szabályok: fajhoz nem tartozó kód nem választható (RES kutyánál); furkáció csak többgyökerű fogon; hiányzó fogra nem vehető fel új lelet; „egészséges” kizár minden más leletet; a hiányzó fog más jelölést nem visel. A hiányzó fog megjelölése törli az addigi jelöléseit (visszavonható). | A prompt 8.4 szabályai, kiegészítve a fenti egymást kizáró esetekkel, hogy az adat önellentmondás nélküli legyen. A furkáció gyökérszám-szabályát az adatbázis nem ellenőrzi (a gyökérszám az alkalmazás katalógusában él). | `canApply`, `tooth_marks_consistent` |
+| Egy kód fokozata egy fogon egy lehet (a T1 helyére a T3 kerül). | Egyszerű, egyértelmű; az adatlapon a fokozat átváltható. | `withFinding` |
+| A fog színe a prompt prioritáslistája szerint: piros (EXT, tervezett is) › kék (ENDO, tervezett is) › narancs (G, PD, FX, RES, Mob, Fur) › sárga (csak T) › zöld (0) › szürke (M). A még meg nem vizsgált fog színtelen. | A „zöld = egészséges” csak akkor igaz, ha valaki egészségesnek jelölte. | `toothColor` |
+| A beavatkozás állapota (tervezett / elvégzett) a gyorsbeviteli sávon átkapcsolható, alapértelmezés: **elvégzett**; az adatlapon fogankénti átváltás. | Vizit közben a beavatkozások többsége már megtörtént. | `Odontogram` |
+| Az **ecset mód**: kijelölés nélkül megnyomott gomb a következő megérintett fogakra alkalmazódik, a „Ecset kikapcsolása” gombig. | A prompt 8.5 pontja. | `Odontogram` |
+| Az **U** (fogkő-eltávolítás) rögzítése után a felület felajánlja a POL-t, de nem kényszeríti. | A prompt 8.4 szabálya. | `Odontogram` |
+| **Visszavonás / újra** csak a lap megnyitása óta végzett tömeges és gyorsbeviteli lépéseket fedi, memóriában él (a lapról elnavigálva elvész). Az adatlapon végzett módosítások (pl. tasakmélység) nem lépések. | A szerkesztések így is az eszközön vannak; tartós visszavonási előzményhez külön tárolás kellene. | `Odontogram` |
+| **Áthozatal** az új vizit indításakor a páciens legutóbbi **lezárt** vizitjéről: hiányzó fog (M, ugyanazzal a fokozattal), elvégzett kihúzás (innentől „korábban kihúzták”, M-prev), elvégzett gyökérkezelés (ENDO). A többi lelet nem; a tervezett beavatkozások sem. Egyszer fut le egy vizitre. | A prompt 8.3 „Áthozatal” szakasza. A lezárt vizit hiányában nincs áthozatal. | `carriedOver`, `carryOverToNewVisit` |
+| Tasakmélység: 6 mérési pont, 0–12 mm, számgombokkal, a következő pontra ugrik; a 4 mm **feletti** érték piros, a kártyán „!” jelzés. A PD-fokozatot a rendszer **javasolja** (legmélyebb pontból: 3–4 mm PD2, 4–6 mm PD3, 6 mm felett PD4; 3 mm alatt nem javasol), de sosem állítja be maga. | A prompt 8.6 pontja. A 4 mm küszöb fajonként még nem állítható. | `chart.ts` |
+| A **lezárt vizit fogképlete** csak olvasható (a fogadatlap megnyílik, de nem szerkeszthető); a szerver a késői szerkesztést `locked` választ adva a `sync_conflicts`-ba menti. | Ugyanaz a szabály, mint a vizit többi tartalmánál. | `sync_push_visit_teeth` |
+| A lezárt vizitre érkező szerkesztés új válasza: **`locked`** (korábban `unchanged`). Az eszköz ilyenkor eldobja a függő szerkesztést (a szerveren megvan a `sync_conflicts`-ban), és a következő lehíváskor a szerver másolatát mutatja. | Az `unchanged` az eszközt arra vitte, hogy a lezárás revíziójánál elfogadottnak tekintse a szerkesztését, és hamis tartalmú piszkozatot mutatott tovább (a lehívás azonos revízió miatt nem írta felül). Hibaként talált és javítva, teszttel. | `record-model.ts`, `20261116180000` |
+
 ## Szakmai tartalom
 
 | Döntés | Indok | Mit érint, ha változik |

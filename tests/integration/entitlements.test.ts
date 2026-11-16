@@ -124,7 +124,8 @@ describe("trial", () => {
 
     const daysLeft = (new Date(entitlements.trial_ends_at!).getTime() - Date.now()) / 86_400_000;
     expect(daysLeft).toBeGreaterThan(13.9);
-    expect(daysLeft).toBeLessThanOrEqual(14);
+    // The server's clock and this machine's clock can differ by seconds; a minute is tolerated.
+    expect(daysLeft).toBeLessThanOrEqual(14 + 1 / 1440);
   });
 
   test("storage is capped during the trial", async () => {

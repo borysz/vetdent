@@ -52,7 +52,12 @@ export interface WireChange {
   fields: Record<string, string | number | boolean | null>;
 }
 
-export type PushStatus = "applied" | "unchanged" | "invalid" | "forbidden" | "deleted";
+/**
+ * `locked`: the record was finalised elsewhere. The edit was not applied, but
+ * the server kept it (in `sync_conflicts`), so the device drops its pending
+ * copy and takes the server's version at the next pull.
+ */
+export type PushStatus = "applied" | "unchanged" | "invalid" | "forbidden" | "deleted" | "locked";
 
 export interface PushResult {
   id: string;
@@ -217,6 +222,10 @@ export function recordOps<F extends object>(spec: RecordSpec<F>) {
       case "invalid":
       case "forbidden":
         return { ...row, problem: result.status };
+
+      case "locked":
+        // A record that never reached the server cannot be kept; one that did keeps its server copy.
+        return row.server ? { ...row, pending: {}, pendingBaseRev: null, pendingDelete: false, problem: null } : null;
 
       case "deleted": {
         // Someone deleted it before our edit arrived: the delete stands, our edit is dropped.

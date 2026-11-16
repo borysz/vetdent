@@ -46,8 +46,20 @@ A gyökérszámot a rendszer arra használja, hogy **furkáció-érintettséget 
 - **Lezárás kötelező mezői:** kezelőorvos és ASA-státusz (a vizit dátuma mindig megvan). A „nyilvánvaló hiányokra” (pl. tervezett, de el nem végzett beavatkozás) figyelmeztetés az odontogram után készül, mert addig nincs mihez viszonyítani.
 - **Gyógyszeres terápia:** készítmény, adag, gyakoriság, időtartam szabad szövegként; adagellenőrzés nincs.
 
-## 3. Később ide kerül
+## 3. Az odontogram kódtörzse és szabályai (8. fázis)
 
-- A leletek és beavatkozások kódtörzse (fokozatok, altípusok).
+A kódokat, fokozatokat és szabályokat a PROJEKT_PROMPT 8.4–8.6 pontja alapján vittem át, szakmai tartalmat magam nem találtam ki. Állatorvosnak kell jóváhagynia:
+
+- **Kódok és fokozatok** (a felület szövegei a `messages/hu.json` `dental.levels` alatt): T1–T3, G1–G2, PD1–PD4, Mob1–Mob3, Fur1–Fur3, FX-C / FX-NC / FX-R, TR1–TR5 (csak macska), M (hiányzik / korábban kihúzták / impaktált), EXT-S / EXT-SURG, ENDO (zárt / nyitott), U, POL, RX. Hiányzik-e valami, helyes-e a magyar megnevezés?
+- **Fur-érintettség** csak többgyökerű fogon rögzíthető; ez a fogkatalógus gyökérszámaitól függ (1. pont, jóváhagyásra vár).
+- **Színek és prioritás**: piros (kihúzandó/kihúzott) › kék (gyökérkezelt/tervezett) › narancs (G, PD, FX, RES, Mob, Fur) › sárga (csak fogkő) › zöld (egészséges) › szürke (hiányzó). Megfelel-e a klinikai logikának, hogy a tervezett kihúzás is pirosra színez?
+- **„Egészséges” (0)** kizár minden más leletet ugyanazon a fogon, és a **hiányzó fog** nem visel más jelölést. Van-e olyan eset, amikor ez korlátozó (pl. hiányzó fog + reszorpciós gyökérmaradvány)?
+- **Áthozatal** az új vizitre: hiányzó fog, elvégzett kihúzás (→ „korábban kihúzták”), elvégzett gyökérkezelés. Szükséges-e más tartós állapot (pl. koronapótlás, ha lesz ilyen kód)?
+- **Tasakmélység**: 6 mérési pont; a küszöb **4 mm felett** (a prompt alapértelmezése, fajonként állítható lenne; a beállítás még nem készült el). **PD-javaslat** a legmélyebb pontból: 3–4 mm PD2, 4–6 mm PD3, 6 mm felett PD4. **3 mm alatt nem javasol**, mert a prompt PD1-et „3 mm alatti tasaknak” írja, de ez normális sulcus is lehet. Kell-e PD1 javaslat?
+- **Gyökérkezelt fog** a „kék” állapot már tervezett kezelésre is; a **POL felajánlása** az U után kötelező lépésként szerepel (a prompt szerint).
+
+## 4. Később ide kerül
+
+- Szervezeti kiegészítések a kódtörzshöz (a rendszerszintű alapkészlet jóváhagyása a 3. pontban).
 - A kódok közérthető magyarázata a gazdinak szóló összefoglalóhoz.
 - A tasakmélység kiemelési küszöbe fajonként.

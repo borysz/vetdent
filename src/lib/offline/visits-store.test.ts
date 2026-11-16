@@ -37,6 +37,12 @@ class FakeVisitServer implements SyncApi {
   async pullClients(): Promise<never[]> {
     return [];
   }
+  async pushTeeth(): Promise<PushResult[]> {
+    return [];
+  }
+  async pullTeeth(): Promise<never[]> {
+    return [];
+  }
   async pushPatients(): Promise<PushResult[]> {
     return [];
   }
@@ -49,8 +55,8 @@ class FakeVisitServer implements SyncApi {
     this.pushed.push(changes);
     return changes.map((change) => {
       const existing = this.visits.get(change.id);
-      // A finalised visit is not edited; the answer is "unchanged".
-      if (existing?.status === "final") return { id: change.id, status: "unchanged", rev: existing.rev };
+      // A finalised visit is not edited; the answer is "locked" (the server keeps the edit aside).
+      if (existing?.status === "final") return { id: change.id, status: "locked", rev: existing.rev };
 
       const fields = Object.fromEntries(
         Object.entries(change.fields).map(([wire, value]) => [wireToCamel(wire), value]),
@@ -173,6 +179,27 @@ describe("synchronising visits", () => {
 
     await removeVisit(db, id);
     expect(await getVisit(db, id)).not.toBeNull();
+  });
+
+  test("an edit made offline to a visit that was finalised meanwhile is dropped, and the final copy is shown", async () => {
+    await knownPatient();
+    const server = new FakeVisitServer();
+    const id = await createVisit(db, ORG, PATIENT, "2026-11-16");
+    await updateVisit(db, id, { sutures: "eredeti" });
+    await syncAll(db, ORG, server);
+
+    // Offline: the device edits; elsewhere the visit is finalised.
+    await updateVisit(db, id, { dietType: "késői szerkesztés" });
+    server.finalize(id);
+
+    await syncAll(db, ORG, server);
+    expect(await getVisit(db, id)).toMatchObject({
+      status: "final",
+      hasPendingChanges: false,
+      problem: null,
+      sutures: "eredeti",
+      dietType: null,
+    });
   });
 
   test("a visit stays a draft after its own edits are acknowledged", async () => {

@@ -1,6 +1,7 @@
 import Dexie, { type Table } from "dexie";
 import type { LocalClientRow } from "./clients-model";
 import type { LocalPatientRow } from "./patients-model";
+import type { LocalToothRow } from "./teeth-model";
 import type { LocalVisitRow } from "./visits-model";
 
 export interface MetaEntry {
@@ -16,6 +17,7 @@ export class LocalDatabase extends Dexie {
   clients!: Table<LocalClientRow, string>;
   patients!: Table<LocalPatientRow, string>;
   visits!: Table<LocalVisitRow, string>;
+  teeth!: Table<LocalToothRow, string>;
   meta!: Table<MetaEntry, string>;
 
   constructor(name: string) {
@@ -35,6 +37,15 @@ export class LocalDatabase extends Dexie {
       visits: "id, organizationId, touchedAt",
       meta: "key",
     });
+    // `visitId` of a tooth record is stored beside the record (see `decorate` in the sync engine) so a
+    // visit's teeth can be read without scanning every tooth of the organization.
+    this.version(4).stores({
+      clients: "id, organizationId, touchedAt",
+      patients: "id, organizationId, touchedAt",
+      visits: "id, organizationId, touchedAt",
+      teeth: "id, organizationId, visitId, touchedAt",
+      meta: "key",
+    });
   }
 }
 
@@ -46,6 +57,7 @@ export const META_KEYS = {
   clientsCursor: "clients.cursor",
   patientsCursor: "patients.cursor",
   visitsCursor: "visits.cursor",
+  teethCursor: "teeth.cursor",
   lastSyncAt: "lastSyncAt",
 } as const;
 

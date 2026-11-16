@@ -2,6 +2,7 @@ import type { Table } from "dexie";
 import { clientOps, type ClientFields } from "./clients-model";
 import { META_KEYS, readMeta, writeMeta, type LocalDatabase } from "./local-db";
 import { patientOps, type PatientFields } from "./patients-model";
+import { toothOps, type ServerTooth, type ToothFields } from "./teeth-model";
 import { visitOps, type ServerVisit, type VisitFields } from "./visits-model";
 import {
   hasPending,
@@ -34,6 +35,8 @@ export interface SyncApi {
   pullPatients(afterSeq: number, limit: number): Promise<ServerRecord<PatientFields>[]>;
   pushVisits(changes: WireChange[]): Promise<PushResult[]>;
   pullVisits(afterSeq: number, limit: number): Promise<ServerVisit[]>;
+  pushTeeth(changes: WireChange[]): Promise<PushResult[]>;
+  pullTeeth(afterSeq: number, limit: number): Promise<ServerTooth[]>;
 }
 
 export interface SyncOutcome {
@@ -57,6 +60,8 @@ interface SyncTable<F extends object> {
    * later round.
    */
   readyToSend?(db: LocalDatabase): Promise<(row: LocalRow<F>) => boolean>;
+  /** Adds what the local indexes need to a row that was just received from the server. */
+  decorate?(row: LocalRow<F>): LocalRow<F>;
 }
 
 const clientsTable: SyncTable<ClientFields> = {
@@ -98,6 +103,21 @@ const visitsTable: SyncTable<VisitFields> = {
     const unknownToServer = new Set(patients.filter((patient) => patient.server === null).map((patient) => patient.id));
     return (row) => !unknownToServer.has(row.pending.patientId ?? row.server?.patientId ?? "");
   },
+};
+
+const teethTable: SyncTable<ToothFields> = {
+  table: (db) => db.teeth,
+  ops: toothOps,
+  cursorKey: META_KEYS.teethCursor,
+  push: (api, changes) => api.pushTeeth(changes),
+  pull: (api, afterSeq, limit) => api.pullTeeth(afterSeq, limit),
+  // A tooth waits while its visit is unknown to the server.
+  async readyToSend(db) {
+    const visits = await db.visits.toArray();
+    const unknownToServer = new Set(visits.filter((visit) => visit.server === null).map((visit) => visit.id));
+    return (row) => !unknownToServer.has(row.pending.visitId ?? row.server?.visitId ?? "");
+  },
+  decorate: (row) => ({ ...row, visitId: row.server?.visitId ?? row.pending.visitId ?? "" }),
 };
 
 const PUSH_BATCH = 100;
@@ -172,8 +192,9 @@ async function pullAll<F extends object>(
     await db.transaction("rw", store, async () => {
       for (const incoming of page) {
         const existing = await store.get(incoming.id);
-        const next = kind.ops.applyPulled(existing, incoming, organizationId);
-        if (next !== existing) {
+        const applied = kind.ops.applyPulled(existing, incoming, organizationId);
+        if (applied !== existing) {
+          const next = kind.decorate ? kind.decorate(applied) : applied;
           await store.put(next);
           pulled += 1;
         }
@@ -231,9 +252,13 @@ export function syncVisits(db: LocalDatabase, organizationId: string, api: SyncA
   return syncKind(db, visitsTable, organizationId, api);
 }
 
+export function syncTeeth(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
+  return syncKind(db, teethTable, organizationId, api);
+}
+
 /**
  * Everything, in dependency order: clients first, because a patient refers to
- * its owner and the server refuses a patient whose owner it does not know yet; visits last, for the same reason.
+ * its owner and the server refuses a patient whose owner it does not know yet; visits after patients and the teeth of a visit last, for the same reason.
  */
 export async function syncAll(db: LocalDatabase, organizationId: string, api: SyncApi): Promise<SyncOutcome> {
   const clients = await syncClients(db, organizationId, api);
@@ -248,11 +273,19 @@ export async function syncAll(db: LocalDatabase, organizationId: string, api: Sy
   if (patients.error) return { ...upToPatients, error: patients.error };
 
   const visits = await syncVisits(db, organizationId, api);
-  return {
+  const upToVisits = {
     pushed: upToPatients.pushed + visits.pushed,
     pulled: upToPatients.pulled + visits.pulled,
     refused: upToPatients.refused + visits.refused,
-    error: visits.error,
+  };
+  if (visits.error) return { ...upToVisits, error: visits.error };
+
+  const teeth = await syncTeeth(db, organizationId, api);
+  return {
+    pushed: upToVisits.pushed + teeth.pushed,
+    pulled: upToVisits.pulled + teeth.pulled,
+    refused: upToVisits.refused + teeth.refused,
+    error: teeth.error,
   };
 }
 
@@ -268,6 +301,7 @@ export async function countPending(db: LocalDatabase): Promise<SyncCounts> {
     ...(await db.clients.toArray()),
     ...(await db.patients.toArray()),
     ...(await db.visits.toArray()),
+    ...(await db.teeth.toArray()),
   ];
   return {
     pending: rows.filter((row) => hasPending(row as LocalRow<object>) && !row.problem).length,

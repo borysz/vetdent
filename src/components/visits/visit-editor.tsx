@@ -42,6 +42,8 @@ import {
   type Medication,
 } from "@/lib/offline/visit-lists";
 import type { VisitFields, VisitView } from "@/lib/offline/visits-model";
+import { Odontogram } from "@/components/dental/odontogram";
+import { loadChart, saveTeeth } from "@/lib/offline/teeth-store";
 import { getVisit, removeVisit, updateVisit } from "@/lib/offline/visits-store";
 import { patientPath, routes } from "@/lib/routes";
 
@@ -97,6 +99,8 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
   const { db, organizationId, canWrite, visitRights, status, syncNow, syncSoon } = useRequiredOffline();
 
   const locked = visit.status === "final" || !visitRights.write || !canWrite;
+  // The dental chart: one record per tooth, read from the device like everything else.
+  const chart = useLiveQuery(() => (db ? loadChart(db, visit.id) : undefined), [db, visit.id]);
 
   const [visitDate, setVisitDate] = useState(visit.visitDate);
   const [veterinarian, setVeterinarian] = useState(visit.veterinarianName ?? "");
@@ -389,12 +393,30 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </div>
         </section>
 
-        <section id="visit-dental" aria-labelledby="visit-dental-title" className="flex scroll-mt-24 flex-col gap-3">
-          <h2 id="visit-dental-title" className="text-xl font-semibold">
-            {t("sections.dental")}
-          </h2>
-          <p className="rounded-xl border border-dashed p-4 text-muted-foreground">{t("dentalSoon")}</p>
-        </section>
+      </fieldset>
+
+      {/* Outside the form fieldset: a locked chart can still be looked at tooth by tooth. */}
+      <section id="visit-dental" aria-labelledby="visit-dental-title" className="flex scroll-mt-24 flex-col gap-3">
+        <h2 id="visit-dental-title" className="text-xl font-semibold">
+          {t("sections.dental")}
+        </h2>
+        {patient && chart ? (
+          <Odontogram
+            species={patient.species}
+            chart={chart}
+            locked={locked}
+            save={async (changes) => {
+              if (!db) return;
+              await saveTeeth(db, organizationId, visit.id, changes);
+              syncSoon();
+            }}
+          />
+        ) : (
+          <p className="text-muted-foreground">{t("loading")}</p>
+        )}
+      </section>
+
+      <fieldset disabled={locked} className="flex min-w-0 flex-col gap-8">
 
         <section id="visit-procedures" aria-labelledby="visit-procedures-title" className="flex scroll-mt-24 flex-col gap-5">
           <h2 id="visit-procedures-title" className="text-xl font-semibold">

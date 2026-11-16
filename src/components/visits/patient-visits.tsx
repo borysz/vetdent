@@ -7,6 +7,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useRequiredOffline } from "@/components/offline/offline-provider";
 import { Button } from "@/components/ui/button";
 import { todayText } from "@/lib/offline/visit-form";
+import { carryOverToNewVisit } from "@/lib/offline/teeth-store";
 import { createVisit, listVisitsOfPatient, updateVisit } from "@/lib/offline/visits-store";
 import { visitPath } from "@/lib/routes";
 
@@ -60,6 +61,8 @@ export function PatientVisits({ patientId }: { patientId: string }) {
               const id = await createVisit(db, organizationId, patientId, todayText());
               // A vet starting a record is most likely the treating vet.
               if (visitRights.finalize && userName) await updateVisit(db, id, { veterinarianName: userName });
+              // Missing, extracted and root-canal treated teeth carry over from the last final visit.
+              await carryOverToNewVisit(db, organizationId, patientId, id);
               syncSoon();
               router.push(visitPath(id));
             }}

@@ -287,14 +287,14 @@ describe("finalising a visit", () => {
     expect(again.error?.message).toBe("already_final");
   });
 
-  test("an edit that arrives for a final visit is not applied, but is kept", async () => {
+  test("an edit that arrives for a final visit is not applied, answered as locked, and kept", async () => {
     const id = await newDraft(aron, { veterinarian_name: "Dr. Vera", asa_status: 2, sutures: "eredeti" });
     await vera.client.rpc("finalize_visit", { p_organization_id: clinicId, p_visit_id: id });
     const rev = (await visitRow(id)).rev;
 
     // aron's device was offline while the visit was finalised and now sends a late edit.
     const [result] = await pushVisits(aron, clinicId, [upsert(id, 1, { sutures: "késői módosítás", diet_type: "pép" })]);
-    expect(result).toMatchObject({ status: "unchanged", conflicts: 2 });
+    expect(result).toMatchObject({ status: "locked", conflicts: 2 });
 
     expect(await visitRow(id)).toMatchObject({ sutures: "eredeti", diet_type: null, rev });
     const { data } = await admin.from("sync_conflicts").select("field, overwritten_value, applied_value").eq("record_id", id).order("field");
