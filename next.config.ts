@@ -4,6 +4,12 @@ import createNextIntlPlugin from "next-intl/plugin";
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  // pdfkit reads its own data files at run time, so it stays outside the bundle;
+  // the letters for the PDF are traced into the route.
+  serverExternalPackages: ["pdfkit"],
+  outputFileTracingIncludes: {
+    "/app/vizitek/[id]/osszefoglalo/pdf": ["./assets/fonts/**/*"],
+  },
   turbopack: {
     rules: {
       "*.css": {

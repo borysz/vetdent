@@ -161,6 +161,7 @@ try {
     "/app/paciensek/uj",
     `/app/paciensek/${fixture.patientId}`,
     `/app/vizitek/${fixture.visitId}`,
+    `/app/vizitek/${fixture.visitId}/osszefoglalo`,
     "/app/sablonok",
     "/app/munkatarsak",
     "/app/fiok",

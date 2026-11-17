@@ -19,7 +19,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <Suspense fallback={<p className="p-6 text-muted-foreground">{t("common.loading")}</p>}>
       <OfflineBoundary>
-        <header className="border-b bg-card">
+        <header className="border-b bg-card print:hidden">
           <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
             <div className="flex flex-wrap items-center gap-4">
               <Link href={routes.app} className="inline-flex min-h-touch items-center text-xl font-semibold tracking-tight text-primary">
@@ -30,9 +30,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <AccountMenu />
           </div>
         </header>
-        <AppNav />
-        <SubscriptionBanner />
-        <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6">{children}</main>
+        <div className="print:hidden">
+          <AppNav />
+          <SubscriptionBanner />
+        </div>
+        <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 print:max-w-none print:p-0">{children}</main>
       </OfflineBoundary>
     </Suspense>
   );

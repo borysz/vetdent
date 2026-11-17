@@ -492,7 +492,8 @@
     "notAllowed": "Ehhez az összefoglalóhoz nincs jogosultsága.",
     "notFound": "A kezelési lap nem található.",
     "loading": "Betöltés az eszközről…",
-    "openFromVisit": "Összefoglaló a gazdinak"
+    "openFromVisit": "Összefoglaló a gazdinak",
+    "openHint": "Közérthető összefoglaló a kezelésről: kinyomtatható vagy PDF-ként letölthető."
   },
   "dictation": {
     "start": "Diktálás indítása",

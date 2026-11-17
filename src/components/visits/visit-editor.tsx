@@ -52,7 +52,7 @@ import { Odontogram } from "@/components/dental/odontogram";
 import { appendText, type DictationTarget } from "@/domain/dictation/triadan";
 import { loadChart, saveTeeth } from "@/lib/offline/teeth-store";
 import { getVisit, removeVisit, updateVisit } from "@/lib/offline/visits-store";
-import { patientPath, routes } from "@/lib/routes";
+import { patientPath, routes, summaryPath } from "@/lib/routes";
 
 const selectClass = "h-touch w-full rounded-lg border border-input bg-card px-3 text-base disabled:opacity-60";
 const textareaClass =
@@ -101,9 +101,10 @@ interface VisitFormProps {
 function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
   const t = useTranslations("visits");
   const tPatients = useTranslations("patients");
+  const tSummary = useTranslations("summaryPage");
   const format = useFormatter();
   const router = useRouter();
-  const { db, organizationId, canWrite, visitRights, features, status, syncNow, syncSoon } = useRequiredOffline();
+  const { db, organizationId, canWrite, visitRights, summaryRights, features, status, syncNow, syncSoon } = useRequiredOffline();
 
   const locked = visit.status === "final" || !visitRights.write || !canWrite;
   // The dental chart: one record per tooth, read from the device like everything else.
@@ -647,6 +648,18 @@ function VisitForm({ visit, patient, ownerName }: VisitFormProps) {
           </div>
         </section>
       </fieldset>
+
+      {summaryRights.any || (summaryRights.finalized && visit.status === "final") ? (
+        <div className="flex flex-col items-start gap-2">
+          <Link
+            href={summaryPath(visit.id)}
+            className="inline-flex min-h-touch items-center justify-center rounded-lg border border-input bg-card px-4 font-medium hover:bg-accent"
+          >
+            {tSummary("openFromVisit")}
+          </Link>
+          <p className="text-sm text-muted-foreground">{tSummary("openHint")}</p>
+        </div>
+      ) : null}
 
       <Lifecycle visit={visit} flush={flush} syncNow={syncNow} organizationId={organizationId} />
 

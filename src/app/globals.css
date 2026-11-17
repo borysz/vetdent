@@ -126,3 +126,9 @@
     border-radius: 0.25rem;
   }
 }
+
+/* Paper for printing: A4 (the summary for the animal's owner is the one thing that is printed). */
+@page {
+  size: A4;
+  margin: 15mm;
+}

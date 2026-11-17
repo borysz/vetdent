@@ -27,6 +27,10 @@ export async function OfflineBoundary({ children }: { children: React.ReactNode 
         manage: permissions.has("templates.manage_own") && fullAccess,
         share: permissions.has("catalog.manage") && fullAccess,
       }}
+      summaryRights={{
+        any: permissions.has("summary.send_any"),
+        finalized: permissions.has("summary.send_finalized"),
+      }}
       features={entitlements?.features ?? []}
       userName={profile ? [profile.title, profile.fullName].filter(Boolean).join(" ") : ""}
     >

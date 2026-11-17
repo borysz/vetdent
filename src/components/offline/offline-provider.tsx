@@ -35,6 +35,7 @@ export interface OfflineContextValue {
   /** What the user may do with visits (treatment records); `write` also needs a full-access subscription. */
   visitRights: VisitRights;
   templateRights: TemplateRights;
+  summaryRights: SummaryRights;
   /** Features of the plan (for example `dictation`, `templates`). */
   features: readonly string[];
   /** The user's own name with title, to prefill the treating vet; empty if unknown. */
@@ -51,6 +52,14 @@ export interface TemplateRights {
   manage: boolean;
   /** Create and change organization-wide templates. */
   share: boolean;
+}
+
+/** What the user may do with the summary for the animal's owner. */
+export interface SummaryRights {
+  /** Of any visit, finished or not. */
+  any: boolean;
+  /** Only of a finished visit. */
+  finalized: boolean;
 }
 
 export interface VisitRights {
@@ -93,6 +102,7 @@ interface OfflineProviderProps {
   canDelete: boolean;
   visitRights: VisitRights;
   templateRights: TemplateRights;
+  summaryRights: SummaryRights;
   features: readonly string[];
   userName: string;
   children: React.ReactNode;
@@ -105,6 +115,7 @@ export function OfflineProvider({
   canDelete,
   visitRights,
   templateRights,
+  summaryRights,
   features,
   userName,
   children,
@@ -180,6 +191,7 @@ export function OfflineProvider({
       canDelete,
       visitRights,
       templateRights,
+      summaryRights,
       features,
       userName,
       status: {
@@ -194,7 +206,7 @@ export function OfflineProvider({
       syncNow,
       syncSoon,
     }),
-    [db, organizationId, canWrite, canDelete, visitRights, templateRights, features, userName, online, syncing, counts, pendingFiles, lastSyncAt, error, syncNow, syncSoon],
+    [db, organizationId, canWrite, canDelete, visitRights, templateRights, summaryRights, features, userName, online, syncing, counts, pendingFiles, lastSyncAt, error, syncNow, syncSoon],
   );
 
   return (

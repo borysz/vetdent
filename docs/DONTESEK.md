@@ -170,6 +170,17 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | A sablon betöltésekor a szövegek és gyógyszerek **hozzáadódnak** a lap meglévő tartalmához (nem írják felül), és ami már benne van, nem kerül be újra. | Nem veszhet el adat, és a kétszeri betöltés ártalmatlan. | `applyExtras` |
 | **Diktálás:** a böngésző beszédfelismerése (Web Speech API, magyar), a felismert szöveg **megerősítésre** megjelenik (javítható, a célhely választható), csak utána kerül mentésre. Az 1xx–4xx fogszámot felismeri (nem mértékegység előtt, a fajnál létező fogra); szám nélkül a kijelölt egy fog, végül az általános megjegyzés a lapon (új mező: `general_note`). | A prompt 8.9 pontja. Böngészőfüggő (Chrome, Edge) és a felismerés a gyártó szerverén fut, ezért kapcsolat kell; ezt a gomb érthetően jelzi. A `dictation` csomagfunkcióhoz kötött. | `triadan.ts`, `speech.ts` |
 
+## A gazdinak szóló összefoglaló (10. fázis)
+
+| Döntés | Indok | Mit érint, ha változik |
+|---|---|---|
+| Az összefoglaló **egyetlen dokumentum-modellből** (`buildSummary`: blokkok, minden szöveg feloldva) készül, és a PDF, valamint a nyomtatási nézet is csak ezt rajzolja. | A kettő így nem mondhat mást; a szöveg- és sorrendi szabály egy helyen van, tesztelve. | `summary.ts`, `pdf.ts`, `summary-view.tsx` |
+| A **PDF a szerveren** készül (`pdfkit`, ő/ű-t tudó DejaVu Sans a `assets/fonts` mappából; a beépített PDF-betűk nem tudják), a felhasználó **saját munkamenetével** olvas (soros szintű védelem), nem a titkos kulccsal. | Így az adatbázis dönti el, mit láthat; a titkos kulcs csak webhookra és adminisztrációra való. A `pdfkit` a csomagon kívül marad (`serverExternalPackages`), a betűk `outputFileTracingIncludes`-szel kerülnek a kiadásba. | `next.config.ts`, `route.ts` |
+| **Jogosultság:** piszkozatról csak `summary.send_any`, lezártról `summary.send_finalized` vagy `summary.send_any`; a nyomtatási nézetre ugyanez. Az útvonal csak az aktív rendelő vizitjét adja, másét 404-gyel. | A prompt 5. táblázata; a jogosultsági mátrix az adatbázisban él. A kapcsolat nélküli nyomtatási nézetnél ez csak a felület szintjén érvényes (az adat már az eszközön van), a PDF-nél a szerver is ellenőriz. | `OfflineBoundary` (`summaryRights`) |
+| A **nyomtatási nézet a helyi adatokból** készül, tehát kapcsolat nélkül is megnyílik és nyomtatható („Nyomtatás vagy mentés PDF-be”); a PDF letöltéséhez kapcsolat kell. A rendelő címe az eszközön nincs, ezért az oldal viszi magát a szerverről. | A prompt: „offline működés”. A cím a service worker által gyorsított oldallal együtt marad meg. | `SummaryView` |
+| **Fotók:** az összefoglalóba a kezelőorvos választ (alapból az „előtte” és „utána” képek); az azonos helyű előtte–utána pár egymás mellé kerül. A PDF-be csak a már feltöltött JPEG és PNG fotó kerül, legfeljebb 12. | A gazdinak szóló lapra nem kell minden röntgen; a WebP-t a PDF-könyvtár nem tudja. | `parsePhotoIds`, `loadSummary` |
+| A **logó** (csomagfüggő, `pdf_branding`) nincs. | Nincs logófeltöltés. | – |
+
 ## Szakmai tartalom
 
 | Döntés | Indok | Mit érint, ha változik |

@@ -75,3 +75,14 @@ export function safeNextPath(next: string | null | undefined, fallback: string =
   if (/[\u0000-\u001f\u007f]/.test(next)) return fallback;
   return next;
 }
+
+/** The printable summary for the animal's owner (works from the data on the device). */
+export function summaryPath(visitId: string): string {
+  return `${visitPath(visitId)}/osszefoglalo`;
+}
+
+/** The summary as a PDF file; `photoIds` are the attachments to put in it. */
+export function summaryPdfPath(visitId: string, photoIds: readonly string[] = []): string {
+  const base = `${summaryPath(visitId)}/pdf`;
+  return photoIds.length > 0 ? `${base}?fotok=${photoIds.join(",")}` : base;
+}

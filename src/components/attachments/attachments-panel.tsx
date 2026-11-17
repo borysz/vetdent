@@ -36,7 +36,7 @@ async function signedUrl(organizationId: string, id: string): Promise<string | n
 }
 
 /** An address the browser can show: the picture kept on this device if there is one, otherwise a signed link. */
-function useSource(item: AttachmentListItem, wantFull: boolean): string | null {
+export function useSource(item: AttachmentListItem, wantFull: boolean): string | null {
   const { organizationId, status } = useRequiredOffline();
   const [source, setSource] = useState<string | null>(null);
 
