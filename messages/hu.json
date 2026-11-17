@@ -224,7 +224,8 @@
       "email": "E-mail-cím",
       "password": "Jelszó",
       "newPassword": "Új jelszó",
-      "passwordHint": "Legalább 10 karakter."
+      "passwordHint": "Legalább 10 karakter.",
+      "invitedEmailHint": "A meghívó erre az e-mail-címre szól, ezért nem módosítható."
     },
     "login": {
       "title": "Bejelentkezés",
@@ -264,6 +265,7 @@
       "samePassword": "Az új jelszó nem egyezhet meg a régivel.",
       "rateLimited": "Túl sok próbálkozás történt. Várjon egy kicsit, majd próbálja újra.",
       "linkInvalid": "A hivatkozás érvénytelen vagy lejárt. Kérjen újat.",
+      "invitationEmail": "A meghívó egy másik e-mail-címre szól. A fiókot ugyanarra a címre kell létrehozni, amelyre a meghívót küldték.",
       "generic": "Hiba történt. Próbálja újra később."
     },
     "validation": {
@@ -422,6 +424,75 @@
       "empty": "A fájl üres.",
       "finalVisit": "A lezárt lapra nem tölthető fel új csatolmány; előbb nyissa újra."
     }
+  },
+  "summary": {
+    "title": "Fogászati kezelés összefoglalója",
+    "draftNotice": "Ez az összefoglaló még nem lezárt kezelési lapból készült, a tartalma változhat.",
+    "unknown": "nincs megadva",
+    "yes": "igen",
+    "no": "nem",
+    "ageValue": "{years} év {months} hónap",
+    "facts": {
+      "patient": "Az állat neve",
+      "owner": "Gazdi",
+      "species": "Faj",
+      "breed": "Fajta",
+      "age": "Kor",
+      "neutered": "Ivartalanított",
+      "weight": "Testtömeg",
+      "visitDate": "A kezelés napja",
+      "veterinarian": "Kezelőorvos"
+    },
+    "chartTitle": "A fogak állapota",
+    "doneTitle": "Mi történt a kezelés során",
+    "noneDone": "A kezelés során beavatkozás nem történt.",
+    "plannedTitle": "Tervezett kezelések",
+    "findingsTitle": "Mit találtunk",
+    "noFindings": "Nem rögzítettünk eltérést.",
+    "healthyTeeth": "Egészséges fogak: {teeth}.",
+    "missingTeeth": "Hiányzó fogak: {teeth}.",
+    "suturesTitle": "Varratok",
+    "medicationsTitle": "Gyógyszerek",
+    "columns": {
+      "name": "Készítmény",
+      "dose": "Adag",
+      "frequency": "Gyakoriság",
+      "duration": "Időtartam"
+    },
+    "feedingTitle": "Táplálási javaslat a kezelés utáni napokra",
+    "followUp": "Kontroll időpontja: {date}",
+    "photosTitle": "Fényképek",
+    "footer": "{organization}. Ez a dokumentum tájékoztató jellegű, a kezelőorvos javaslatát nem helyettesíti.",
+    "lay": {
+      "0": "Ezen a fogon nem találtunk eltérést.",
+      "T": "A fogkő a fogra rakódott kemény lerakódás. Irritálja az ínyt, és idővel gyulladást, fogágybetegséget okozhat.",
+      "G": "Az íny vörös, duzzadt, és könnyen vérzik. Ez a fogágybetegség első, még visszafordítható jele.",
+      "PD": "Fogágybetegség: az ín és a fogat tartó csont károsodik, a fog körüli „zseb” elmélyül. Kezelés nélkül a fog meglazulhat.",
+      "Mob": "A fog az elgyengült tartószövet miatt mozog.",
+      "Fur": "A betegség elérte a fog gyökerei közötti részt.",
+      "FX": "A fog korona- vagy gyökérrésze eltört.",
+      "RES": "Macskáknál előforduló elváltozás: a fog szövete fokozatosan felszívódik, ami fájdalmas lehet.",
+      "M": "A hiányzó fog helyén nincs fog, vagy korábban eltávolították.",
+      "U": "A fogkövet ultrahanggal távolítottuk el.",
+      "POL": "A fogak felszínét símára csiszoltuk, hogy kevésbé tapadjon rájuk a lepedék.",
+      "EXT": "A fogat eltávolítottuk.",
+      "ENDO": "A fog belsejét (a pulpát) kezeltük, hogy a fog megmaradhasson.",
+      "RX": "A fogról röntgenfelvétel készült."
+    }
+  },
+  "summaryPage": {
+    "title": "Összefoglaló a gazdinak",
+    "lead": "Egy közérthető, nyomtatható összefoglaló a kezelésről. A nyomtatási nézet kapcsolat nélkül is működik; a PDF letöltéséhez internet kell.",
+    "back": "Vissza a kezelési laphoz",
+    "print": "Nyomtatás vagy mentés PDF-be",
+    "download": "PDF letöltése",
+    "downloadOffline": "A PDF letöltéséhez internetkapcsolat kell. A „Nyomtatás vagy mentés PDF-be” gomb kapcsolat nélkül is használható.",
+    "photosTitle": "Mely fotók kerüljenek bele?",
+    "noPhotos": "Ehhez a laphoz még nincs fotó.",
+    "notAllowed": "Ehhez az összefoglalóhoz nincs jogosultsága.",
+    "notFound": "A kezelési lap nem található.",
+    "loading": "Betöltés az eszközről…",
+    "openFromVisit": "Összefoglaló a gazdinak"
   },
   "dictation": {
     "start": "Diktálás indítása",

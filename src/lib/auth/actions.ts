@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { logAuthEvent } from "@/lib/audit/log-auth-event";
 import { ACTIVE_ORGANIZATION_COOKIE } from "@/lib/auth/dal";
 import { authErrorKey } from "@/lib/auth/errors";
+import { pendingInvitationEmail } from "@/lib/members/invitation";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -59,6 +60,12 @@ export async function signInAction(_previous: FormState, formData: FormData): Pr
 export async function signUpAction(_previous: FormState, formData: FormData): Promise<FormState> {
   const t = await getTranslations("auth");
   const values = { fullName: field(formData, "fullName"), email: field(formData, "email") };
+
+  // Coming from an invitation, the account must be made for the very address that was invited.
+  const invitedEmail = await pendingInvitationEmail(field(formData, "next"));
+  if (invitedEmail !== null && values.email.trim().toLowerCase() !== invitedEmail) {
+    return { status: "error", message: t("errors.invitationEmail"), values: { ...values, email: invitedEmail } };
+  }
 
   const parsed = signUpSchema.safeParse({ ...values, password: field(formData, "password") });
   if (!parsed.success) {

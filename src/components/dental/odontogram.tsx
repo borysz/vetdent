@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { levelKey, quickKey } from "@/components/dental/keys";
+import { quadrantsOf } from "@/domain/dental/layout";
 import { ToothShape } from "@/components/dental/tooth-shape";
 import { ToothSheet } from "@/components/dental/tooth-sheet";
 import { badgeOf, getCode } from "@/domain/dental/codes";
@@ -58,16 +59,6 @@ const LEGEND: readonly { color: Exclude<ToothColor, "none">; swatch: string }[] 
 
 const QUADRANTS: readonly Quadrant[] = [1, 2, 3, 4];
 
-/** The teeth of a jaw as drawn, split into its two quadrants (patient's right quadrant first, as on the screen). */
-function quadrantsOf(row: readonly ToothDefinition[]): { quadrant: Quadrant; teeth: ToothDefinition[] }[] {
-  const groups: { quadrant: Quadrant; teeth: ToothDefinition[] }[] = [];
-  for (const tooth of row) {
-    const last = groups[groups.length - 1];
-    if (last && last.quadrant === tooth.quadrant) last.teeth.push(tooth);
-    else groups.push({ quadrant: tooth.quadrant, teeth: [tooth] });
-  }
-  return groups;
-}
 const TYPES: readonly ToothType[] = ["incisor", "canine", "premolar", "molar"];
 
 interface OdontogramProps {

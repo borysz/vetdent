@@ -9,7 +9,8 @@ import { SubmitButton } from "@/components/forms/submit-button";
 import { signInAction } from "@/lib/auth/actions";
 import { initialFormState } from "@/lib/forms";
 
-export function LoginForm() {
+/** `invitedEmail`: the address an invitation was sent to; it is filled in and cannot be changed. */
+export function LoginForm({ invitedEmail }: { invitedEmail?: string | null }) {
   const t = useTranslations("auth");
   const searchParams = useSearchParams();
   const [state, formAction] = useActionState(signInAction, initialFormState);
@@ -33,7 +34,9 @@ export function LoginForm() {
         autoCapitalize="none"
         spellCheck={false}
         required
-        defaultValue={values?.email}
+        readOnly={Boolean(invitedEmail)}
+        defaultValue={invitedEmail ?? values?.email}
+        hint={invitedEmail ? t("fields.invitedEmailHint") : undefined}
         error={errors?.email}
       />
       <FormField

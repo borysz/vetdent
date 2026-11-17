@@ -58,7 +58,11 @@ A kódokat, fokozatokat és szabályokat a PROJEKT_PROMPT 8.4–8.6 pontja alapj
 - **Tasakmélység**: 6 mérési pont; a küszöb **4 mm felett** (a prompt alapértelmezése, fajonként állítható lenne; a beállítás még nem készült el). **PD-javaslat** a legmélyebb pontból: 3–4 mm PD2, 4–6 mm PD3, 6 mm felett PD4. **3 mm alatt nem javasol**, mert a prompt PD1-et „3 mm alatti tasaknak” írja, de ez normális sulcus is lehet. Kell-e PD1 javaslat?
 - **Gyökérkezelt fog** a „kék” állapot már tervezett kezelésre is; a **POL felajánlása** az U után kötelező lépésként szerepel (a prompt szerint).
 
-## 4. Később ide kerül
+## 4. A gazdinak szóló összefoglaló laikus magyarázatai (10. fázis)
+
+Az `messages/hu.json` `summary.lay` blokkja kódonként közérthető magyarázatot ad a gazdinak (T, G, PD, Mob, Fur, FX, RES, M, U, POL, EXT, ENDO, RX, 0). A szövegeket én fogalmaztam meg, **állatorvosnak kell jóváhagynia**, különösen: a fogágybetegség és az ínygyulladás leírását („még visszafordítható”), a fogeltávolítás (a prompt „kódonként szerkeszthető laikus szöveget” kér, szervezeti szerkesztés még nincs), és a polírozás indoklását. A szervezetenként szerkeszthető változat a kódtörzs szervezeti kiegészítésével együtt készül.
+
+## 5. Később ide kerül
 
 - Szervezeti kiegészítések a kódtörzshöz (a rendszerszintű alapkészlet jóváhagyása a 3. pontban).
 - A kódok közérthető magyarázata a gazdinak szóló összefoglalóhoz.

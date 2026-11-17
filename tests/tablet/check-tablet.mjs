@@ -16,6 +16,8 @@
 
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import puppeteer from "puppeteer-core";
 import { createClient } from "@supabase/supabase-js";
 
@@ -143,7 +145,9 @@ function inspect(minTarget) {
   return { sideways: root.scrollWidth > root.clientWidth + 1, outside, small };
 }
 
-const browser = await puppeteer.launch({ executablePath: findBrowser(), headless: true, args: ["--no-sandbox"] });
+// A profile of its own, so the test never meets a browser the user already has open.
+const profile = fs.mkdtempSync(path.join(os.tmpdir(), "vetdent-tablet-"));
+const browser = await puppeteer.launch({ executablePath: findBrowser(), headless: true, userDataDir: profile, args: ["--no-sandbox"] });
 const fixture = await createFixture();
 const failures = [];
 
@@ -207,6 +211,7 @@ try {
   }
 } finally {
   await browser.close();
+  fs.rmSync(profile, { recursive: true, force: true });
   await removeFixture(fixture);
 }
 
