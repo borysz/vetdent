@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:tablet": "node tests/tablet/check-tablet.mjs",
+    "check:offline": "node tests/offline/check-offline.mjs",
     "test:integration": "vitest run --config vitest.integration.config.mts",
     "check": "npm run lint && npm run typecheck && npm run test",
     "db:push": "supabase db push --remote",

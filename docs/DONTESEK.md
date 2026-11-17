@@ -97,6 +97,8 @@ Ide kerül minden olyan döntés, amely eltér a `referencia/PROJEKT_PROMPT.md`-
 | Átirányítás és hibás válasz nem kerül a tárolóba; más eredet (Supabase), POST, belépési és `/auth` útvonalak érintetlenek. | Különben a belépési oldal vagy egy hibaoldal ülne a védett oldal helyén. | `public/sw.js` |
 | Kijelentkezéskor és az eszköz törlésekor (10 hibás PIN) a worker oldal-tárolója ürül. | Közös tableten a következő felhasználó nem kaphatja az előző oldalait. | `clearCachedPages` |
 | A worker csak éles buildben regisztrál. | Fejlesztés közben elavult fájlokat szolgálna ki, és zavarná a gyorsfrissítést. | `registerServiceWorker` |
+| Az **ütközések** oldala a `sync_conflicts` elintézetlen sorait mutatja, és csak „elintézettnek” jelölni lehet (`resolve_sync_conflict`); automatikus visszaállítás nincs. Jogosultság: `clients.write` (ugyanaz, mint az adatbázis olvasási szabálya). A navigáció számlálója ugyanebből a jogosultságból él. | Az adat már megvan (mindkét érték), a döntést ember hozza; az adatbázis szabálya változatlan, a felület csak megjeleníti. A visszaállítás mezőnként más és más szabályt kívánna (listák, lezárt lap). | `/app/utkozesek`, `conflicts/load.ts` |
+| A **valódi offline próbát** (`check:offline`) a saját Chrome-os szkript végzi a böngészőpanel helyett. | A panel nem enged service workert, és a szkript a böngésző saját offline kapcsolójával a valódi helyzetet adja. | `tests/offline/check-offline.mjs` |
 
 ## Gazdik és páciensek
 

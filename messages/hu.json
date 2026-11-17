@@ -880,7 +880,101 @@
     "billing": "Előfizetés",
     "roles": "Szerepkörök",
     "auditLog": "Napló",
+    "conflicts": "Ütközések",
+    "conflictsOpen": "Ütközések ({count})",
     "profile": "Profil"
+  },
+  "conflicts": {
+    "title": "Ütközések",
+    "lead": "Ha ugyanazt a mezőt két eszközön is átírták, vagy egy már lezárt lapra késve érkezett szerkesztés, a rendszer az egyik értéket megtartja, a másikat itt őrzi, hogy semmi ne vesszen el. Nézze át: ha a ki nem került érték kell, írja be újra a rekordban, utána jelölje elintézettnek.",
+    "none": "Nincs elintézetlen ütközés.",
+    "showing": "{count} elintézetlen ütközés látszik.",
+    "kept": "Érvényben maradt",
+    "lost": "Nem került be",
+    "by": "Szerkesztette: {name}",
+    "unknownPerson": "ismeretlen",
+    "unknownRecord": "(a rekord már nem érhető el)",
+    "open": "Rekord megnyitása",
+    "resolve": "Elintézve",
+    "resolveFailed": "Nem sikerült elintézettnek jelölni. Próbálja újra.",
+    "empty": "(üres)",
+    "planned": "tervezett",
+    "tables": {
+      "clients": "Gazdi",
+      "patients": "Páciens",
+      "visits": "Kezelési lap",
+      "visit_teeth": "Fog a kezelési lapon",
+      "templates": "Sablon",
+      "attachments": "Csatolmány"
+    },
+    "fields": {
+      "clients": {
+        "full_name": "Név",
+        "phone": "Telefonszám",
+        "email": "E-mail-cím",
+        "address": "Cím",
+        "notes": "Megjegyzés",
+        "email_consent": "E-mail-hozzájárulás"
+      },
+      "patients": {
+        "name": "Név",
+        "species": "Faj",
+        "breed": "Fajta",
+        "birth_date": "Születési idő",
+        "sex": "Nem",
+        "neutered": "Ivartalanított",
+        "weight_kg": "Testtömeg (kg)",
+        "microchip": "Mikrochip",
+        "notes": "Megjegyzés",
+        "client_id": "Gazdi"
+      },
+      "visits": {
+        "patient_id": "Páciens",
+        "visit_date": "A kezelés napja",
+        "veterinarian_name": "Kezelőorvos",
+        "assistant_name": "Asszisztens",
+        "asa_status": "ASA-státusz",
+        "last_fed_at": "Utolsó etetés",
+        "blood_summary": "Vérvizsgálat",
+        "weight_kg": "Testtömeg (kg)",
+        "complaint_tags": "Fő panasz (címkék)",
+        "complaint_notes": "Fő panasz (megjegyzés)",
+        "home_brushing": "Otthoni fogmosás",
+        "diet_type": "Étrend",
+        "anesthesia_blocks": "Helyi érzéstelenítés",
+        "sutures": "Varratok",
+        "medications": "Gyógyszerek",
+        "feeding_advice": "Táplálási javaslat",
+        "follow_up_date": "Kontroll időpontja",
+        "ready_to_finalize": "Lezárásra kész",
+        "general_note": "Általános megjegyzés"
+      },
+      "visit_teeth": {
+        "tooth": "Fog",
+        "findings": "Leletek",
+        "procedures": "Beavatkozások",
+        "pockets": "Tasakmélységek",
+        "note": "A fog megjegyzése",
+        "visit_id": "Kezelési lap"
+      },
+      "templates": {
+        "name": "Név",
+        "kind": "Fajta",
+        "shared": "Közös",
+        "species": "Faj",
+        "text_target": "Szövegmező",
+        "body": "Szöveg",
+        "payload": "Tartalom"
+      },
+      "attachments": {
+        "kind": "Típus",
+        "tooth": "Fog",
+        "quadrant": "Kvadráns",
+        "original_name": "Fájlnév",
+        "uploaded": "Feltöltve",
+        "visit_id": "Kezelési lap"
+      }
+    }
   },
   "billing": {
     "title": "Előfizetés",

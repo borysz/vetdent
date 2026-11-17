@@ -24,6 +24,7 @@ export const routes = {
   roles: "/app/szerepkorok",
   auditLog: "/app/naplo",
   profile: "/app/profil",
+  conflicts: "/app/utkozesek",
 } as const;
 
 export function clientPath(id: string): string {

@@ -25,7 +25,8 @@ Next.js 16 (App Router, Turbopack, `cacheComponents` + `partialPrefetching`), Re
 npm install
 npm run dev            # http://localhost:3000
 npm run check          # lint + typecheck + egységtesztek (mindig zöldnek kell lennie commit előtt)
-npm run check:tablet       # AUTOMATIKUS álló-tablet ellenőrzés (768×1024, 810×1080, 834×1194): valódi böngészőben, minden fő oldalon; előtte `npm run build && npm run start`. Új oldalt vegyél fel a `tests/tablet/check-tablet.mjs` listájába. Minden UI-változtatás után futtasd.
+npm run check:tablet       # AUTOMATIKUS álló-tablet ellenőrzés (768×1024, 810×1080, 834×1194): valódi böngészőben, minden fő oldalon; előtte `npm run build && npm run start`. Új oldalt vegyél fel a `tests/tablet/check-tablet.mjs` listájába. Minden UI-változtatás után futtasd. **Ezen a gépen** az Edge headless módban nem indul: `BROWSER_PATH="C:/Program Files/Google/Chrome/Application/chrome.exe"` kell (és `BASE_URL`, ha nem a 3000-es porton fut).
+npm run check:offline      # VALÓDI offline próba éles buildre (service worker, offline indítás, offline szerkesztés, szinkron, ütközés, ütközések oldala); ugyanúgy Chrome-mal és `BASE_URL`-lal. Offline/szinkron/ütközés érintő változtatás után futtasd.
 npm run test:integration   # a VALÓDI fejlesztői Supabase-projekten fut, saját tesztadattal; éles projekten SOHA
 npm run build
 ```
@@ -72,7 +73,7 @@ Kész: 1. alapozás · 2. felhasználók/fiókok/meghívók/profil/MFA+tartalék
 **Elhalasztva a demó utánra** (a demó ingyenes): Stripe-fizetés, Számlázz.hu-számlázás, platform-admin felület.
 
 Hátravan, javasolt sorrendben:
-1. A **service worker és a kezelési lap valódi böngészős próbája** (offline indítás, offline szerkesztés a vizit lapján), az **ütközések megjelenítése** a felületen. (A korábbi „betöltési hiba” megoldva: a böngészőpanel nem rajzol képkockát fókusz nélkül, ezért a React nem fedi fel a streamelt tartalmat; teljes betöltés után a panelben egy képernyőkép vagy kattintás elég. Lásd `NYITOTT_KERDESEK.md` 18. pont.)
+1. A **service worker, az offline szerkesztés és az ütközések** valódi böngészős próbája **kész** (`npm run check:offline`, 12 ellenőrzés zöld; lásd `NYITOTT_KERDESEK.md` 24. pont); az ütközések oldala (`/app/utkozesek`, a navigációban számlálóval) kész. Hátravan: a nem fogott esetek (lásd a 24. pont „Nem ellenőriztem” része), és hogy az eszköz saját felhasználója is értesüljön, ha a szerver elvetette a szerkesztését. A böngészőpanelben a service worker **nem regisztrálható** (a panel blokkolja), ezért az offline próbákat a `check:offline` végzi saját Chrome-mal. Böngészőpanelben a teljes betöltés után az `/app` oldalak „Betöltés…”-en állnak, amíg az oldal nem kap képkockát: kérj egy képernyőképet vagy kattints.
 2. **A 10. fázis maradéka:** a gazdi-PDF elkészült és élőben kipróbált (lásd `NYITOTT_KERDESEK.md` 23. pont). Hátravan: a laikus magyarázatok (`summary.lay.*`) állatorvosi jóváhagyása (`docs/SZAKMAI_ELLENORZES.md` 4. pont), a nyomtatási nézet és a PDF valódi táblagépen, a `check:tablet` futtatása (a gépen a böngésző nem indult), a logó (nincs logófeltöltés), az e-mail küldés (SMTP-fiók kell; külső szolgáltatás, előbb kérdezz).
 3. A 8. fázis maradéka (`NYITOTT_KERDESEK.md` 20. pont): szervezeti beállítások (színek, gombok, küszöb), 4 pontos mód, telefonos kvadráns-nézet, korábbi fogképletek idővonala.
 4. 10. fázis e-mail része (SMTP-fiók kell, külső szolgáltatás: előbb kérdezz) · 11. lezárás (adatexport, biztonsági átnézés).

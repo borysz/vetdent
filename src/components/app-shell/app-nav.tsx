@@ -1,7 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { MainNav, type NavItem } from "@/components/app-shell/main-nav";
-import { getPermissions } from "@/lib/auth/dal";
+import { getActiveMembership, getPermissions } from "@/lib/auth/dal";
+import { countOpenConflicts } from "@/lib/conflicts/load";
 import { routes } from "@/lib/routes";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
  * Builds the navigation from the user's permissions, so nobody is offered a
@@ -24,6 +26,12 @@ export async function AppNav() {
   }
   if (permissions.has("templates.manage_own")) {
     items.push({ href: routes.templates, label: t("templates") });
+  }
+  const membership = await getActiveMembership();
+  if (permissions.has("clients.write") && membership) {
+    const open = await countOpenConflicts(await createSupabaseServerClient(), membership.organization.id);
+    // Always reachable for those who may decide, with the number when something waits.
+    items.push({ href: routes.conflicts, label: open > 0 ? t("conflictsOpen", { count: open }) : t("conflicts") });
   }
   items.push({ href: routes.roles, label: t("roles") });
   if (permissions.has("audit.view")) {

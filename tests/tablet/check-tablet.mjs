@@ -163,6 +163,7 @@ try {
     `/app/vizitek/${fixture.visitId}`,
     `/app/vizitek/${fixture.visitId}/osszefoglalo`,
     "/app/sablonok",
+    "/app/utkozesek",
     "/app/munkatarsak",
     "/app/fiok",
     "/app/elofizetes",
